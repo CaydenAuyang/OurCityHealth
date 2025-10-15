@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Our City Health — Map</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#0b1f14;--card:#10281b;--ink:#e9fff2;--muted:#b8e6cf;--accent:#22c55e;--accent2:#16a34a;--grid:#123822}
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,#07140e, #0b1f14);color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+    header{padding:36px 20px 8px;max-width:1140px;margin:0 auto}
+    h1{margin:0;font-size:34px;letter-spacing:.2px}
+    h2{margin:0 0 8px 0;font-size:22px}
+    p{margin:0 0 12px 0}
+    p.lead{margin:8px 0 0;color:var(--muted);line-height:1.7}
+    .copy{line-height:1.85;letter-spacing:.15px}
+    .section{margin:28px 0}
+    .wrap{max-width:1200px;margin:16px auto;padding:0 20px}
+    .panel{background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:14px;overflow:hidden}
+    .panel-head{display:flex;gap:16px;align-items:center;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.06)}
+    .pill{padding:6px 10px;border-radius:999px;background:rgba(34,197,94,.12);color:#a8f3c7;font-weight:600;font-size:12px}
+    .grid{display:grid;grid-template-columns:1fr 380px;gap:0}
+    .right{border-left:1px solid rgba(255,255,255,.06);max-height:72vh;overflow:auto}
+    #globe{height:70vh;min-height:540px;position:relative;background:radial-gradient(1200px 520px at 50% -200px,rgba(34,197,94,.12),transparent 60%), repeating-linear-gradient(90deg,transparent 0,transparent 39px,rgba(255,255,255,.04) 40px)}
+    .city-card{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.06);cursor:pointer}
+    .city-card:hover{background:rgba(34,197,94,.06)}
+    .city-card[data-has-geo="0"]{opacity:.65}
+    .city-card[data-has-geo="0"] .city-name::after{content:" · no map pin";color:#f87171;font-size:11px;font-weight:600;margin-left:6px}
+    .city-name{font-weight:700}
+    .score{color:#9ef2c5;font-weight:700}
+    .muted{color:var(--muted);font-size:12px}
+    dialog{border:0;border-radius:16px;max-width:860px;width:calc(100% - 32px);background:#0f2218;color:var(--ink)}
+    .modal-hd{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.06)}
+    .tabs{display:flex;gap:8px;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.06)}
+    .tab{padding:8px 10px;border-radius:10px;background:rgba(34,197,94,.08);cursor:pointer}
+    .tab.active{background:rgba(34,197,94,.18)}
+    .modal-body{padding:14px 16px}
+    ul.clean{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+    a{color:#8ff0c1;text-decoration:none}
+    a:hover{text-decoration:underline}
+    .footer{padding:22px 0;color:var(--muted);font-size:12px;text-align:center}
+    .legend{position:absolute;left:12px;bottom:12px;background:rgba(16,40,27,.8);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:8px 10px;font-size:12px;color:var(--muted)}
+    /* Global issues cards */
+    .issues-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+    .issue-card{background:rgba(16,40,27,.92);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px 14px;box-shadow:0 10px 24px rgba(0,0,0,.22)}
+    .issue-title{font-weight:700;margin:0 0 6px 0;color:#ccf4df}
+    .issue-desc{color:var(--ink);opacity:.9;margin:0 0 6px 0;line-height:1.6}
+    .issue-meta{font-size:12px;color:var(--muted)}
+    @media(max-width:960px){.grid{grid-template-columns:1fr}.right{border-left:0;border-top:1px solid rgba(255,255,255,.06)}#globe{height:52vh}}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Our City Health — Global Index</h1>
+    <p class="lead">Explore city health scores across the globe. Drag the globe, click cities for details, and scroll for full citations.</p>
+    <div class="section copy" style="color:var(--muted);max-width:1120px">
+      <h2 style="color:#c9f3db">About Our City Health</h2>
+      <p>Our City Health measures affordability, services, safety, opportunity, culture, environment, transportation, governance, housing, economy, education, and health across the world’s largest cities using news and social signals.</p>
+      <p>We emphasize transparency and fairness: each city’s analysis balances document counts, source diversity, recency, and relevance. All citations are preserved so results can be verified.</p>
+    </div>
+  </header>
+  <div class="wrap">
+    <div class="panel">
+      <div class="panel-head" style="gap:10px;flex-wrap:wrap">
+        <span class="pill" id="summary-pill">Loading…</span>
+        <span class="pill" id="summary-pill-run">—</span>
+        <span class="pill" id="summary-pill-cum">—</span>
+      </div>
+      <div class="panel-head" style="gap:10px;flex-wrap:wrap">
+        <input id="search" placeholder="Search city or country" aria-label="Search city or country" style="all:unset;background:rgba(255,255,255,.08);padding:12px 14px;border-radius:12px;min-width:280px;flex:1;color:var(--ink)"/>
+        <span class="muted">Tip: hover a city to see its name; click for full details</span>
+      </div>
+      <div class="grid">
+        <div>
+          <div id="globe"><div class="legend">• Green dots: clickable cities<br>• Drag to rotate • Scroll to zoom</div></div>
+        </div>
+        <div class="right">
+          <div id="city-list"></div>
+        </div>
+      </div>
+    </div>
+    <div id="global-issues" class="panel" style="margin-top:20px;padding:16px 16px">
+      <div class="panel-head" style="border-bottom:0;padding:0 0 10px 0"><span class="pill">Global Top 10 Issues</span></div>
+      <div id="issues-content" class="copy" style="color:var(--ink)">Loading…</div>
+    </div>
+    <p class="footer">Inspired by professional civic dashboards like <a href="https://civicinfoindex.org/the-index/" target="_blank" rel="noopener">this example</a>. This page uses your local data file.</p>
+    <div class="panel" style="margin-top:22px;padding:18px 16px">
+      <div class="panel-head" style="border-bottom:0;padding:0 0 10px 0"><span class="pill">About This Project</span></div>
+      <div class="copy" style="color:var(--ink)">
+        <p><strong>Overview.</strong> Our City Health aggregates and analyzes public articles and Reddit discussions to estimate a city’s civic health across multiple dimensions. Data collection maximizes coverage via RSS/sitemaps with homepage fallback, concurrency, connection pooling, compression, retries, and SQLite caching.</p>
+        <p><strong>Fairness.</strong> Per-city AI inputs are balanced using source diversity, recency, and relevance weighting so cities with more volume don’t drown out others.</p>
+        <p><strong>Techniques.</strong> NLP keyword and NER extraction, clustering, and model scoring produce city-level health scores and top issues; link aggregation preserves full transparency.</p>
+        <p><strong>Decisions.</strong> Hybrid selection (up to 500 docs/city) balances cost and breadth; local media domain tagging ensures all related local articles are cited even if the city is not named explicitly.</p>
+      </div>
+    </div>
+  </div>
+
+  <dialog id="modal">
+    <div class="modal-hd">
+      <strong id="m-title">City</strong>
+      <button onclick="modal.close()" style="all:unset;cursor:pointer;color:#a8f3c7">Close ✕</button>
+    </div>
+    <div class="tabs">
+      <div class="tab active" data-tab="scores">Scores</div>
+      <div class="tab" data-tab="issues">Top issues</div>
+      <div class="tab" data-tab="articles">Articles</div>
+      <div class="tab" data-tab="reddit">Reddit posts</div>
+    </div>
+    <div class="modal-body">
+      <div id="tab-scores"></div>
+      <div id="tab-issues" style="display:none"></div>
+      <div id="tab-articles" style="display:none"></div>
+      <div id="tab-reddit" style="display:none"></div>
+    </div>
+  </dialog>
+
+  <script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three-globe@2.30.0/dist/three-globe.min.js"></script>
+  <script src="https://unpkg.com/topojson-client@3"></script>
+  <script>
+  const modal = document.getElementById('modal');
+  const tabEls = Array.from(document.querySelectorAll('.tab'));
+  tabEls.forEach(el=> el.addEventListener('click',()=>{
+    tabEls.forEach(t=>t.classList.remove('active'));
+    el.classList.add('active');
+    const id = el.dataset.tab;
+    for(const sec of ['scores','issues','articles','reddit']){
+      document.getElementById('tab-'+sec).style.display = (sec===id?'block':'none');
+    }
+  }));
+
+  // Load results JSON
+  let RESULTS = null;
+  const GEO_SOURCE_PRIORITY = { boundary: 3, dataset: 2, hint: 1 };
+
+  function normalizeName(str){
+    return (str || '')
+      .toString()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9\s]/gi, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .toLowerCase();
+  }
+
+  const CITY_ALIAS_TO_CANONICAL = {
+    'bangalore': 'bengaluru',
+    'bombay': 'mumbai',
+    'calcutta': 'kolkata',
+    'madras': 'chennai',
+    'saigon': 'ho chi minh city',
+    'canton': 'guangzhou',
+    'peking': 'beijing',
+    'roma': 'rome',
+    'moskva': 'moscow',
+    'rangoon': 'yangon',
+    'washington dc': 'washington',
+    'washington d c': 'washington',
+    'st petersburg': 'saint petersburg',
+    'saint petersburg': 'saint petersburg'
+  };
+
+  function geometryToPolygons(geometry){
+    if(!geometry || !geometry.type) return [];
+    if(geometry.type === 'Polygon') return [geometry.coordinates || []];
+    if(geometry.type === 'MultiPolygon') return geometry.coordinates || [];
+    return [];
+  }
+
+  function centroidFromGeometry(geometry){
+    const polys = geometryToPolygons(geometry);
+    if(!polys.length) return null;
+    let areaTotal = 0;
+    let cxTotal = 0;
+    let cyTotal = 0;
+    polys.forEach(rings=>{
+      if(!Array.isArray(rings) || !rings.length) return;
+      const outer = rings[0] || [];
+      if(outer.length < 3) return;
+      let signedArea = 0;
+      let cx = 0;
+      let cy = 0;
+      for(let i=0;i<outer.length-1;i++){
+        const [x0,y0] = outer[i];
+        const [x1,y1] = outer[i+1];
+        const a = (x0 * y1) - (x1 * y0);
+        signedArea += a;
+        cx += (x0 + x1) * a;
+        cy += (y0 + y1) * a;
+      }
+      if(!signedArea) return;
+      const polyArea = Math.abs(signedArea) / 2;
+      const centroidLng = cx / (6 * signedArea);
+      const centroidLat = cy / (6 * signedArea);
+      areaTotal += polyArea;
+      cxTotal += centroidLng * polyArea;
+      cyTotal += centroidLat * polyArea;
+    });
+    if(!areaTotal) return null;
+    return { lng: cxTotal / areaTotal, lat: cyTotal / areaTotal };
+  }
+
+  function registerGeo(index, name, lat, lng, country, source, aliases){
+    if(!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+    const rec = { lat, lng, country: country || '', source, priority: GEO_SOURCE_PRIORITY[source] || 0, label: name };
+    const seeds = Array.isArray(aliases) ? [name].concat(aliases) : [name];
+    const expanded = new Set();
+    seeds.forEach(raw=>{
+      if(!raw) return;
+      const alias = raw.trim();
+      if(!alias) return;
+      expanded.add(alias);
+      if(/city$/i.test(alias)){
+        expanded.add(alias.replace(/city$/i,'').trim());
+      }else{
+        expanded.add(`${alias} City`);
+      }
+      if(/^St[.\s]/i.test(alias)){
+        expanded.add(alias.replace(/^St[.\s]*/i,'Saint '));
+      }
+      if(/^Saint\s/i.test(alias)){
+        expanded.add(alias.replace(/^Saint\s/i,'St '));
+        expanded.add(alias.replace(/^Saint\s/i,'St. '));
+      }
+      if(/D\.?C\.?/i.test(alias)){
+        expanded.add(alias.replace(/[,.\s]*D\.?C\.?/ig,'').trim());
+        expanded.add(alias.replace(/[,.\s]*DC/ig,'').trim());
+      }
+    });
+    expanded.forEach(alias=>{
+      const norm = normalizeName(alias);
+      if(!norm) return;
+      const existing = index.get(norm);
+      if(!existing || rec.priority > existing.priority){
+        index.set(norm, rec);
+      }
+    });
+  }
+
+  function resolveGeo(index, name){
+    if(!name) return null;
+    const norm = normalizeName(name);
+    const candidates = [norm];
+    if(norm.endsWith(' city')){
+      candidates.push(norm.replace(/\s+city$/, ''));
+    }else{
+      candidates.push(`${norm} city`);
+    }
+    if(norm.includes(' d c')){
+      candidates.push(norm.replace(/\s*d c/g, ''));
+    }
+    if(norm.includes('st ')){
+      candidates.push(norm.replace(/\bst\b/g, 'saint'));
+    }
+    if(norm.includes('saint ')){
+      candidates.push(norm.replace(/\bsaint\b/g, 'st'));
+    }
+    const aliasCanonical = CITY_ALIAS_TO_CANONICAL[norm];
+    if(aliasCanonical){
+      candidates.push(normalizeName(aliasCanonical));
+    }
+    for(const cand of candidates){
+      if(cand && index.has(cand)){
+        return index.get(cand);
+      }
+    }
+    return null;
+  }
+
+  function colorFromScore(score){
+    if(score == null || Number.isNaN(score)) return '#9ca3af';
+    if(score >= 80) return '#22c55e';
+    if(score >= 65) return '#4ade80';
+    if(score >= 50) return '#facc15';
+    if(score >= 35) return '#f97316';
+    return '#ef4444';
+  }
+
+  function attachSearch(inputEl, renderFn){
+    if(!inputEl || typeof renderFn !== 'function') return;
+    if(inputEl._renderHandler){
+      inputEl.removeEventListener('input', inputEl._renderHandler);
+    }
+    const handler = e=> renderFn(e.target.value || '');
+    inputEl._renderHandler = handler;
+    inputEl.addEventListener('input', handler);
+  }
+  function tryFetch(paths){
+    if(!paths.length) throw new Error('no paths');
+    const [p, ...rest] = paths;
+    return fetch(p).then(r=>{
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      return r.json();
+    }).catch(()=> rest.length? tryFetch(rest): Promise.reject(new Error('all failed')));
+  }
+  tryFetch(['data/latest/full_results.json','full_results.json']).then(d=>{
+    RESULTS = d;
+    const sum = d.summary || {};
+    const art = Number(sum.news_articles||0);
+    const posts = Number(sum.reddit_posts||0);
+    const ct = (d.cities?.length||0);
+    document.getElementById('summary-pill').textContent = `${art.toLocaleString()} articles · ${posts.toLocaleString()} Reddit posts · ${ct.toLocaleString()} cities`;
+    const ts = (sum.run_timestamp||'').toString();
+    document.getElementById('summary-pill-run').textContent = ts? `Last run: ${ts.replace('T',' ').replace('Z','')}` : 'Last run: —';
+    const cum = sum.cumulative || {};
+    const cumArt = Number(cum.news_articles_distinct||0).toLocaleString();
+    const cumPost = Number(cum.reddit_posts_distinct||0).toLocaleString();
+    const cumComm = Number(cum.reddit_comments_total||0).toLocaleString();
+    document.getElementById('summary-pill-cum').textContent = `Cumulative: ${cumArt} articles · ${cumPost} posts · ${cumComm} comments`;
+
+    // Minimal geo hints. Next iteration can embed lat/lon in JSON.
+    const GEO_HINTS = {
+      'New York City':[40.7128,-74.0060],'London':[51.5074,-0.1278],'Paris':[48.8566,2.3522],'Tokyo':[35.6895,139.6917],
+      'Shanghai':[31.2304,121.4737],'Beijing':[39.9042,116.4074],'Mumbai':[19.0760,72.8777],'Delhi':[28.6139,77.2090],
+      'Los Angeles':[34.0522,-118.2437],'Singapore':[1.3521,103.8198],'Hong Kong':[22.3193,114.1694],'Toronto':[43.6532,-79.3832],
+      'Sydney':[-33.8688,151.2093],'Berlin':[52.5200,13.4050],'Barcelona':[41.3874,2.1686],'Istanbul':[41.0082,28.9784]
+    };
+
+    // Build list UI + search
+    const ALL = (d.cities || []).slice().sort((a,b)=> (b.health_score ?? 0) - (a.health_score ?? 0));
+    const listEl = document.getElementById('city-list');
+    const searchInput = document.getElementById('search');
+    if(listEl){
+      listEl.innerHTML = '<div class="muted" style="padding:16px">Loading city locations…</div>';
+    }
+    if(searchInput){
+      searchInput.value = '';
+      searchInput.placeholder = 'Loading geodata…';
+      searchInput.disabled = true;
+    }
+
+    const boundariesPromise = tryFetch(['data/latest/city_boundaries.geojson','city_boundaries.geojson']).catch(()=>null);
+    const catalogPromise = fetch('https://raw.githubusercontent.com/lutangar/cities.json/master/cities.json')
+      .then(r=>r.json()).catch(()=>[]);
+
+    function bootstrapGeodata(boundaries, catalog){
+      const geoIndex = new Map();
+      const cityPolygons = [];
+
+      if(boundaries && Array.isArray(boundaries.features)){
+        boundaries.features.forEach(f=>{
+          const props = f.properties || {};
+          const name = (props.name || props.NAME || props.City || '').trim();
+          if(!name) return;
+          const centroid = centroidFromGeometry(f.geometry);
+          if(!centroid) return;
+          const country = props.country || props.COUNTRY || props.admin || props.ADMIN || '';
+          const aliases = country ? [`${name}, ${country}`] : [];
+          registerGeo(geoIndex, name, centroid.lat, centroid.lng, country, 'boundary', aliases);
+          cityPolygons.push({
+            type: 'Feature',
+            geometry: f.geometry,
+            properties: { ...props, __isCityBoundary: true, cityName: name }
+          });
+        });
+      }
+
+      if(Array.isArray(catalog)){
+        catalog.forEach(entry=>{
+          const name = (entry && (entry.name || entry.city)) || '';
+          if(!name) return;
+          const lat = Number(entry.lat ?? entry.latitude);
+          const lng = Number(entry.lng ?? entry.lon ?? entry.longitude);
+          if(!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+          const country = entry.country || entry.country_code || entry.countryCode || entry.country_name || '';
+          const aliases = country ? [`${name}, ${country}`] : [];
+          registerGeo(geoIndex, name, lat, lng, country, 'dataset', aliases);
+        });
+      }
+
+      Object.entries(GEO_HINTS).forEach(([name, coords])=>{
+        if(Array.isArray(coords) && coords.length === 2){
+          registerGeo(geoIndex, name, Number(coords[0]), Number(coords[1]), '', 'hint');
+        }
+      });
+
+      Object.entries(CITY_ALIAS_TO_CANONICAL).forEach(([alias, canonical])=>{
+        const aliasRec = resolveGeo(geoIndex, alias);
+        if(!aliasRec) return;
+        const canonicalRec = resolveGeo(geoIndex, canonical);
+        if(canonicalRec) return;
+        registerGeo(geoIndex, canonical, aliasRec.lat, aliasRec.lng, aliasRec.country, aliasRec.source, [alias]);
+      });
+
+      const cityDetails = new Map();
+      const missing = [];
+      ALL.forEach(city=>{
+        const record = resolveGeo(geoIndex, city.name);
+        if(record){
+          cityDetails.set(city.name, record);
+        }else{
+          missing.push(city.name);
+        }
+      });
+
+      const renderList = (filter='')=>{
+        if(!listEl) return;
+        const q = normalizeName(filter);
+        listEl.innerHTML = '';
+        const filtered = ALL.filter(city=>{
+          if(!q) return true;
+          const meta = cityDetails.get(city.name);
+          const cityMatch = normalizeName(city.name).includes(q);
+          const countryMatch = meta?.country && normalizeName(meta.country).includes(q);
+          return cityMatch || countryMatch;
+        });
+        filtered.forEach(city=>{
+          const meta = cityDetails.get(city.name);
+          const el = document.createElement('div');
+          el.className = 'city-card';
+          el.dataset.hasGeo = meta ? '1' : '0';
+          const countryLabel = meta?.country ? `<span class="muted"> · ${meta.country}</span>` : '';
+          el.innerHTML = `<div class="city-name">${city.name}${countryLabel}</div>
+            <div class="muted">Health score <span class="score">${city.health_score ?? '—'}</span></div>`;
+          el.addEventListener('click',()=>showCity(city));
+          listEl.appendChild(el);
+        });
+        if(!filtered.length){
+          const empty = document.createElement('div');
+          empty.className = 'muted';
+          empty.style.padding = '16px';
+          empty.textContent = 'No cities match your search.';
+          listEl.appendChild(empty);
+        }
+      };
+
+      renderList('');
+      if(searchInput){
+        searchInput.disabled = false;
+        searchInput.placeholder = 'Search city or country';
+        attachSearch(searchInput, renderList);
+      }
+
+      buildGlobe(ALL, cityDetails, cityPolygons);
+
+      if(missing.length){
+        console.warn('Cities missing placement on globe:', missing);
+        const legendEl = document.querySelector('#globe .legend');
+        if(legendEl){
+          legendEl.innerHTML += `<br>• ${missing.length} cities missing map coordinates`;
+        }
+      }
+    }
+
+    Promise.all([boundariesPromise, catalogPromise])
+      .then(([boundaries, catalog])=> bootstrapGeodata(boundaries, catalog))
+      .catch(err=>{
+        console.error('Geo dataset load failed, falling back to hints', err);
+        bootstrapGeodata(null, []);
+      });
+
+    // Global issues section (Top 10)
+    const issuesEl = document.getElementById('issues-content');
+    const topics = d.topics || [];
+    const top10 = topics.slice(0,10);
+    issuesEl.innerHTML = top10.length ? (`<div class="issues-grid">` + top10.map((t,i)=>{
+      const desc = t.description || '';
+      const cities = (t.cities||[]).slice(0,5).join(', ');
+      return `<div class="issue-card"><div class="issue-num">${String(i+1).padStart(2,'0')}</div><div class="issue-title">${t.name}</div><div class="issue-desc">${desc}</div>${cities?`<div class="issue-meta">Notable: ${cities}</div>`:''}</div>`;
+    }).join('') + `</div>`) : '<div class="muted">No issues available.</div>';
+  }).catch((e)=>{
+    console.error('Failed to load results.json', e);
+    document.getElementById('summary-pill').textContent = 'Failed to load results.json';
+  });
+
+  function showCity(c){
+    document.getElementById('m-title').textContent = c.name;
+    const dims = c.dimensions||{};
+    const dimRows = Object.entries(dims).map(([k,v])=>`<div style="display:flex;justify-content:space-between;gap:12px"><span>${k}</span><strong>${(v&&v.score)!=null?v.score:'—'}</strong></div>`).join('');
+    document.getElementById('tab-scores').innerHTML = dimRows || '<div class="muted">No scores available.</div>';
+
+    const issues = (c.top_issues||[]).slice(0,20).map(x=>`<li>${x}</li>`).join('');
+    document.getElementById('tab-issues').innerHTML = issues?`<ul class="clean">${issues}</ul>`:'<div class="muted">No issues found.</div>';
+
+    const arts = (c.articles&&c.articles.length?c.articles:c.citations||[]).filter(u=>!/reddit\.com\//.test(u));
+    document.getElementById('tab-articles').innerHTML = arts.length?`<ul class="clean">${arts.map(u=>`<li><a href="${u}" target="_blank" rel="noopener">${u}</a></li>`).join('')}</ul>`:'<div class="muted">No article links.</div>';
+
+    const reds = (c.reddit_posts&&c.reddit_posts.length?c.reddit_posts:c.citations||[]).filter(u=>/reddit\.com\//.test(u));
+    document.getElementById('tab-reddit').innerHTML = reds.length?`<ul class="clean">${reds.map(u=>`<li><a href="${u}" target="_blank" rel="noopener">${u}</a></li>`).join('')}</ul>`:'<div class="muted">No Reddit links.</div>';
+
+    modal.showModal();
+  }
+
+  function buildGlobe(cities, cityDetails, cityPolygons){
+    const container = document.getElementById('globe');
+    if(!container) return;
+
+    Array.from(container.querySelectorAll('canvas')).forEach(c=> c.remove());
+    if(container._resizeHandler){
+      window.removeEventListener('resize', container._resizeHandler);
+      delete container._resizeHandler;
+    }
+
+    const width = container.clientWidth || 900;
+    const height = container.clientHeight || 600;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 1000);
+    camera.position.z = 240;
+
+    const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(width, height);
+    renderer.domElement.style.display = 'block';
+    renderer.domElement.style.width = '100%';
+    renderer.domElement.style.height = '100%';
+    container.appendChild(renderer.domElement);
+
+    const globe = new ThreeGlobe()
+      .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+      .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
+      .showAtmosphere(true)
+      .atmosphereColor('#3bf08f')
+      .atmosphereAltitude(0.12);
+    scene.add(globe);
+
+    const glowGeo = new THREE.SphereGeometry(100, 64, 64);
+    const glowMat = new THREE.MeshBasicMaterial({ color:0x22c55e, transparent:true, opacity:0.08 });
+    const glowMesh = new THREE.Mesh(glowGeo, glowMat);
+    glowMesh.scale.set(1.05,1.05,1.05);
+    scene.add(glowMesh);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.95));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.55);
+    dirLight.position.set(2,1,1);
+    scene.add(dirLight);
+
+    function latLngToVec3(lat,lng,r=100){
+      const phi = (90 - lat) * Math.PI/180;
+      const theta = (lng + 180) * Math.PI/180;
+      const x = -r * Math.sin(phi) * Math.cos(theta);
+      const z =  r * Math.sin(phi) * Math.sin(theta);
+      const y =  r * Math.cos(phi);
+      return new THREE.Vector3(x,y,z);
+    }
+
+    const pointByCity = new Map();
+    const pts = cities.map(city=>{
+      const meta = cityDetails.get(city.name);
+      if(!meta) return null;
+      const lat = Number(meta.lat);
+      const lng = Number(meta.lng);
+      if(!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+      const score = Number(city.health_score);
+      const altitude = 0.012 + (Number.isFinite(score) ? Math.max(score, 0) / 6000 : 0);
+      const color = colorFromScore(score);
+      const record = { lat, lng, city, meta, altitude, color };
+      pointByCity.set(city.name, record);
+      return record;
+    }).filter(Boolean).sort((a,b)=> (b.city.health_score ?? 0) - (a.city.health_score ?? 0));
+
+    if(!pts.length){
+      console.warn('No cities resolved for globe rendering.');
+    }
+
+    let pointRadiusVar = 0.9;
+    globe.pointsData(pts)
+      .pointAltitude(d=>d.altitude)
+      .pointColor(d=>d.color)
+      .pointRadius(()=>pointRadiusVar);
+
+    let currentLabelData = pts.slice(0, Math.min(90, pts.length));
+    let labelSizeVar = 1.4;
+    function applyLabels(){
+      globe.labelsData(currentLabelData)
+        .labelLat(d=>d.lat)
+        .labelLng(d=>d.lng)
+        .labelText(d=> d.city?.name || '')
+        .labelSize(()=>labelSizeVar)
+        .labelDotRadius(()=>0.0)
+        .labelColor(()=> '#ffffff')
+        .labelResolution(3)
+        .labelAltitude(()=>0.02)
+        .labelsTransitionDuration(0);
+    }
+    applyLabels();
+
+    const glowTexture = (()=>{
+      const cvs = document.createElement('canvas'); cvs.width = cvs.height = 128;
+      const ctx = cvs.getContext('2d');
+      const g = ctx.createRadialGradient(64,64,0,64,64,64);
+      g.addColorStop(0,'rgba(255,255,255,0.45)');
+      g.addColorStop(1,'rgba(255,255,255,0.0)');
+      ctx.fillStyle = g; ctx.fillRect(0,0,128,128);
+      const tex = new THREE.CanvasTexture(cvs); tex.needsUpdate = true; return tex;
+    })();
+
+    const sprites = [];
+    pts.forEach(p=>{
+      const mat = new THREE.SpriteMaterial({ map: glowTexture, transparent:true, opacity:0.0, depthWrite:false, blending:THREE.AdditiveBlending });
+      const spr = new THREE.Sprite(mat);
+      spr.position.copy(latLngToVec3(p.lat, p.lng, 100));
+      spr.scale.set(20,20,1);
+      spr.renderOrder = 1000;
+      sprites.push({ spr, point: p });
+      scene.add(spr);
+    });
+
+    let hoveredPoint = null;
+    let hoverPolygon = null;
+    fetch('https://unpkg.com/world-atlas@2.0.2/countries-110m.json')
+      .then(r=>r.json())
+      .then(topology=>{
+        const countryFeatures = topojson.feature(topology, topology.objects.countries).features;
+        const combined = countryFeatures.concat(Array.isArray(cityPolygons) ? cityPolygons : []);
+        globe
+          .polygonsData(combined)
+          .polygonAltitude(f=>{
+            const isCity = f?.properties?.__isCityBoundary;
+            if(f === hoverPolygon){
+              return isCity ? 0.035 : 0.022;
+            }
+            return isCity ? 0.012 : 0.008;
+          })
+          .polygonCapColor(f=>{
+            const isCity = f?.properties?.__isCityBoundary;
+            if(f === hoverPolygon){
+              return 'rgba(255,255,255,0.22)';
+            }
+            return isCity ? 'rgba(34,197,94,0.22)' : 'rgba(47,89,63,0.28)';
+          })
+          .polygonSideColor(f=> f?.properties?.__isCityBoundary ? 'rgba(25,78,48,0.65)' : 'rgba(20,40,28,0.55)')
+          .polygonsTransitionDuration(220);
+
+        globe.onPolygonHover(feat=>{
+          hoverPolygon = feat || null;
+          if(feat && feat.properties?.__isCityBoundary){
+            const name = feat.properties.cityName || feat.properties.name || feat.properties.NAME;
+            const candidate = pointByCity.get(name);
+            if(candidate) hoveredPoint = candidate;
+          }
+        });
+
+        globe.onPolygonClick(feat=>{
+          if(!feat) return;
+          const name = feat.properties?.cityName || feat.properties?.name || feat.properties?.NAME;
+          const city = cities.find(c=> c.name === name);
+          if(city) showCity(city);
+        });
+
+        const mesh = topojson.mesh(topology, topology.objects.countries, (a,b)=> a!==b);
+        if(mesh && mesh.coordinates){
+          const borderGroup = new THREE.Group();
+          const lineMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent:true, opacity:0.88, depthTest:false });
+          (mesh.coordinates || []).forEach(multi=>{
+            (multi || []).forEach(ring=>{
+              if(!ring || ring.length < 4) return;
+              const ptsRing = ring.map(([lng,lat])=> latLngToVec3(lat,lng,100.5));
+              const pos = new Float32Array(ptsRing.length * 3);
+              ptsRing.forEach((vec,i)=>{
+                pos[i*3]=vec.x; pos[i*3+1]=vec.y; pos[i*3+2]=vec.z;
+              });
+              const geom = new THREE.BufferGeometry();
+              geom.setAttribute('position', new THREE.BufferAttribute(pos,3));
+              const line = new THREE.Line(geom, lineMat);
+              borderGroup.add(line);
+            });
+          });
+          borderGroup.renderOrder = 999;
+          scene.add(borderGroup);
+        }
+      })
+      .catch(err=> console.warn('Failed to load country polygons', err));
+
+    if(Array.isArray(cityPolygons) && cityPolygons.length){
+      const outlineMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent:true, opacity:0.55, depthTest:false });
+      cityPolygons.forEach(feat=>{
+        geometryToPolygons(feat.geometry).forEach(rings=>{
+          if(!rings || !rings.length) return;
+          const outer = rings[0];
+          if(!outer || outer.length < 3) return;
+          const ptsRing = outer.map(([lng,lat])=> latLngToVec3(lat,lng,100.4));
+          const pos = new Float32Array(ptsRing.length * 3);
+          ptsRing.forEach((vec,i)=>{
+            pos[i*3]=vec.x; pos[i*3+1]=vec.y; pos[i*3+2]=vec.z;
+          });
+          const geom = new THREE.BufferGeometry();
+          geom.setAttribute('position', new THREE.BufferAttribute(pos,3));
+          const loop = new THREE.LineLoop(geom, outlineMat);
+          loop.renderOrder = 1000;
+          scene.add(loop);
+        });
+      });
+    }
+
+    let autoRotate = true;
+    let dragging = false;
+    let lastX = 0, lastY = 0;
+    let rotateTimer = null;
+    const mouse = new THREE.Vector2();
+
+    function scheduleAutoRotate(){
+      if(rotateTimer) clearTimeout(rotateTimer);
+      rotateTimer = setTimeout(()=>{ autoRotate = true; }, 2200);
+    }
+
+    renderer.domElement.addEventListener('pointerdown', e=>{
+      autoRotate = false;
+      dragging = true;
+      lastX = e.clientX;
+      lastY = e.clientY;
+      renderer.domElement.setPointerCapture(e.pointerId);
+    });
+
+    renderer.domElement.addEventListener('pointermove', e=>{
+      if(!dragging) return;
+      const dx = e.clientX - lastX;
+      const dy = e.clientY - lastY;
+      globe.rotation.y += dx * 0.005;
+      globe.rotation.x += dy * 0.003;
+      globe.rotation.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, globe.rotation.x));
+      lastX = e.clientX;
+      lastY = e.clientY;
+    });
+
+    renderer.domElement.addEventListener('pointerup', e=>{
+      dragging = false;
+      renderer.domElement.releasePointerCapture(e.pointerId);
+      scheduleAutoRotate();
+    });
+
+    renderer.domElement.addEventListener('pointerleave', ()=>{
+      if(!dragging) scheduleAutoRotate();
+    });
+
+    renderer.domElement.addEventListener('wheel', e=>{
+      e.preventDefault();
+      autoRotate = false;
+      camera.position.z = Math.max(140, Math.min(360, camera.position.z + Math.sign(e.deltaY) * 12));
+      scheduleAutoRotate();
+    }, { passive: false });
+
+    function nearestPoint(mx,my){
+      let nearest = null;
+      let best = Infinity;
+      pts.forEach(p=>{
+        const v = latLngToVec3(p.lat, p.lng, 100).clone().project(camera);
+        const dx = v.x - mx;
+        const dy = v.y - my;
+        const d2 = dx*dx + dy*dy;
+        if(d2 < best){
+          best = d2;
+          nearest = p;
+        }
+      });
+      return { point: nearest, dist2: best };
+    }
+
+    renderer.domElement.addEventListener('mousemove', evt=>{
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((evt.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((evt.clientY - rect.top) / rect.height) * 2 + 1;
+      const res = nearestPoint(mouse.x, mouse.y);
+      const threshold = Math.max(0.003, Math.min(0.02, (camera.position.z - 140) / 500));
+      hoveredPoint = res.dist2 < threshold ? res.point : null;
+    });
+
+    renderer.domElement.addEventListener('click', evt=>{
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((evt.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((evt.clientY - rect.top) / rect.height) * 2 + 1;
+      const res = nearestPoint(mouse.x, mouse.y);
+      if(res.point){
+        showCity(res.point.city);
+      }
+    });
+
+    let lastLabelTick = 0;
+    function declutter(){
+      const now = performance.now();
+      if(now - lastLabelTick < 150) return;
+      lastLabelTick = now;
+      const z = camera.position.z;
+      labelSizeVar = z > 235 ? 1.0 : z > 205 ? 1.2 : z > 175 ? 1.45 : 1.7;
+      pointRadiusVar = z > 250 ? 0.5 : z > 220 ? 0.75 : 0.95;
+      const target = z > 250 ? 18 : z > 220 ? 34 : z > 190 ? 60 : 110;
+      const desired = Math.min(target, pts.length);
+      if(currentLabelData.length !== desired){
+        currentLabelData = pts.slice(0, desired);
+      }
+      applyLabels();
+    }
+
+    function animate(){
+      requestAnimationFrame(animate);
+      if(autoRotate && !dragging){
+        globe.rotation.y += 0.0009;
+      }
+      renderer.render(scene, camera);
+      declutter();
+      sprites.forEach(({spr, point})=>{
+        const active = hoveredPoint && hoveredPoint === point;
+        spr.material.opacity = active ? 0.85 : 0.0;
+        const scale = active ? 32 : 20;
+        spr.scale.set(scale, scale, 1);
+      });
+      renderer.domElement.style.cursor = dragging ? 'grabbing' : (hoveredPoint ? 'pointer' : 'grab');
+    }
+    animate();
+
+    const onResize = ()=>{
+      const w = container.clientWidth || width;
+      const h = container.clientHeight || height;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    };
+    container._resizeHandler = onResize;
+    window.addEventListener('resize', onResize);
+  }
+  </script>
+</body>
+</html>
