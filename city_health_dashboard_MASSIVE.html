@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our City Health — Civic Health Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{
+            --bg1:#667eea; --bg2:#764ba2; --card:#ffffff; --muted:#64748b; --ink:#1f2937; --accent:#3b82f6;
+            --good:#16a34a; --warn:#f59e0b; --bad:#dc2626; --soft:#f8fafc; --ring:#e2e8f0
+        }
+        body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:linear-gradient(135deg,var(--bg1),var(--bg2));min-height:100vh;color:var(--ink)}
+        .container{max-width:1400px;margin:0 auto;padding:28px}
+        .hero{background:rgba(255,255,255,.96);border-radius:20px;box-shadow:0 20px 40px rgba(0,0,0,.15);padding:32px;margin-bottom:22px}
+        .hero h1{font-size:38px;font-weight:800;margin-bottom:8px;letter-spacing:-.02em;color:#111827}
+        .hero p{font-size:16px;color:var(--muted)}
+        .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin:22px 0}
+        .stat{background:var(--card);border-radius:14px;padding:18px;text-align:center;box-shadow:0 12px 24px rgba(0,0,0,.08)}
+        .stat .num{font-size:30px;font-weight:800;color:var(--accent)}
+        .stat .lab{text-transform:uppercase;font-size:12px;color:var(--muted);letter-spacing:.05em}
+        .section{background:rgba(255,255,255,.96);border-radius:20px;box-shadow:0 20px 40px rgba(0,0,0,.12);padding:24px;margin:22px 0}
+        .section h2{font-size:24px;text-align:center;margin-bottom:18px;color:#111827}
+        .topics{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}
+        .topic{background:#f8fafc;border:1px solid var(--ring);border-left:4px solid var(--accent);border-radius:12px;padding:14px}
+        .topic .t{font-weight:800;color:#0f172a;margin-bottom:6px}
+        .topic .d{color:var(--muted);font-size:14px;margin-bottom:8px}
+        .topic .s span{display:inline-block;background:var(--accent);color:#fff;padding:2px 8px;border-radius:999px;font-size:12px;margin:2px}
+        .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+        .card{position:relative;background:var(--card);border:1px solid var(--ring);border-radius:16px;padding:16px;box-shadow:0 16px 36px rgba(0,0,0,.12);cursor:pointer;transition:transform .2s,box-shadow .2s}
+        .card:hover{transform:scale(1.02);box-shadow:0 26px 60px rgba(0,0,0,.18)}
+        .card.expanded{transform:scale(1.04)}
+        .c-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+        .c-name{font-size:18px;font-weight:800}
+        .score{font-weight:900;font-size:28px;border-radius:12px;padding:8px 12px}
+        .sc-good{color:#065f46;background:#dcfce7}
+        .sc-mid{color:#7c2d12;background:#ffedd5}
+        .sc-bad{color:#7f1d1d;background:#fee2e2}
+        .mini-dims{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0;opacity:.0;max-height:0;overflow:hidden;transition:all .25s}
+        .card:hover .mini-dims{opacity:1;max-height:500px}
+        .dim{display:flex;justify-content:space-between;background:var(--soft);border:1px solid var(--ring);padding:6px 8px;border-radius:10px;font-size:13px}
+        .mini-issues{margin-top:8px}
+        .mini-issues h4{font-size:12px;color:#065f46;margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+        .mini-issues li{font-size:13px;color:var(--muted);padding:3px 0}
+        .footer{text-align:center;color:#fff;opacity:.9;padding:24px 0}
+        /* Modal with tabs */
+        .modal{position:fixed;inset:0;display:none;z-index:50}
+        .modal.show{display:block}
+        .backdrop{position:absolute;inset:0;background:rgba(0,0,0,.6)}
+        .sheet{position:relative;margin:40px auto;max-width:1100px;background:#fff;border-radius:16px;box-shadow:0 30px 80px rgba(0,0,0,.45);padding:16px}
+        .close{position:absolute;top:8px;right:12px;border:none;background:transparent;font-size:28px;cursor:pointer}
+        .head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--ring);padding-bottom:10px;margin-bottom:10px}
+        .tabs{display:flex;gap:8px;margin:6px 0 12px}
+        .tab{padding:8px 10px;border:1px solid var(--ring);border-radius:10px;background:#f8fafc;cursor:pointer;font-weight:700;font-size:13px}
+        .tab.active{background:#e0f2fe;border-color:#93c5fd}
+        .panes>div{display:none}
+        .panes>div.active{display:block}
+        .scores-grid{display:grid;grid-template-columns:2fr 1fr;gap:12px}
+        .tbl{width:100%;border-collapse:collapse}
+        .tbl th,.tbl td{border-bottom:1px solid var(--ring);padding:6px 8px;font-size:13px;text-align:left;vertical-align:top}
+        .list{max-height:420px;overflow:auto}
+        .list a{display:block;color:#0369a1;font-size:13px;text-decoration:none;padding:4px 0;word-break:break-all}
+        .list a:hover{text-decoration:underline}
+        @media(max-width:880px){.scores-grid{grid-template-columns:1fr}}
+    </style>
+    </head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <h1>Our City Health</h1>
+            <p>The Civic Health Pulse across global cities, computed from large-scale news and social discourse. We aggregate and normalize signals like affordability, services, safety, opportunity, culture, and more — providing transparent, source-linked scores you can audit.</p>
+        </div>
+        <div class="stats">
+            <div class="stat"><div class="num" id="s-articles">–</div><div class="lab">News Articles (this run)</div></div>
+            <div class="stat"><div class="num" id="s-posts">–</div><div class="lab">Reddit Posts (this run)</div></div>
+            <div class="stat"><div class="num" id="s-comments">–</div><div class="lab">Reddit Comments (this run)</div></div>
+            <div class="stat"><div class="num" id="s-cities">–</div><div class="lab">Cities (this run)</div></div>
+        </div>
+        <div class="stats">
+            <div class="stat"><div class="num" id="s-articles-cum">–</div><div class="lab">Distinct Articles (cumulative)</div></div>
+            <div class="stat"><div class="num" id="s-posts-cum">–</div><div class="lab">Distinct Reddit Posts (cumulative)</div></div>
+            <div class="stat"><div class="num" id="s-comments-cum">–</div><div class="lab">Reddit Comments (cumulative)</div></div>
+            <div class="stat"><div class="num" id="s-run-ts">–</div><div class="lab">Last Run (UTC)</div></div>
+        </div>
+        <div class="section" id="topics-sec">
+            <h2>Global Top 20 Issues</h2>
+            <div class="topics" id="topics"></div>
+        </div>
+        <div class="section">
+            <h2>City Health Scores</h2>
+            <div class="grid" id="cities"></div>
+        </div>
+        <div class="section">
+            <h2>Scoring Model & Methodology</h2>
+            <div style="color:var(--muted);font-size:14px;line-height:1.7">
+                <p><strong>Data selection:</strong> We collect news and Reddit content, then perform quality scoring per city combining source reputation (30%), civic relevance from keyword density (45%), length/coverage (15%), and recency (10%). We ensure diversity via domain caps and title-dedup.</p>
+                <p><strong>Fairness normalization:</strong> For each city we sample up to a fixed cap (configurable) balanced across source types (news, posts, comments) so no city is advantaged by sheer volume.</p>
+                <p><strong>AI scoring:</strong> We feed normalized snippets to the model to produce an overall score and per-dimension scores with rationales, plus a list of top issues («why it matters»). Higher is better net of sentiment. Recency is implicitly weighted.</p>
+                <p><strong>Transparency:</strong> Every city exposes <em>all</em> links used (Articles + Reddit) for auditability. Cities with limited data are marked by lower coverage; we never fabricate citations.</p>
+            </div>
+        </div>
+        <div class="footer">© Our City Health • Full transparency by design</div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="modal" role="dialog" aria-modal="true">
+        <div class="backdrop"></div>
+        <div class="sheet">
+            <button class="close" id="m-close" aria-label="Close">×</button>
+            <div class="head">
+                <div style="font-weight:900;font-size:22px" id="m-title">City</div>
+                <div class="score sc-good" id="m-score">--/100</div>
+            </div>
+            <div class="tabs">
+                <button class="tab active" data-tab="scores">Scores</button>
+                <button class="tab" data-tab="issues">Top Issues</button>
+                <button class="tab" data-tab="articles">Articles</button>
+                <button class="tab" data-tab="reddit">Reddit Posts</button>
+            </div>
+            <div class="panes">
+                <div id="pane-scores" class="active">
+                    <div class="scores-grid">
+                        <div>
+                            <table class="tbl" id="m-dim"></table>
+                        </div>
+                        <div>
+                            <div style="font-weight:800;margin-bottom:6px">Coverage</div>
+                            <div id="m-coverage" style="color:var(--muted);font-size:13px"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="pane-issues"><div id="m-issues" class="list"></div></div>
+                <div id="pane-articles"><div id="m-articles" class="list"></div></div>
+                <div id="pane-reddit"><div id="m-reddit" class="list"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function(){
+        const citiesEl = document.getElementById('cities');
+        const topicsEl = document.getElementById('topics');
+        const sA = id=>document.getElementById(id);
+
+        // Modal refs
+        const modal = document.getElementById('modal');
+        const mClose = document.getElementById('m-close');
+        const mTitle = document.getElementById('m-title');
+        const mScore = document.getElementById('m-score');
+        const mDim = document.getElementById('m-dim');
+        const mIssues = document.getElementById('m-issues');
+        const mArticles = document.getElementById('m-articles');
+        const mReddit = document.getElementById('m-reddit');
+        const mCoverage = document.getElementById('m-coverage');
+
+        function classForScore(n){ return n>=75? 'score sc-good' : (n>=60? 'score sc-mid' : 'score sc-bad'); }
+
+        function renderStats(sum){
+            const set=(id,v)=>{ const el=sA(id); if(el) el.textContent=(v||0).toLocaleString(); };
+            set('s-articles', Number(sum.news_articles||0));
+            set('s-posts', Number(sum.reddit_posts||0));
+            set('s-comments', Number(sum.reddit_comments||0));
+            set('s-cities', Number(sum.cities_covered||0));
+            const cum = sum.cumulative || {};
+            set('s-articles-cum', Number(cum.news_articles_distinct||0));
+            set('s-posts-cum', Number(cum.reddit_posts_distinct||0));
+            set('s-comments-cum', Number(cum.reddit_comments_total||0));
+            const ts = (sum.run_timestamp||'').toString();
+            const elTs = sA('s-run-ts'); if(elTs) elTs.textContent = ts ? ts.replace('T',' ').replace('Z','') : '—';
+        }
+
+        function renderTopics(topics){
+            topicsEl.innerHTML='';
+            (topics||[]).slice(0,20).forEach((t,i)=>{
+                const d=document.createElement('div'); d.className='topic';
+                const signals = t.signals || t.representative_phrases || [];
+                const rank = (i+1).toString().padStart(2,'0');
+                const topCities = Array.isArray(t.cities)? `Top cities: ${t.cities.slice(0,6).join(', ')}` : '';
+                d.innerHTML = `<div class="t">${rank}. ${t.name||'Topic'}</div>`+
+                              `<div class="d">${t.description||''}${topCities? ' — '+topCities : ''}</div>`+
+                              `<div class="s">${signals.slice(0,6).map(s=>`<span>${s}</span>`).join('')}</div>`;
+                topicsEl.appendChild(d);
+            });
+        }
+
+        function deriveLinksForCity(c){
+            // If structured lists are missing, derive from citations
+            const cites = Array.isArray(c.citations)? c.citations : [];
+            if (!Array.isArray(c.articles) || !c.articles.length){
+                c.articles = cites.filter(u => typeof u==='string' && !u.includes('reddit.com/'));
+            }
+            if (!Array.isArray(c.reddit_posts) || !c.reddit_posts.length){
+                c.reddit_posts = cites.filter(u => typeof u==='string' && u.includes('reddit.com/'));
+            }
+            return c;
+        }
+
+        function buildTopicsFallback(data){
+            // Build top issues from per-city issues if topics are missing
+            const counts = new Map();
+            (data.cities||[]).forEach(c => {
+                (c.top_issues||[]).forEach(raw => {
+                    const s = (raw||'').toString();
+                    const name = s.split(' — ')[0] || s.split(' - ')[0] || s;
+                    const key = name.trim();
+                    counts.set(key, (counts.get(key)||0)+1);
+                });
+            });
+            const top = Array.from(counts.entries()).sort((a,b)=>b[1]-a[1]).slice(0,20)
+                .map(([name,count])=>({name, description:`Appears across ${count} cities`, signals: []}));
+            return top;
+        }
+
+        function renderCities(data){
+            const cities=(data.cities||[]).slice().sort((a,b)=> (b.health_score||0)-(a.health_score||0));
+            citiesEl.innerHTML='';
+            cities.forEach((c,idx)=>{
+                c = deriveLinksForCity(c);
+                const card=document.createElement('div'); card.className='card'; card.style.animationDelay=(idx*25)+'ms';
+                const head=document.createElement('div'); head.className='c-head';
+                const name=document.createElement('div'); name.className='c-name'; name.textContent=c.name;
+                const sc=document.createElement('div'); sc.className=classForScore(c.health_score); sc.textContent=(c.health_score??'--')+ '/100';
+                head.appendChild(name); head.appendChild(sc);
+
+                const miniDims=document.createElement('div'); miniDims.className='mini-dims';
+                (Object.keys(c.dimensions||{}).slice(0,4)).forEach(k=>{
+                    const d=c.dimensions[k]||{}; const row=document.createElement('div'); row.className='dim';
+                    row.innerHTML=`<span>${k}</span><span>${d.score??'-'}/100</span>`; miniDims.appendChild(row);
+                });
+
+                const miniIssues=document.createElement('div'); miniIssues.className='mini-issues';
+                miniIssues.innerHTML='<h4>Top Issues</h4>';
+                const ul=document.createElement('ul');
+                (c.top_issues||[]).slice(0,3).forEach(t=>{ const li=document.createElement('li'); li.textContent=t; ul.appendChild(li); });
+                miniIssues.appendChild(ul);
+
+                card.appendChild(head); card.appendChild(miniDims); card.appendChild(miniIssues);
+                card.addEventListener('click', ()=>openModal(c));
+                citiesEl.appendChild(card);
+            });
+        }
+
+        function openModal(city){
+            city = deriveLinksForCity(city);
+            mTitle.textContent=city.name; mScore.className=classForScore(city.health_score); mScore.textContent=(city.health_score??'--')+'/100';
+            // Scores table
+            mDim.innerHTML='<thead><tr><th>Category</th><th>Score</th><th>Rationale</th></tr></thead><tbody></tbody>';
+            const tb=mDim.querySelector('tbody');
+            Object.entries(city.dimensions||{}).forEach(([k,v])=>{
+                const tr=document.createElement('tr'); tr.innerHTML=`<td style="font-weight:800">${k}</td><td style="font-weight:900">${v?.score??'-'}</td><td>${(v?.note||'').replace(/</g,'&lt;')}</td>`; tb.appendChild(tr);
+            });
+            // Issues
+            mIssues.innerHTML='';
+            (city.top_issues||[]).forEach(t=>{ const p=document.createElement('div'); p.style.padding='6px 0'; p.textContent=t; mIssues.appendChild(p); });
+            // Articles & Reddit (full transparency)
+            const makeList=(el,arr)=>{ el.innerHTML=''; (arr||[]).forEach(u=>{ const a=document.createElement('a'); a.href=u; a.target='_blank'; a.rel='noopener noreferrer'; a.textContent=u; el.appendChild(a); }); };
+            makeList(mArticles, city.articles);
+            makeList(mReddit, city.reddit_posts);
+            const totalCites = (Array.isArray(city.citations)? city.citations.length : (city.articles.length + city.reddit_posts.length));
+            mCoverage.textContent = `${(city.articles||[]).length} articles • ${(city.reddit_posts||[]).length} reddit links • ${totalCites} total citations`;
+            // Tabs
+            setActiveTab('scores');
+            modal.classList.add('show');
+        }
+        function closeModal(){ modal.classList.remove('show'); }
+        mClose.addEventListener('click', closeModal);
+        modal.querySelector('.backdrop').addEventListener('click', closeModal);
+        document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+        document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>setActiveTab(btn.dataset.tab)));
+        function setActiveTab(name){
+            document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===name));
+            document.querySelectorAll('.panes>div').forEach(p=>p.classList.toggle('active', p.id===`pane-${name}`));
+        }
+
+        function loadData(){
+            const tryPaths=['data/latest/full_results.json','full_results_MASSIVE.json'];
+            (function next(i){
+                if(i>=tryPaths.length){ console.warn('No data file found'); return; }
+                fetch(tryPaths[i]).then(r=>r.json()).then(data=>{
+                    renderStats(data.summary||{});
+                    const topics = (data.topics && data.topics.length)? data.topics : buildTopicsFallback(data);
+                    renderTopics(topics);
+                    renderCities(data);
+                }).catch(()=>next(i+1));
+            })(0);
+        }
+        loadData();
+    })();
+    </script>
+</body>
+</html>
