@@ -1,0 +1,19 @@
+# Outputs and caches
+Automation-Project/data/
+data/
+*.sqlite
+*.db
+*.log
+*.cache
+
+# Node/py/build clutter if present
+node_modules/
+dist/
+build/
+.venv/
+__pycache__/
+*.pyc
+
+# Huge JSON snapshots (if you keep any at root)
+full_results*.json
+full_analysis*.txt
