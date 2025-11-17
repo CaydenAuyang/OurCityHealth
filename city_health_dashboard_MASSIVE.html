@@ -93,11 +93,52 @@
         </div>
         <div class="section">
             <h2>Scoring Model & Methodology</h2>
-            <div style="color:var(--muted);font-size:14px;line-height:1.7">
-                <p><strong>Data selection:</strong> We collect news and Reddit content, then perform quality scoring per city combining source reputation (30%), civic relevance from keyword density (45%), length/coverage (15%), and recency (10%). We ensure diversity via domain caps and title-dedup.</p>
-                <p><strong>Fairness normalization:</strong> For each city we sample up to a fixed cap (configurable) balanced across source types (news, posts, comments) so no city is advantaged by sheer volume.</p>
-                <p><strong>AI scoring:</strong> We feed normalized snippets to the model to produce an overall score and per-dimension scores with rationales, plus a list of top issues («why it matters»). Higher is better net of sentiment. Recency is implicitly weighted.</p>
-                <p><strong>Transparency:</strong> Every city exposes <em>all</em> links used (Articles + Reddit) for auditability. Cities with limited data are marked by lower coverage; we never fabricate citations.</p>
+            <div style="color:var(--muted);font-size:14px;line-height:1.8">
+                <h3 style="color:#111827;font-size:18px;margin:16px 0 12px 0;font-weight:800">Step 1: Document Selection Scoring</h3>
+                <p>Each article/post is scored using a weighted formula to determine which documents are most valuable for analysis:</p>
+                <ul style="margin-left:20px;margin-bottom:16px">
+                    <li><strong>45% - Civic Relevance:</strong> Keyword density matching 12 civic dimensions (affordability, services, safety, opportunity, culture, environment, transportation, governance, housing, economy, education, health). Score: min(hits/8.0, 1.0)</li>
+                    <li><strong>30% - Source Quality/Reputation:</strong> News sources get reputation scores (0.60-0.95), Reddit posts get 0.58, other sources get 0.52</li>
+                    <li><strong>15% - Length/Coverage:</strong> Longer articles (up to 600 words) score higher. Formula: min(word_count/600.0, 1.0)</li>
+                    <li><strong>10% - Recency:</strong> Recent content scores higher: ≤14 days (1.0), ≤30 days (0.9), ≤90 days (0.7), ≤180 days (0.55), ≤365 days (0.45), >365 days (0.35)</li>
+                </ul>
+                <p style="margin-bottom:16px"><strong>Final Selection Score:</strong> (0.30 × quality) + (0.45 × relevance) + (0.15 × length) + (0.10 × recency)</p>
+
+                <h3 style="color:#111827;font-size:18px;margin:16px 0 12px 0;font-weight:800">Step 2: Fairness Normalization</h3>
+                <p>To ensure no city is advantaged by sheer volume, we apply strict fairness caps:</p>
+                <ul style="margin-left:20px;margin-bottom:16px">
+                    <li><strong>Per-City Document Cap:</strong> Maximum 500 documents per city (configurable via --city_docs flag)</li>
+                    <li><strong>Source Type Balance:</strong> Documents are evenly distributed across source types (news articles, Reddit posts, Reddit comments)</li>
+                    <li><strong>Domain Diversity:</strong> Maximum documents per domain = max(3, city_docs ÷ max(8, number_of_domains))</li>
+                    <li><strong>Title Deduplication:</strong> Duplicate titles are filtered out to avoid redundancy</li>
+                </ul>
+
+                <h3 style="color:#111827;font-size:18px;margin:16px 0 12px 0;font-weight:800">Step 3: AI Scoring (OpenAI GPT Model)</h3>
+                <p>The selected documents are formatted as snippets and sent to OpenAI's language model for analysis:</p>
+                <ul style="margin-left:20px;margin-bottom:16px">
+                    <li><strong>Model:</strong> GPT-4 or GPT-3.5-turbo (configurable)</li>
+                    <li><strong>Temperature:</strong> 0.2 (low for consistent, focused results)</li>
+                    <li><strong>Input Format:</strong> Up to 100 snippets per city, each containing: Title (20 words), Text (60 words), Source, URL</li>
+                    <li><strong>Output Structure:</strong>
+                        <ul style="margin-left:20px;margin-top:8px">
+                            <li><strong>Overall Health Score:</strong> Single integer 0-100 (holistic assessment, not a weighted average)</li>
+                            <li><strong>12 Dimension Scores:</strong> Each dimension (affordability, services, safety, opportunity, culture, environment, transportation, governance, housing, economy, education, health) receives:
+                                <ul style="margin-left:20px;margin-top:4px">
+                                    <li>Score: Integer 0-100</li>
+                                    <li>Rationale: Concise explanation citing specific signals and tradeoffs</li>
+                                </ul>
+                            </li>
+                            <li><strong>Top 10 Issues:</strong> Array of issues with name and "why it matters" explanation</li>
+                        </ul>
+                    </li>
+                    <li><strong>Scoring Guidance:</strong> Higher scores indicate better civic health (net of sentiment). The model weighs recency (implied), quality/reputation, length, and diversity across sources (news vs social). It favors specificity (policies, programs, metrics) over generic text.</li>
+                </ul>
+
+                <h3 style="color:#111827;font-size:18px;margin:16px 0 12px 0;font-weight:800">Step 4: Final Scores</h3>
+                <p>The overall health score (0-100) is produced directly by the AI model as a holistic assessment of all 12 dimensions combined. It is <em>not</em> a weighted average of dimension scores, but rather the model's integrated evaluation of the city's overall civic health based on all available signals.</p>
+
+                <h3 style="color:#111827;font-size:18px;margin:16px 0 12px 0;font-weight:800">Transparency & Auditability</h3>
+                <p>Every city exposes <em>all</em> source links used (Articles + Reddit posts) for full auditability. Cities with limited data are marked by lower coverage; we never fabricate citations. All citations are preserved in the JSON output and displayed in the dashboard.</p>
             </div>
         </div>
         <div class="footer">© Our City Health • Full transparency by design</div>
@@ -232,7 +273,12 @@
                 const miniIssues=document.createElement('div'); miniIssues.className='mini-issues';
                 miniIssues.innerHTML='<h4>Top Issues</h4>';
                 const ul=document.createElement('ul');
-                (c.top_issues||[]).slice(0,3).forEach(t=>{ const li=document.createElement('li'); li.textContent=t; ul.appendChild(li); });
+                const issues = Array.isArray(c.top_issues) ? c.top_issues : [];
+                if(issues.length > 0){
+                    issues.slice(0,3).forEach(t=>{ const li=document.createElement('li'); li.textContent=t; ul.appendChild(li); });
+                } else {
+                    const li=document.createElement('li'); li.textContent='No issues data available'; li.style.fontStyle='italic'; ul.appendChild(li);
+                }
                 miniIssues.appendChild(ul);
 
                 card.appendChild(head); card.appendChild(miniDims); card.appendChild(miniIssues);
@@ -273,16 +319,104 @@
             document.querySelectorAll('.panes>div').forEach(p=>p.classList.toggle('active', p.id===`pane-${name}`));
         }
 
+        // Force reload button
+        function addReloadButton(){
+            const btn = document.createElement('button');
+            btn.textContent = '🔄 Force Reload Data';
+            btn.style.cssText = 'position:fixed;top:10px;right:10px;z-index:9999;padding:8px 16px;background:#22c55e;color:white;border:none;border-radius:6px;cursor:pointer;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,0.3)';
+            btn.onclick = () => {
+                console.log('🔄 Force reloading data...');
+                // Clear all possible caches
+                localStorage.clear();
+                sessionStorage.clear();
+                // Clear service worker cache if exists
+                if('caches' in window){
+                    caches.keys().then(names => {
+                        names.forEach(name => caches.delete(name));
+                        console.log('🗑️ Cleared service worker caches');
+                    });
+                }
+                // Force reload with cache bypass
+                window.location.href = window.location.href.split('?')[0] + '?nocache=' + Date.now();
+            };
+            document.body.appendChild(btn);
+        }
+        addReloadButton();
+        
         function loadData(){
-            const tryPaths=['data/latest/full_results.json','full_results_MASSIVE.json'];
+            console.log('Dashboard: Current page URL:', window.location.href);
+            console.log('Dashboard: Current page pathname:', window.location.pathname);
+            // Try multiple possible paths in case of worktree issues
+            const tryPaths=[
+                'data/latest/full_results.json',
+                './data/latest/full_results.json',
+                '../data/latest/full_results.json',
+                window.location.pathname.replace(/\/[^/]*$/, '/data/latest/full_results.json'),
+                'full_results_MASSIVE.json'
+            ];
+            console.log('Dashboard: Will try these paths:', tryPaths);
             (function next(i){
-                if(i>=tryPaths.length){ console.warn('No data file found'); return; }
-                fetch(tryPaths[i]).then(r=>r.json()).then(data=>{
+                if(i>=tryPaths.length){ 
+                    console.error('No data file found. Tried:', tryPaths);
+                    document.getElementById('cities').innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted)">No data file found. Please run the scraper first.</div>';
+                    return; 
+                }
+                // Add cache-busting timestamp to prevent browser caching old data
+                const path = tryPaths[i];
+                const separator = path.includes('?') ? '&' : '?';
+                const timestamp = Date.now();
+                const random = Math.random().toString(36).substring(7);
+                const sessionId = sessionStorage.getItem('data_session_id') || Math.random().toString(36).substring(7);
+                sessionStorage.setItem('data_session_id', sessionId);
+                const cacheBustedPath = path + separator + '_t=' + timestamp + '&_r=' + random + '&_s=' + sessionId;
+                console.log('🔄 Attempting to load (cache-busted):', cacheBustedPath);
+                console.log('Cache-busting params: t=' + timestamp + ', r=' + random + ', s=' + sessionId);
+                fetch(cacheBustedPath, {
+                    method: 'GET',
+                    cache: 'no-store',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0',
+                        'Pragma': 'no-cache',
+                        'Expires': '0',
+                        'If-Modified-Since': '0'
+                    }
+                }).then(r=>{
+                    console.log('📥 Response status:', r.status, 'for', cacheBustedPath);
+                    console.log('📥 Response headers:', {
+                        'cache-control': r.headers.get('cache-control'),
+                        'last-modified': r.headers.get('last-modified')
+                    });
+                    if(!r.ok) {
+                        console.error('HTTP error:', r.status, r.statusText);
+                        throw new Error('HTTP '+r.status + ': ' + r.statusText);
+                    }
+                    return r.json();
+                }).then(data=>{
+                    console.log('✅ Data loaded successfully:', {
+                        cities: data.cities?.length || 0,
+                        topics: data.topics?.length || 0,
+                        summary: data.summary
+                    });
+                    const runTs = data.summary?.run_timestamp || 'N/A';
+                    console.log('📅 Run timestamp from data:', runTs);
+                    console.log('📅 Current time:', new Date().toISOString());
+                    // Show timestamp in UI
+                    const tsEl = document.getElementById('data-timestamp');
+                    if(tsEl) tsEl.textContent = 'Data from: ' + (runTs !== 'N/A' ? new Date(runTs).toLocaleString() : 'Unknown');
+                    if(!data.cities || data.cities.length === 0){
+                        console.error('⚠️ No cities in data!');
+                        document.getElementById('cities').innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted)">No cities found in data file.</div>';
+                        return;
+                    }
                     renderStats(data.summary||{});
                     const topics = (data.topics && data.topics.length)? data.topics : buildTopicsFallback(data);
                     renderTopics(topics);
                     renderCities(data);
-                }).catch(()=>next(i+1));
+                }).catch(err=>{
+                    console.error('❌ Error loading', tryPaths[i], ':', err.message || err);
+                    console.error('Full error:', err);
+                    next(i+1);
+                });
             })(0);
         }
         loadData();
