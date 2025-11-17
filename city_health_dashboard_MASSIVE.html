@@ -232,7 +232,12 @@
                 const miniIssues=document.createElement('div'); miniIssues.className='mini-issues';
                 miniIssues.innerHTML='<h4>Top Issues</h4>';
                 const ul=document.createElement('ul');
-                (c.top_issues||[]).slice(0,3).forEach(t=>{ const li=document.createElement('li'); li.textContent=t; ul.appendChild(li); });
+                const issues = Array.isArray(c.top_issues) ? c.top_issues : [];
+                if(issues.length > 0){
+                    issues.slice(0,3).forEach(t=>{ const li=document.createElement('li'); li.textContent=t; ul.appendChild(li); });
+                } else {
+                    const li=document.createElement('li'); li.textContent='No issues data available'; li.style.fontStyle='italic'; ul.appendChild(li);
+                }
                 miniIssues.appendChild(ul);
 
                 card.appendChild(head); card.appendChild(miniDims); card.appendChild(miniIssues);
@@ -276,13 +281,29 @@
         function loadData(){
             const tryPaths=['data/latest/full_results.json','full_results_MASSIVE.json'];
             (function next(i){
-                if(i>=tryPaths.length){ console.warn('No data file found'); return; }
-                fetch(tryPaths[i]).then(r=>r.json()).then(data=>{
+                if(i>=tryPaths.length){ 
+                    console.error('No data file found. Tried:', tryPaths);
+                    document.getElementById('cities').innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted)">No data file found. Please run the scraper first.</div>';
+                    return; 
+                }
+                console.log('Attempting to load:', tryPaths[i]);
+                fetch(tryPaths[i]).then(r=>{
+                    if(!r.ok) throw new Error('HTTP '+r.status);
+                    return r.json();
+                }).then(data=>{
+                    console.log('Data loaded successfully:', {
+                        cities: data.cities?.length || 0,
+                        topics: data.topics?.length || 0,
+                        summary: data.summary
+                    });
                     renderStats(data.summary||{});
                     const topics = (data.topics && data.topics.length)? data.topics : buildTopicsFallback(data);
                     renderTopics(topics);
                     renderCities(data);
-                }).catch(()=>next(i+1));
+                }).catch(err=>{
+                    console.error('Error loading', tryPaths[i], ':', err);
+                    next(i+1);
+                });
             })(0);
         }
         loadData();
