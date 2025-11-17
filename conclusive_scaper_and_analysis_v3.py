@@ -903,7 +903,9 @@ def scrape_news_site(base_url: str, label: str, limit: int) -> List[Entry]:
     # Step 1: Prefer RSS/sitemap, fallback to homepage
     candidates = discover_article_links(base_url, session, limit * 2)  # Discover article URLs efficiently
     if not candidates:
+        print(f"    [WARN] No article links found for {label}")
         return entries
+    print(f"    [INFO] Found {len(candidates)} candidate URLs for {label}")
     
     # Step 2: Download and process each article (parallel)
     count = 0                                  # Initialize counter for successfully processed articles
@@ -938,11 +940,16 @@ def scrape_news_site(base_url: str, label: str, limit: int) -> List[Entry]:
                 break
             if i % 50 == 0:
                 print(f"    Progress: {i}/{total_candidates} URLs processed, {count} articles collected")
-            res = fut.result()
-            if res is not None:
-                entries.append(res)
-                count += 1
+            try:
+                res = fut.result()
+                if res is not None:
+                    entries.append(res)
+                    count += 1
+            except Exception as e:
+                if i % 100 == 0:  # Only log occasionally to avoid spam
+                    print(f"    [WARN] Error processing URL {i}: {str(e)[:50]}")
     
+    print(f"    [INFO] Collected {len(entries)} articles from {label}")
     return entries                             # Return all the articles we successfully collected
 
 def print_progress_bar(current: int, total: int, prefix: str = "", length: int = 50):
@@ -990,7 +997,10 @@ def scrape_all_news(sites: List[str], per_site_limit: int) -> List[Entry]:
             print_progress_bar(i, total_sites, f"Scraping news sites")
             try:
                 chunk = fut.result()
-            except Exception:
+                if chunk:
+                    print(f"  -> Got {len(chunk)} articles from {futs[fut]}")
+            except Exception as e:
+                print(f"  -> ERROR scraping {futs[fut]}: {str(e)[:100]}")
                 chunk = []
             results.extend(chunk)
             time.sleep(0.05)  # small jitter to spread load
@@ -1580,6 +1590,9 @@ def main():
         dynamic_sources = NEWS_SOURCES                                   # Fall back to static global sources
         dynamic_city_subs = CITY_SUBREDDITS                              # Fall back to static subreddit map
         city_country_map: Dict[str, Optional[str]] = {}
+    
+    print(f"\n[DEBUG] Using {len(dynamic_sources)} news sources for scraping")
+    print(f"[DEBUG] First 5 sources: {dynamic_sources[:5]}")
 
     # Step 3: Collect data from international/global news sources
     print_header("Collecting Data")                                      # Print a nice header for this section

@@ -1,0 +1,41 @@
+# Project Objective
+You are helping build “Our City Health” — an interactive civic wellbeing dashboard.
+Pipeline: scrape (news + Reddit) → tag cities → select docs fairly → LLM score 12 dimensions → JSON outputs → HTML dashboards.
+
+# Codebase Map (authoritative)
+- Automation-Project/conclusive_scraper_and_analysis.py: main pipeline (CLI flags documented in README).
+- Automation-Project/map.html: globe UI (3D with per-run/cumulative stats).
+- Automation-Project/city_health_dashboard_MASSIVE.html: dashboard UI (scores, issues, citations).
+- Automation-Project/data/: outputs (data/latest/*) and sqlite cache (visited.sqlite).
+- basic_*.py: small, earlier scrapers (NYT, Reddit).
+- README.md: run instructions + structure.
+
+# Non-negotiables
+- Maintain fairness: balanced per-city doc cap (--city_docs).
+- Ensure transparency: preserve full citations in outputs and UI.
+- Keep scraping respectful (timeouts, concurrency, retries as coded).
+- JSON schema must remain strict and deterministic for downstream UI.
+
+# When asked to change the scoring
+- Do NOT remove fairness or transparency.
+- Propose a flag-gated change (default OFF) with clear schema notes.
+
+# Style
+- Clear, commented Python; small, testable functions where reasonable.
+- Keep UI changes to HTML/JS minimalistic, accessible, and performant.
+
+# Preferred Commands
+- Fast sample run:
+  python3 Automation-Project/conclusive_scraper_and_analysis.py --num_cities 20 --per_source_limit 120 --reddit_pages 3 --reddit_comments 50 --city_docs 200 --out data/latest
+- Full run (heavy):
+  python3 Automation-Project/conclusive_scraper_and_analysis.py --cities_link "https://en.wikipedia.org/wiki/List_of_largest_cities" --num_cities 100 --per_source_limit 500 --reddit_pages 10 --reddit_comments 100 --city_docs 500 --out data/latest
+
+# Files to Read First
+README.md
+Automation-Project/conclusive_scraper_and_analysis.py
+Automation-Project/city_health_dashboard_MASSIVE.html
+Automation-Project/map.html
+
+# Avoid Using As Primary Context (unless asked)
+- Large JSON in data/latest/*
+- SQLite cache files
