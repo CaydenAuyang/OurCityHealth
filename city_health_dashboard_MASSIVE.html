@@ -319,29 +319,7 @@
             document.querySelectorAll('.panes>div').forEach(p=>p.classList.toggle('active', p.id===`pane-${name}`));
         }
 
-        // Force reload button
-        function addReloadButton(){
-            const btn = document.createElement('button');
-            btn.textContent = '🔄 Force Reload Data';
-            btn.style.cssText = 'position:fixed;top:10px;right:10px;z-index:9999;padding:8px 16px;background:#22c55e;color:white;border:none;border-radius:6px;cursor:pointer;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,0.3)';
-            btn.onclick = () => {
-                console.log('🔄 Force reloading data...');
-                // Clear all possible caches
-                localStorage.clear();
-                sessionStorage.clear();
-                // Clear service worker cache if exists
-                if('caches' in window){
-                    caches.keys().then(names => {
-                        names.forEach(name => caches.delete(name));
-                        console.log('🗑️ Cleared service worker caches');
-                    });
-                }
-                // Force reload with cache bypass
-                window.location.href = window.location.href.split('?')[0] + '?nocache=' + Date.now();
-            };
-            document.body.appendChild(btn);
-        }
-        addReloadButton();
+        // Force reload button removed per user request
         
         function loadData(){
             console.log('Dashboard: Current page URL:', window.location.href);
