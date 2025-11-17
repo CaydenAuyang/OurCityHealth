@@ -232,7 +232,12 @@
                 const miniIssues=document.createElement('div'); miniIssues.className='mini-issues';
                 miniIssues.innerHTML='<h4>Top Issues</h4>';
                 const ul=document.createElement('ul');
-                (c.top_issues||[]).slice(0,3).forEach(t=>{ const li=document.createElement('li'); li.textContent=t; ul.appendChild(li); });
+                const issues = Array.isArray(c.top_issues) ? c.top_issues : [];
+                if(issues.length > 0){
+                    issues.slice(0,3).forEach(t=>{ const li=document.createElement('li'); li.textContent=t; ul.appendChild(li); });
+                } else {
+                    const li=document.createElement('li'); li.textContent='No issues data available'; li.style.fontStyle='italic'; ul.appendChild(li);
+                }
                 miniIssues.appendChild(ul);
 
                 card.appendChild(head); card.appendChild(miniDims); card.appendChild(miniIssues);
@@ -273,16 +278,104 @@
             document.querySelectorAll('.panes>div').forEach(p=>p.classList.toggle('active', p.id===`pane-${name}`));
         }
 
+        // Force reload button
+        function addReloadButton(){
+            const btn = document.createElement('button');
+            btn.textContent = '🔄 Force Reload Data';
+            btn.style.cssText = 'position:fixed;top:10px;right:10px;z-index:9999;padding:8px 16px;background:#22c55e;color:white;border:none;border-radius:6px;cursor:pointer;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,0.3)';
+            btn.onclick = () => {
+                console.log('🔄 Force reloading data...');
+                // Clear all possible caches
+                localStorage.clear();
+                sessionStorage.clear();
+                // Clear service worker cache if exists
+                if('caches' in window){
+                    caches.keys().then(names => {
+                        names.forEach(name => caches.delete(name));
+                        console.log('🗑️ Cleared service worker caches');
+                    });
+                }
+                // Force reload with cache bypass
+                window.location.href = window.location.href.split('?')[0] + '?nocache=' + Date.now();
+            };
+            document.body.appendChild(btn);
+        }
+        addReloadButton();
+        
         function loadData(){
-            const tryPaths=['data/latest/full_results.json','full_results_MASSIVE.json'];
+            console.log('Dashboard: Current page URL:', window.location.href);
+            console.log('Dashboard: Current page pathname:', window.location.pathname);
+            // Try multiple possible paths in case of worktree issues
+            const tryPaths=[
+                'data/latest/full_results.json',
+                './data/latest/full_results.json',
+                '../data/latest/full_results.json',
+                window.location.pathname.replace(/\/[^/]*$/, '/data/latest/full_results.json'),
+                'full_results_MASSIVE.json'
+            ];
+            console.log('Dashboard: Will try these paths:', tryPaths);
             (function next(i){
-                if(i>=tryPaths.length){ console.warn('No data file found'); return; }
-                fetch(tryPaths[i]).then(r=>r.json()).then(data=>{
+                if(i>=tryPaths.length){ 
+                    console.error('No data file found. Tried:', tryPaths);
+                    document.getElementById('cities').innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted)">No data file found. Please run the scraper first.</div>';
+                    return; 
+                }
+                // Add cache-busting timestamp to prevent browser caching old data
+                const path = tryPaths[i];
+                const separator = path.includes('?') ? '&' : '?';
+                const timestamp = Date.now();
+                const random = Math.random().toString(36).substring(7);
+                const sessionId = sessionStorage.getItem('data_session_id') || Math.random().toString(36).substring(7);
+                sessionStorage.setItem('data_session_id', sessionId);
+                const cacheBustedPath = path + separator + '_t=' + timestamp + '&_r=' + random + '&_s=' + sessionId;
+                console.log('🔄 Attempting to load (cache-busted):', cacheBustedPath);
+                console.log('Cache-busting params: t=' + timestamp + ', r=' + random + ', s=' + sessionId);
+                fetch(cacheBustedPath, {
+                    method: 'GET',
+                    cache: 'no-store',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0',
+                        'Pragma': 'no-cache',
+                        'Expires': '0',
+                        'If-Modified-Since': '0'
+                    }
+                }).then(r=>{
+                    console.log('📥 Response status:', r.status, 'for', cacheBustedPath);
+                    console.log('📥 Response headers:', {
+                        'cache-control': r.headers.get('cache-control'),
+                        'last-modified': r.headers.get('last-modified')
+                    });
+                    if(!r.ok) {
+                        console.error('HTTP error:', r.status, r.statusText);
+                        throw new Error('HTTP '+r.status + ': ' + r.statusText);
+                    }
+                    return r.json();
+                }).then(data=>{
+                    console.log('✅ Data loaded successfully:', {
+                        cities: data.cities?.length || 0,
+                        topics: data.topics?.length || 0,
+                        summary: data.summary
+                    });
+                    const runTs = data.summary?.run_timestamp || 'N/A';
+                    console.log('📅 Run timestamp from data:', runTs);
+                    console.log('📅 Current time:', new Date().toISOString());
+                    // Show timestamp in UI
+                    const tsEl = document.getElementById('data-timestamp');
+                    if(tsEl) tsEl.textContent = 'Data from: ' + (runTs !== 'N/A' ? new Date(runTs).toLocaleString() : 'Unknown');
+                    if(!data.cities || data.cities.length === 0){
+                        console.error('⚠️ No cities in data!');
+                        document.getElementById('cities').innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted)">No cities found in data file.</div>';
+                        return;
+                    }
                     renderStats(data.summary||{});
                     const topics = (data.topics && data.topics.length)? data.topics : buildTopicsFallback(data);
                     renderTopics(topics);
                     renderCities(data);
-                }).catch(()=>next(i+1));
+                }).catch(err=>{
+                    console.error('❌ Error loading', tryPaths[i], ':', err.message || err);
+                    console.error('Full error:', err);
+                    next(i+1);
+                });
             })(0);
         }
         loadData();

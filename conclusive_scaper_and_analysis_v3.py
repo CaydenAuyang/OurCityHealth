@@ -97,6 +97,44 @@ def build_city_boundaries_geojson(cities: List[Tuple[str, Optional[str]]], out_p
 # CONFIGURATION SECTION
 # =========================
 
+# CONSISTENT LIST OF 100 CITIES - Always use this exact list for consistency
+# Format: (city_name, country_name) tuples
+CONSISTENT_100_CITIES = [
+    # Top 20 Global Cities
+    ("Tokyo", "Japan"), ("Delhi", "India"), ("Shanghai", "China"), ("São Paulo", "Brazil"),
+    ("Mexico City", "Mexico"), ("Cairo", "Egypt"), ("Mumbai", "India"), ("Beijing", "China"),
+    ("Dhaka", "Bangladesh"), ("Osaka", "Japan"), ("New York City", "United States"),
+    ("Karachi", "Pakistan"), ("Buenos Aires", "Argentina"), ("Chongqing", "China"),
+    ("Istanbul", "Turkey"), ("Kolkata", "India"), ("Manila", "Philippines"), ("Lagos", "Nigeria"),
+    ("Rio de Janeiro", "Brazil"), ("Tianjin", "China"),
+    # Next 30 Major Cities
+    ("Guangzhou", "China"), ("Moscow", "Russia"), ("Lahore", "Pakistan"), ("Bangalore", "India"),
+    ("Paris", "France"), ("Bogotá", "Colombia"), ("Jakarta", "Indonesia"), ("Chennai", "India"),
+    ("Lima", "Peru"), ("Bangkok", "Thailand"), ("Seoul", "South Korea"), ("Nagoya", "Japan"),
+    ("London", "United Kingdom"), ("Tehran", "Iran"), ("Chicago", "United States"),
+    ("Chengdu", "China"), ("Nanjing", "China"), ("Wuhan", "China"), ("Ho Chi Minh City", "Vietnam"),
+    ("Luanda", "Angola"), ("Ahmedabad", "India"), ("Kuala Lumpur", "Malaysia"), ("Xi'an", "China"),
+    ("Hong Kong", "China"), ("Dongguan", "China"), ("Hangzhou", "China"), ("Foshan", "China"),
+    ("Shenyang", "China"), ("Riyadh", "Saudi Arabia"), ("Baghdad", "Iraq"),
+    # Next 30 Cities
+    ("Santiago", "Chile"), ("Surat", "India"), ("Madrid", "Spain"), ("Suzhou", "China"),
+    ("Pune", "India"), ("Harbin", "China"), ("Houston", "United States"), ("Dallas", "United States"),
+    ("Toronto", "Canada"), ("Dar es Salaam", "Tanzania"), ("Miami", "United States"),
+    ("Belo Horizonte", "Brazil"), ("Singapore", "Singapore"), ("Philadelphia", "United States"),
+    ("Atlanta", "United States"), ("Fukuoka", "Japan"), ("Khartoum", "Sudan"), ("Barcelona", "Spain"),
+    ("Johannesburg", "South Africa"), ("Saint Petersburg", "Russia"), ("Qingdao", "China"),
+    ("Dalian", "China"), ("Washington", "United States"), ("Yangon", "Myanmar"), ("Alexandria", "Egypt"),
+    ("Jinan", "China"), ("Guadalajara", "Mexico"), ("Los Angeles", "United States"),
+    ("San Francisco", "United States"), ("Boston", "United States"), ("Seattle", "United States"),
+    # Final 20 Cities
+    ("Berlin", "Germany"), ("Rome", "Italy"), ("Amsterdam", "Netherlands"), ("Vienna", "Austria"),
+    ("Sydney", "Australia"), ("Melbourne", "Australia"), ("Dubai", "United Arab Emirates"),
+    ("Vancouver", "Canada"), ("Montreal", "Canada"), ("Brisbane", "Australia"), ("Perth", "Australia"),
+    ("Auckland", "New Zealand"), ("Stockholm", "Sweden"), ("Copenhagen", "Denmark"),
+    ("Oslo", "Norway"), ("Helsinki", "Finland"), ("Dublin", "Ireland"), ("Brussels", "Belgium"),
+    ("Zurich", "Switzerland"),
+]
+
 # List of international news websites we want to scrape
 # Each website will be visited to collect recent articles
 NEWS_SOURCES = [
@@ -861,6 +899,8 @@ def extract_title_and_text(html: str) -> Tuple[str, str]:
         soup.find('div', attrs={'itemprop': 'articleBody'}),  # Look for structured data markup
         soup.find('section', class_='article'),         # Look for article section with class
         soup.find('div', id='main-content'),            # Look for main content div by ID
+        soup.find('div', class_=lambda x: x and ('article' in x.lower() or 'content' in x.lower() or 'story' in x.lower())),  # Look for divs with article/content/story in class
+        soup.find('div', id=lambda x: x and ('content' in x.lower() or 'article' in x.lower() or 'story' in x.lower())),  # Look for divs with content/article/story in ID
     ]
     
     # Use the first content container we find, or fall back to searching the whole page
@@ -868,6 +908,10 @@ def extract_title_and_text(html: str) -> Tuple[str, str]:
     
     # Find all paragraph tags in the content area (or whole page if no container found)
     ps = container.find_all('p') if container else soup.find_all('p')  # Get all <p> tags from container or page
+    
+    # If no paragraphs found, try to get text from divs
+    if not ps and container:
+        ps = container.find_all('div', class_=lambda x: x and ('text' in x.lower() or 'body' in x.lower()))
     
     # Extract text from each paragraph
     for p in ps:                               # Loop through each paragraph tag
@@ -903,32 +947,50 @@ def scrape_news_site(base_url: str, label: str, limit: int) -> List[Entry]:
     # Step 1: Prefer RSS/sitemap, fallback to homepage
     candidates = discover_article_links(base_url, session, limit * 2)  # Discover article URLs efficiently
     if not candidates:
+        print(f"    [WARN] No article links found for {label}")
         return entries
+    print(f"    [INFO] Found {len(candidates)} candidate URLs for {label}")
     
     # Step 2: Download and process each article (parallel)
     count = 0                                  # Initialize counter for successfully processed articles
     total_candidates = len(candidates)         # Get total number of candidate URLs for progress tracking
+    cached_count = 0                          # Track how many were skipped due to cache
+    
     def fetch_one(u: str) -> Optional[Entry]:
         try:
+            # Skip cached URLs (but allow some retries for failed ones)
             if cache_has(cache, u):
-                return None
-            resp = session.get(u, timeout=8)
+                return None  # Will be counted separately
+            
+            resp = session.get(u, timeout=10)
             if resp.status_code != 200 or not resp.text:
                 return None
+            
             title, text = extract_title_and_text(resp.text)
-            if not (title or text) or (len(text.split()) < 5 and len(title) < 2):
-                return None
+            
+            # Relaxed filtering: require title OR text with reasonable content
+            # Accept if: (title exists) OR (text has at least 10 words) OR (text has at least 3 words AND title has at least 2 chars)
+            text_words = len(text.split()) if text else 0
+            title_len = len(title) if title else 0
+            
+            if not title and text_words < 10:
+                return None  # Need either title or substantial text
+            if title_len < 2 and text_words < 3:
+                return None  # Need at least minimal content
+            
+            # Only cache successful extractions
             cache_put(cache, u)
             return Entry(
                 source="News",
                 source_site=label,
                 url=u,
-                title=title,
+                title=title or "Untitled",
                 date=None,
-                text=text,
+                text=text or "",
                 cities=[],
             )
-        except Exception:
+        except Exception as e:
+            # Log errors occasionally for debugging
             return None
 
     with ThreadPoolExecutor(max_workers=24) as ex:  # Concurrency (cap per site)
@@ -938,11 +1000,24 @@ def scrape_news_site(base_url: str, label: str, limit: int) -> List[Entry]:
                 break
             if i % 50 == 0:
                 print(f"    Progress: {i}/{total_candidates} URLs processed, {count} articles collected")
-            res = fut.result()
-            if res is not None:
-                entries.append(res)
-                count += 1
+            try:
+                res = fut.result()
+                if res is not None:
+                    entries.append(res)
+                    count += 1
+            except Exception as e:
+                if i % 100 == 0:  # Only log occasionally to avoid spam
+                    print(f"    [WARN] Error processing URL {i}: {str(e)[:50]}")
     
+    # Count cached URLs
+    for u in candidates[: limit * 3]:
+        if cache_has(cache, u):
+            cached_count += 1
+    
+    if cached_count > 0:
+        print(f"    [INFO] Collected {len(entries)} articles from {label} ({cached_count} URLs were cached/skipped)")
+    else:
+        print(f"    [INFO] Collected {len(entries)} articles from {label}")
     return entries                             # Return all the articles we successfully collected
 
 def print_progress_bar(current: int, total: int, prefix: str = "", length: int = 50):
@@ -990,7 +1065,10 @@ def scrape_all_news(sites: List[str], per_site_limit: int) -> List[Entry]:
             print_progress_bar(i, total_sites, f"Scraping news sites")
             try:
                 chunk = fut.result()
-            except Exception:
+                if chunk:
+                    print(f"  -> Got {len(chunk)} articles from {futs[fut]}")
+            except Exception as e:
+                print(f"  -> ERROR scraping {futs[fut]}: {str(e)[:100]}")
                 chunk = []
             results.extend(chunk)
             time.sleep(0.05)  # small jitter to spread load
@@ -1015,7 +1093,7 @@ def reddit_fetch_subreddit_json(sub: str, max_pages: int) -> List[Dict[str, Any]
     after: Optional[str] = None                # Reddit pagination token (starts as None)
     
     # Get multiple pages of posts from this subreddit
-    for _ in range(max_pages):                 # Loop for the specified number of pages
+    for page_num in range(max_pages):         # Loop for the specified number of pages
         # Try multiple endpoints to reduce rate limiting issues
         bases = (
             f"https://api.reddit.com/r/{sub}/.json?limit=50&raw_json=1",
@@ -1025,10 +1103,15 @@ def reddit_fetch_subreddit_json(sub: str, max_pages: int) -> List[Dict[str, Any]
         jtxt = None
         for base in bases:
             url = base + (f"&after={after}" if after else "")
-            jtxt = safe_request(url, headers={**DEFAULT_HEADERS, "Accept": "application/json", "Referer": f"https://www.reddit.com/r/{sub}/"}, timeout=12, max_retries=4)
-            if jtxt:
-                break
+            try:
+                jtxt = safe_request(url, headers={**DEFAULT_HEADERS, "Accept": "application/json", "Referer": f"https://www.reddit.com/r/{sub}/"}, timeout=15, max_retries=2)
+                if jtxt:
+                    break
+            except Exception as e:
+                print(f"    [WARN] Error fetching r/{sub} page {page_num + 1}: {str(e)[:100]}")
+                continue
         if not jtxt:                           # If download failed
+            print(f"    [WARN] Failed to fetch r/{sub} page {page_num + 1}, stopping")
             break                              # Stop trying to get more pages
         
         try:
@@ -1154,11 +1237,48 @@ def scrape_reddit_for_cities(city_subreddits: Dict[str, str],
     for i, (city, sub) in enumerate(city_subreddits.items()): # Loop through city -> subreddit mappings with index
         # Show progress bar for Reddit scraping
         print_progress_bar(i, total_cities, f"Scraping Reddit cities")  # Show progress
-        print(f"\nScraping subreddit: r/{sub} for {city}")  # Show which city/subreddit we're working on
+        print(f"\nScraping subreddit: r/{sub} for {city}", flush=True)  # Show which city/subreddit we're working on
         
-        # Get posts from this subreddit using Reddit's JSON API
-        posts = reddit_fetch_subreddit_json(sub, max_pages)  # Fetch posts for this subreddit
-        print(f"  -> {len(posts)} posts")      # Show how many posts we successfully got
+        try:
+            # Get posts from this subreddit using Reddit's JSON API with timeout protection
+            # Use threading timeout instead of signal (more reliable cross-platform)
+            import threading
+            import queue
+            
+            posts_queue = queue.Queue()
+            exception_queue = queue.Queue()
+            
+            def fetch_posts():
+                try:
+                    result = reddit_fetch_subreddit_json(sub, max_pages)
+                    posts_queue.put(result)
+                except Exception as e:
+                    exception_queue.put(e)
+            
+            # Start fetch in a thread with timeout
+            fetch_thread = threading.Thread(target=fetch_posts, daemon=True)
+            fetch_thread.start()
+            # TRIAL MODE: Reduced timeout for speed (10 seconds per subreddit for <10 min total)
+            # Normal: 45 seconds, Trial: 10 seconds
+            timeout_seconds = 10 if REDDIT_COMMENTS_PER_POST_LIMIT <= 10 else 45
+            fetch_thread.join(timeout=timeout_seconds)
+            
+            if fetch_thread.is_alive():
+                print(f"  -> TIMEOUT: r/{sub} took too long, skipping", flush=True)
+                posts = []  # Timeout - skip this subreddit
+            elif not exception_queue.empty():
+                e = exception_queue.get()
+                print(f"  -> ERROR: Failed to fetch r/{sub}: {str(e)[:100]}", flush=True)
+                posts = []  # Error - skip this subreddit
+            elif not posts_queue.empty():
+                posts = posts_queue.get()
+                print(f"  -> {len(posts)} posts", flush=True)
+            else:
+                print(f"  -> No posts returned from r/{sub}", flush=True)
+                posts = []
+        except Exception as e:
+            print(f"  -> ERROR: Exception fetching r/{sub}: {str(e)[:100]}", flush=True)
+            posts = []  # Continue with empty posts list
         
         # Add post entries first
         for p in posts:
@@ -1176,16 +1296,22 @@ def scrape_reddit_for_cities(city_subreddits: Dict[str, str],
         permalinks = [(p, p.get("permalink")) for p in posts if p.get("permalink")]
         comments_by_post: Dict[str, List[str]] = {}
         if permalinks:
-            with ThreadPoolExecutor(max_workers=16) as ex:
+            print(f"    Fetching comments for {len(permalinks)} posts...", flush=True)
+            with ThreadPoolExecutor(max_workers=8) as ex:  # Reduced from 16 to avoid overwhelming Reddit
                 futs = {ex.submit(reddit_fetch_comments_json, pl, comments_per_post_limit, session): p for p, pl in permalinks}
                 for idx, fut in enumerate(as_completed(futs), 1):
                     post = futs[fut]
                     try:
-                        comments_by_post[post["url"]] = fut.result() or []
-                    except Exception:
+                        # TRIAL MODE: Reduced timeout for speed (5 seconds per comment fetch)
+                        # Normal: 30 seconds, Trial: 5 seconds when comments <= 10
+                        comment_timeout = 5 if REDDIT_COMMENTS_PER_POST_LIMIT <= 10 else 30
+                        comments_by_post[post["url"]] = fut.result(timeout=comment_timeout) or []
+                    except Exception as e:
                         comments_by_post[post["url"]] = []
+                        if idx % 20 == 0:  # Only log every 20th error to avoid spam
+                            print(f"    [WARN] Comment fetch error: {str(e)[:50]}", flush=True)
                     if idx % 10 == 0:
-                        print(f"    Reddit comments progress: {idx}/{len(permalinks)} posts")
+                        print(f"    Reddit comments progress: {idx}/{len(permalinks)} posts", flush=True)
 
         # Create an Entry object for each comment
         for p in posts:
@@ -1543,6 +1669,8 @@ def main():
                         help="Documents per city fed into AI scoring (fairness normalization)")
     parser.add_argument("--out", type=str, default="data/latest",    # Where to write outputs (JSON/TXT)
                         help="Output directory for results")
+    parser.add_argument("--clear_cache", action="store_true",        # Option to clear cache before running
+                        help="Clear the URL cache before scraping (allows re-scraping previously visited URLs)")
     args = parser.parse_args()                                         # Parse the CLI arguments
 
     # -----------------------
@@ -1554,32 +1682,60 @@ def main():
     REDDIT_COMMENTS_PER_POST_LIMIT = args.reddit_comments               # Override comments per post limit
     CITY_DOCS_PER_MODEL_CALL = args.city_docs                           # Override per-city AI document cap
 
+    # Clear cache if requested
+    if args.clear_cache:
+        cache_path = os.path.join("data", "visited.sqlite")
+        if os.path.exists(cache_path):
+            try:
+                cache = _init_cache(cache_path)
+                with CACHE_LOCK:
+                    cache.execute("DELETE FROM visited")
+                    cache.commit()
+                print(f"✅ Cleared {cache_path}")
+            except Exception as e:
+                print(f"⚠️  Warning: Could not clear cache: {e}")
+    
     # Step 1: Load the AI language model for text processing
     nlp = spacy.load("en_core_web_md")                                 # Load spaCy's medium English model with word vectors
     
-    # Step 2: Build dynamic city list, subreddits, and news sources (if cities_link provided)
-    if args.cities_link:                                                # If a cities list URL was provided
-        print("\n================================================================================")
-        print("Loading cities")                                         # Announce city loading
-        print("================================================================================")
-        top_cities = load_top_cities_from_table(args.cities_link, max_cities=args.num_cities)  # Load top-N cities
-        print(f"Loaded {len(top_cities)} cities")                        # Show how many cities we got
-
-        print("\nDiscovering subreddits")                              # Announce subreddit discovery
-        dynamic_city_subs = build_city_subreddits(top_cities)            # Attempt to map city -> subreddit
+    # Step 2: Use CONSISTENT 100-city list (always the same cities for consistency)
+    print("\n================================================================================")
+    print("Using Consistent 100-City List")                              # Announce consistent city list
+    print("================================================================================")
+    # Always use the consistent 100-city list, limited to num_cities if specified
+    top_cities = CONSISTENT_100_CITIES[:args.num_cities]                 # Use consistent list, limit to requested count
+    print(f"Using {len(top_cities)} cities from consistent list")        # Show how many cities we're using
+    
+    if len(top_cities) > 0:
+        print("\nDiscovering subreddits")                          # Announce subreddit discovery
+        dynamic_city_subs = build_city_subreddits(top_cities)        # Attempt to map city -> subreddit
         print(f"Subreddits found: {len(dynamic_city_subs)} / {len(top_cities)}")  # Summary of findings
 
-        print("\nDiscovering per-city news sources")                   # Announce city news discovery
+        print("\nDiscovering per-city news sources")               # Announce city news discovery
         city_sources_map = build_city_sources_map(top_cities, per_city_min=30)  # Find >=30 local media for each city
 
-        print("\nBuilding global news source pool")                    # Announce global pool building
+        print("\nBuilding global news source pool")                # Announce global pool building
         dynamic_sources = build_global_sources(city_sources_map, global_min=150)  # Build global pool >= 150
         print(f"Global news sources total (unique): {len(dynamic_sources)}")    # Show how many unique sources
+        
+        # FALLBACK: If dynamic sources failed, merge with static sources
+        if len(dynamic_sources) == 0:
+            print("⚠️  WARNING: Dynamic source discovery returned 0 sources. Using static sources.")
+            dynamic_sources = NEWS_SOURCES
+        
+        # Merge dynamic subreddits with static ones (dynamic takes precedence)
+        for city, sub in CITY_SUBREDDITS.items():
+            if city not in dynamic_city_subs:
+                dynamic_city_subs[city] = sub
+        
         city_country_map: Dict[str, Optional[str]] = {c: country for c, country in top_cities}
     else:
         dynamic_sources = NEWS_SOURCES                                   # Fall back to static global sources
         dynamic_city_subs = CITY_SUBREDDITS                              # Fall back to static subreddit map
         city_country_map: Dict[str, Optional[str]] = {}
+    
+    print(f"\n[DEBUG] Using {len(dynamic_sources)} news sources for scraping")
+    print(f"[DEBUG] First 5 sources: {dynamic_sources[:5]}")
 
     # Step 3: Collect data from international/global news sources
     print_header("Collecting Data")                                      # Print a nice header for this section
@@ -1735,8 +1891,17 @@ def main():
             snip = f"Title: {truncate_words(e.title, 20)}\nText: {truncate_words(e.text, 60)}\nSource: {e.source} [{e.source_site}] {e.url}"
             snippets.append(snip)              # Add formatted snippet to our list
         
-        # Ask OpenAI to score this city's civic health
-        score = openai_score_city(city, snippets)  # Use AI to analyze and score this city
+        # CRITICAL: Only call OpenAI if we have actual data snippets
+        if not snippets:
+            print(f"    [WARN] No data snippets for {city} - skipping AI analysis")
+            score = {
+                "overall_health": None,  # Use None instead of 50 to indicate no data
+                "category_scores": {k: {"score": None, "rationale": "No data available for analysis"} for k in CIVIC_DIMENSIONS},
+                "top_issues": [],
+            }
+        else:
+            # Ask OpenAI to score this city's civic health
+            score = openai_score_city(city, snippets)  # Use AI to analyze and score this city
         city_scores[city] = score              # Store the results for this city
         
         # Display the results for this city

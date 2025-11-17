@@ -2,10 +2,10 @@
 **Interactive, transparent civic health analytics for global cities. We transform large-scale news and Reddit data into a comparable Civic Health Pulse with per-category scores, top issues, and full citations  — [ourcityhealth.com](https://ourcityhealth.com)**
 
 
-### What’s included
-- `Automation-Project/conclusive_scraper_and_analysis.py`: end‑to‑end data pipeline (scraping → NLP/LLM → JSON outputs).
-- `Automation-Project/map.html`: interactive 3D globe with clickable cities, search, and high‑contrast borders.
-- `Automation-Project/city_health_dashboard_MASSIVE.html`: modern dashboard with city cards, modal details, and full citations.
+### What's included
+- `conclusive_scaper_and_analysis_v3.py`: end‑to‑end data pipeline (scraping → NLP/LLM → JSON outputs).
+- `map.html`: interactive 3D globe with clickable cities, search, auto-rotation, and smooth camera transitions.
+- `city_health_dashboard_MASSIVE.html`: modern dashboard with city cards, modal details, and full citations.
 
 ## Key capabilities
 
@@ -52,9 +52,10 @@
 ## Dashboards
 
 ### Globe (`map.html`)
-- Earth-like globe (Three.js/Three-Globe), white labels, white hover glow, crisp country borders.
-- City boundary polygons (when available) glow on hover; search city/country; decluttered labels by zoom.
-- Top bar shows: per‑run stats, last run timestamp, and cumulative counts.
+- Interactive 3D globe (Three.js/Three-Globe) with clickable city markers and smooth camera transitions.
+- Clickable arrows/spheres on cities; click city names in sidebar to center camera on location.
+- Search city/country; drag to rotate; scroll to zoom; globe stays centered (rotation only, no panning).
+- Cache-busting ensures fresh data loads; top bar shows per‑run stats, last run timestamp, and cumulative counts.
 
 ### Dashboard (`city_health_dashboard_MASSIVE.html`)
 - Modern minimalist UI; two rows of stats:
@@ -78,8 +79,7 @@ export OPENAI_API_KEY="your-api-key"
 ### Run the analysis
 - Full run (example):
 ```bash
-cd Automation-Project
-python3 conclusive_scraper_and_analysis.py \
+python3 conclusive_scaper_and_analysis_v3.py \
   --cities_link "https://en.wikipedia.org/wiki/List_of_largest_cities" \
   --num_cities 100 \
   --per_source_limit 500 \
@@ -90,21 +90,20 @@ python3 conclusive_scraper_and_analysis.py \
 ```
 - Faster check (small sample):
 ```bash
-python3 conclusive_scraper_and_analysis.py --num_cities 20 --per_source_limit 120 --reddit_pages 3 --reddit_comments 50 --city_docs 200
+python3 conclusive_scaper_and_analysis_v3.py --num_cities 20 --per_source_limit 120 --reddit_pages 3 --reddit_comments 50 --city_docs 200 --out data/latest
 ```
 - Reuse previous Reddit links (skip scraping, still show posts in UI):
 ```bash
-python3 conclusive_scraper_and_analysis.py --reddit_pages 0
+python3 conclusive_scaper_and_analysis_v3.py --reddit_pages 0 --out data/latest
 ```
 
 ### View dashboards locally
 ```bash
-cd Automation-Project
-python3 -m http.server 8765
+python3 -m http.server 8000
 # Globe:
-open http://localhost:8765/map.html
+open http://localhost:8000/map.html
 # Dashboard:
-open http://localhost:8765/city_health_dashboard_MASSIVE.html
+open http://localhost:8000/city_health_dashboard_MASSIVE.html
 ```
 
 ## Configuration (CLI flags)
@@ -133,17 +132,16 @@ open http://localhost:8765/city_health_dashboard_MASSIVE.html
 
 ## Project structure
 ```
-Automation-Project/
-  conclusive_scraper_and_analysis.py     # Main pipeline
+.
+  conclusive_scaper_and_analysis_v3.py   # Main pipeline
   map.html                               # Interactive globe (per-run + cumulative stats)
-  city_health_dashboard_MASSIVE.html     # City dashboard (per-run + cumulative stats)
+  city_health_dashboard_MASSIVE.html      # City dashboard (per-run + cumulative stats)
+  cities_and_sources.py                  # City and source data loading
   data/
     latest/
       full_results.json                  # Structured results (per-run + cumulative)
       city_boundaries.geojson            # City polygons for globe
-  full_results.json                      # (example snapshot)
-  full_results_MASSIVE.json              # (example snapshot)
-  full_analysis_MASSIVE.txt              # (example snapshot)
+    visited.sqlite                        # SQLite cache for URLs and metrics
   requirements.txt
 ```
 
@@ -151,7 +149,7 @@ Automation-Project/
 - Daily cron (example):
 ```bash
 # Runs every day at 3:15 AM
-15 3 * * * cd "/path/to/Automation-Project" && /usr/bin/python3 conclusive_scraper_and_analysis.py --out data/latest >> daily.log 2>&1
+15 3 * * * cd "/path/to/project" && /usr/bin/python3 conclusive_scaper_and_analysis_v3.py --out data/latest >> daily.log 2>&1
 ```
 - Because of SQLite caching, reruns only fetch new articles; cumulative metrics update automatically.
 

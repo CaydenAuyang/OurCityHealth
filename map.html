@@ -41,8 +41,9 @@
     .sidebar-tab-content.active{display:block}
     /* Hover tooltip */
     .city-tooltip{position:fixed;background:rgba(16,40,27,.95);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:8px 12px;color:#ffffff;font-size:14px;font-weight:600;pointer-events:none;z-index:2000;box-shadow:0 4px 12px rgba(0,0,0,.4);white-space:nowrap;transform:translate(-50%,-100%);margin-top:-8px}
-    #globe{height:70vh;min-height:540px;position:relative;background:radial-gradient(1200px 520px at 50% -200px,rgba(34,197,94,.12),transparent 60%), repeating-linear-gradient(90deg,transparent 0,transparent 39px,rgba(255,255,255,.04) 40px);overflow:hidden}
-    #globe canvas{display:block !important;position:absolute !important;top:0 !important;left:0 !important;width:100% !important;height:100% !important;z-index:1;pointer-events:auto !important;opacity:1 !important;visibility:visible !important}
+    #globe{height:70vh;min-height:540px;position:relative;background:radial-gradient(1200px 520px at 50% -200px,rgba(34,197,94,.12),transparent 60%), repeating-linear-gradient(90deg,transparent 0,transparent 39px,rgba(255,255,255,.04) 40px);overflow:hidden;background-color:#0a0a0a}
+    #globe canvas{display:block !important;position:absolute !important;top:0 !important;left:0 !important;width:100% !important;height:100% !important;z-index:10 !important;pointer-events:auto !important;opacity:1 !important;visibility:visible !important;background:transparent !important}
+    #globe .legend{z-index:20;position:relative;pointer-events:none}
     .city-card{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.06);cursor:pointer}
     .city-card:hover{background:rgba(34,197,94,.06)}
     .city-card[data-has-geo="0"]{opacity:.65}
@@ -371,18 +372,69 @@
   function tryFetch(paths){
     if(!paths.length) throw new Error('no paths');
     const [p, ...rest] = paths;
-    return fetch(p).then(r=>{
+    // Add cache-busting timestamp to prevent browser caching old data
+    // Use both timestamp AND random string to ensure unique URL every time
+    const separator = p.includes('?') ? '&' : '?';
+    const timestamp = Date.now();
+    const random = Math.random().toString(36).substring(7);
+    const sessionId = sessionStorage.getItem('data_session_id') || Math.random().toString(36).substring(7);
+    sessionStorage.setItem('data_session_id', sessionId);
+    const cacheBustedPath = p + separator + '_t=' + timestamp + '&_r=' + random + '&_s=' + sessionId;
+    console.log('Map: 🔄 Fetching (cache-busted):', cacheBustedPath);
+    console.log('Map: Cache-busting params: t=' + timestamp + ', r=' + random + ', s=' + sessionId);
+    return fetch(cacheBustedPath, {
+      method: 'GET',
+      cache: 'no-store',
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+        'If-Modified-Since': '0'
+      }
+    }).then(r=>{
+      console.log('Map: Response status:', r.status, 'for', cacheBustedPath);
+      console.log('Map: Response headers:', {
+        'cache-control': r.headers.get('cache-control'),
+        'last-modified': r.headers.get('last-modified'),
+        'etag': r.headers.get('etag')
+      });
       if(!r.ok) throw new Error('HTTP '+r.status);
       return r.json();
-    }).catch(()=> rest.length? tryFetch(rest): Promise.reject(new Error('all failed')));
+    }).then(data => {
+      const runTs = data.summary?.run_timestamp || 'N/A';
+      console.log('Map: ✅ Data received, cities:', data.cities?.length || 0);
+      console.log('Map: 📅 Data timestamp:', runTs);
+      return data;
+    }).catch((err) => {
+      console.error('Map: ❌ Fetch error for', cacheBustedPath, ':', err);
+      return rest.length ? tryFetch(rest) : Promise.reject(new Error('all failed'));
+    });
   }
-  console.log('Map: Starting data load...');
-  tryFetch(['data/latest/full_results.json','full_results.json']).then(d=>{
-    console.log('Map: Data loaded successfully:', {
+  console.log('Map: Starting data load at', new Date().toISOString());
+  console.log('Map: Current page URL:', window.location.href);
+  console.log('Map: Current page pathname:', window.location.pathname);
+  console.log('Map: Will try to load latest data with cache-busting...');
+  // Try multiple possible paths in case of worktree issues
+  const dataPaths = [
+    'data/latest/full_results.json',
+    './data/latest/full_results.json',
+    '../data/latest/full_results.json',
+    window.location.pathname.replace(/\/[^/]*$/, '/data/latest/full_results.json'),
+    'full_results.json'
+  ];
+  console.log('Map: Will try these paths:', dataPaths);
+  tryFetch(dataPaths).then(d=>{
+    console.log('Map: ✅ Data loaded successfully:', {
       cities: d.cities?.length || 0,
       topics: d.topics?.length || 0,
       summary: d.summary
     });
+    const runTs = d.summary?.run_timestamp || 'N/A';
+    console.log('Map: 📅 Run timestamp from data:', runTs);
+    console.log('Map: 📅 Current time:', new Date().toISOString());
+    
+    // Force reload button removed per user request
+    
     if(!d.cities || d.cities.length === 0){
       console.error('Map: No cities found in data!');
       const pill = document.getElementById('summary-pill');
@@ -675,7 +727,6 @@
         attachSearch(searchInput, renderList);
       }
 
-      console.log('Map: Building globe with', ALL.length, 'cities,', cityDetails.size, 'with coordinates');
       buildGlobe(ALL, cityDetails, cityPolygons);
 
       if(missing.length){
@@ -754,34 +805,35 @@
   }
 
   function buildGlobe(cities, cityDetails, cityPolygons){
-    console.log('Map: buildGlobe called with', cities.length, 'cities');
+    console.log('🔍 buildGlobe called with', cities?.length || 0, 'cities');
     const container = document.getElementById('globe');
     if(!container){
-      console.error('Map: Globe container not found!');
+      console.error('❌ Globe container not found!');
       return;
     }
+    console.log('✅ Globe container found');
     
     // Safety check: ensure we have cities to display
     if(!cities || cities.length === 0){
-      console.error('Map: No cities provided to buildGlobe!');
+      console.warn('⚠️ No cities provided');
       container.innerHTML = '<div class="muted" style="padding:16px;text-align:center">No city data available. Please run the scraper first.</div>';
       return;
     }
     
-    console.log('Map: Globe container found, initializing Three.js...');
-    
     // Check if Three.js and ThreeGlobe are loaded
     if(typeof THREE === 'undefined'){
-      console.error('Map: THREE.js not loaded!');
+      console.error('❌ THREE.js not loaded');
       container.innerHTML = '<div class="muted" style="padding:16px;text-align:center">Error: THREE.js library failed to load. Check your internet connection.</div>';
       return;
     }
+    console.log('✅ THREE.js loaded');
     
     if(typeof ThreeGlobe === 'undefined'){
-      console.error('Map: ThreeGlobe not loaded!');
+      console.error('❌ ThreeGlobe not loaded');
       container.innerHTML = '<div class="muted" style="padding:16px;text-align:center">Error: ThreeGlobe library failed to load. Check your internet connection.</div>';
       return;
     }
+    console.log('✅ ThreeGlobe loaded');
 
     Array.from(container.querySelectorAll('canvas')).forEach(c=> c.remove());
     if(container._resizeHandler){
@@ -799,78 +851,75 @@
     camera.position.set(0, 0, 240);
     camera.lookAt(0, 0, 0);
     
-    console.log('Map: Camera position:', camera.position);
-    console.log('Map: Camera aspect:', camera.aspect);
 
-    const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
+    } catch(e) {
+      container.innerHTML = '<div class="muted" style="padding:16px;text-align:center">WebGL not supported or failed to initialize: ' + e.message + '</div>';
+      return;
+    }
+    
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setSize(width, height);
     renderer.setClearColor(0x000000, 0); // Transparent background
-    renderer.domElement.style.display = 'block';
-    renderer.domElement.style.width = '100%';
-    renderer.domElement.style.height = '100%';
-    renderer.domElement.style.position = 'absolute';
-    renderer.domElement.style.top = '0';
-    renderer.domElement.style.left = '0';
-    renderer.domElement.style.zIndex = '1';
-    container.appendChild(renderer.domElement);
     
-    console.log('Map: Renderer created and added to container');
-    console.log('Map: Canvas style:', {
-      display: renderer.domElement.style.display,
-      position: renderer.domElement.style.position,
-      width: renderer.domElement.style.width,
-      height: renderer.domElement.style.height,
-      zIndex: renderer.domElement.style.zIndex
-    });
+    // Make canvas visible and properly positioned
+    const canvas = renderer.domElement;
+    canvas.style.cssText = 'display:block !important;position:absolute !important;top:0 !important;left:0 !important;width:100% !important;height:100% !important;z-index:10 !important;pointer-events:auto !important;opacity:1 !important;visibility:visible !important;background:transparent !important';
+    
+    container.appendChild(canvas);
+    
 
-    console.log('Map: Creating ThreeGlobe instance...');
     let globe;
     try {
+      console.log('🌍 Creating ThreeGlobe...');
       globe = new ThreeGlobe()
-        .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
-        .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
-        .showAtmosphere(true)
-        .atmosphereColor('#3bf08f')
-        .atmosphereAltitude(0.12);
-      scene.add(globe);
-      console.log('Map: Globe added to scene successfully, globe object:', globe);
-      console.log('Map: Scene children count:', scene.children.length);
+      .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+        .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png');
+      // Atmosphere disabled - was causing green film overlay
+      if(typeof globe.showAtmosphere === 'function'){
+        globe.showAtmosphere(false);
+      }
+    scene.add(globe);
+      console.log('✅ Globe added to scene, children:', scene.children.length);
+      
+      // Immediate render to ensure globe appears
+      console.log('🎨 Rendering...');
+      renderer.render(scene, camera);
+      console.log('✅ Render complete');
     } catch(e) {
-      console.error('Map: Error creating globe:', e);
-      container.innerHTML = '<div class="muted" style="padding:16px;text-align:center">Error creating globe: ' + e.message + '<br>Check browser console (F12) for details.</div>';
+      console.error('❌ Error creating globe:', e);
+      container.innerHTML = '<div class="muted" style="padding:16px;text-align:center">Error creating globe: ' + e.message + '</div>';
       return;
     }
     
     // Verify globe was added
     if(!globe){
-      console.error('Map: Globe is null after creation!');
-      container.innerHTML = '<div class="muted" style="padding:16px;text-align:center">Failed to create globe object. Check browser console.</div>';
+      console.error('❌ Globe is null after creation');
+      container.innerHTML = '<div class="muted" style="padding:16px;text-align:center">Failed to create globe object.</div>';
       return;
     }
+    console.log('✅ Globe created successfully');
 
-    const glowGeo = new THREE.SphereGeometry(100, 64, 64);
-    const glowMat = new THREE.MeshBasicMaterial({ color:0x22c55e, transparent:true, opacity:0.08 });
-    const glowMesh = new THREE.Mesh(glowGeo, glowMat);
-    glowMesh.scale.set(1.05,1.05,1.05);
-    scene.add(glowMesh);
+    // Removed green glow mesh - it was causing a distracting transparent overlay when zooming
 
     scene.add(new THREE.AmbientLight(0xffffff, 0.95));
     const dirLight = new THREE.DirectionalLight(0xffffff, 0.55);
     dirLight.position.set(2,1,1);
     scene.add(dirLight);
 
-    // Use ThreeGlobe's coordinate system - it uses standard spherical coordinates
+    // Use ThreeGlobe's coordinate system - standard spherical to Cartesian
     // ThreeGlobe uses: lat (-90 to 90), lng (-180 to 180)
-    // Coordinate system: y-axis up (north pole), x-axis right (east), z-axis forward
+    // Standard conversion: y-axis up (north pole), x-axis right (east), z-axis forward
     function latLngToVec3(lat, lng, r=100){
-      // Standard spherical to Cartesian conversion matching ThreeGlobe
+      // Convert to radians
       const phi = (90 - lat) * Math.PI / 180;  // Colatitude (0 at north pole, π at south pole)
       const theta = (lng + 180) * Math.PI / 180;  // Longitude (0-2π)
       
-      // FIXED: ThreeGlobe uses NEGATIVE x for east (or different convention)
-      // Try flipping x sign to match ThreeGlobe's actual coordinate system
-      const x = -r * Math.sin(phi) * Math.cos(theta);  // NEGATIVE sign added
+      // Standard spherical to Cartesian conversion
+      // ThreeGlobe uses standard convention: x=east, y=north, z=forward
+      const x = r * Math.sin(phi) * Math.cos(theta);
       const y = r * Math.cos(phi);
       const z = r * Math.sin(phi) * Math.sin(theta);
       
@@ -910,12 +959,17 @@
     let hoveredPointData = null; // Track which point is hovered
     const arrowObjects = new Map(); // Map: pointData -> arrow mesh object
     
-    globe.pointsData(pts)
+    // Configure points - try pointThreeObject first, fallback to pointRadius
+    const pointsConfig = globe.pointsData(pts)
       .pointLat(d => d.lat)
       .pointLng(d => d.lng)
       .pointAltitude(d => d.altitude)
-      .pointColor(d => d.color)
-      .pointThreeObject(d => {
+      .pointColor(d => d.color);
+    
+    // Check if pointThreeObject method exists on the returned object
+    if (pointsConfig && typeof pointsConfig.pointThreeObject === 'function') {
+      try {
+        pointsConfig.pointThreeObject(d => {
         // Create arrow (cylinder) that extends through the globe to opposite side
         const radius = hoveredPointData === d ? pointRadiusVar * 1.5 : pointRadiusVar;
         const globeRadius = 100; // Globe radius
@@ -945,11 +999,47 @@
         arrow.userData.height = arrowHeight;
         arrowObjects.set(d, arrow);
         
-        return arrow;
-      });
+          return arrow;
+        });
+        console.log('✅ Using pointThreeObject for custom arrows');
+      } catch(e) {
+        console.error('❌ Error with pointThreeObject:', e);
+        // Fallback to pointRadius
+        pointsConfig.pointRadius(d => hoveredPointData === d ? pointRadiusVar * 1.5 : pointRadiusVar);
+      }
+    } else {
+      // Fallback: use pointRadius if pointThreeObject is not available
+      // Also create invisible clickable spheres for each point
+      pointsConfig.pointRadius(d => hoveredPointData === d ? pointRadiusVar * 1.5 : pointRadiusVar);
+      
+        // Create clickable spheres manually since pointThreeObject doesn't work
+        // We'll position them after ThreeGlobe renders the points
+        // Store point data for later positioning
+        pts.forEach(pointData => {
+          // Create a larger invisible sphere for easier clicking
+          const clickGeometry = new THREE.SphereGeometry(pointRadiusVar * 5, 16, 16);
+          const clickMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0xffffff, 
+            transparent: true, 
+            opacity: 0.01,
+            visible: true
+          });
+          const clickSphere = new THREE.Mesh(clickGeometry, clickMaterial);
+          // Position will be set after ThreeGlobe renders
+          clickSphere.userData.city = pointData.city;
+          clickSphere.userData.pointData = pointData;
+          scene.add(clickSphere);
+          arrowObjects.set(pointData, clickSphere);
+        });
+        console.log('✅ Created', arrowObjects.size, 'clickable spheres for cities');
+        
+        // After ThreeGlobe renders, find actual arrow positions and update clickable spheres
+        setTimeout(() => {
+          updateClickableSpherePositions();
+        }, 1000); // Give ThreeGlobe more time to render
+    }
     
-    console.log('ℹ️ ThreeGlobe custom arrows (extending through globe) ready:', pts.length);
-    console.log('✅ Created', arrowObjects.size, 'arrows that extend to opposite side');
+    console.log('✅ Points configured, arrows:', arrowObjects.size);
     
     // Click detection using actual rendered positions from ThreeGlobe
     let controls = null;
@@ -964,6 +1054,121 @@
     // Store actual rendered point objects and their data
     const renderedPoints = new Map(); // Map: pointData -> { mesh, worldPos }
     let pointsInitialized = false;
+    
+    function updateClickableSpherePositions(){
+      // CRITICAL: Make clickable spheres children of the globe so they rotate with it
+      // Match by 3D position since ThreeGlobe doesn't store lat/lng in userData
+      
+      const foundPointMeshes = [];
+      
+      // Traverse the globe object directly to find point meshes
+      // Filter out the globe itself and other non-point meshes
+      globe.traverse((obj) => {
+        if(obj.type === 'Mesh' && obj.geometry && obj.material && obj !== globe){
+          // Skip if it's the globe sphere itself (usually has a large radius)
+          const isGlobeSphere = obj.geometry.boundingSphere && obj.geometry.boundingSphere.radius > 50;
+          if(isGlobeSphere) return;
+          
+          // Get the local position (relative to globe)
+          const localPos = obj.position.clone();
+          const distance = localPos.length();
+          
+          // Point meshes should be at radius ~100 (globe surface) or slightly above
+          if(distance > 50 && distance < 150){
+            foundPointMeshes.push({ 
+              mesh: obj, 
+              localPos: localPos.clone(),
+              distance: distance
+            });
+          }
+        }
+      });
+      
+      console.log('🔍 Found', foundPointMeshes.length, 'potential point meshes in globe');
+      console.log('🔍 Need to match', arrowObjects.size, 'cities');
+      
+      // CRITICAL: ThreeGlobe creates points in the same order as pts array
+      // So we can match by index if counts match, otherwise match by closest distance
+      let matched = 0;
+      let attached = 0;
+      const usedMeshes = new Set();
+      
+      // If we have the same number of meshes as cities, match by order
+      const matchByOrder = foundPointMeshes.length === arrowObjects.size;
+      
+      if(matchByOrder){
+        console.log('✅ Same count - matching by order');
+        let index = 0;
+        for(const [pointData, clickSphere] of arrowObjects){
+          if(index < foundPointMeshes.length){
+            const found = foundPointMeshes[index];
+            scene.remove(clickSphere);
+            globe.add(clickSphere);
+            clickSphere.position.copy(found.localPos);
+            clickSphere.updateMatrixWorld(true);
+            matched++;
+            attached++;
+            console.log(`✅ Matched ${pointData.city.name} by order`);
+          }
+          index++;
+        }
+      } else {
+        console.log('⚠️ Different counts - matching by closest distance');
+        // Match by finding closest mesh for each city
+        for(const [pointData, clickSphere] of arrowObjects){
+          const lat = pointData.lat;
+          const lng = pointData.lng;
+          
+          // Calculate expected position for this city
+          const expectedRadius = 100 * (1 + (pointData.altitude || 0));
+          const expectedPos = latLngToVec3(lat, lng, expectedRadius);
+          
+          // Find closest mesh by 3D distance
+          let bestMatch = null;
+          let bestDist = Infinity;
+          let bestIndex = -1;
+          
+          foundPointMeshes.forEach((found, index) => {
+            if(usedMeshes.has(index)) return;
+            
+            // Calculate 3D distance between expected position and mesh position
+            const dist = found.localPos.distanceTo(expectedPos);
+            
+            // Increase threshold to 50 units to catch more matches
+            if(dist < 50 && dist < bestDist){
+              bestDist = dist;
+              bestMatch = found;
+              bestIndex = index;
+            }
+          });
+          
+          if(bestMatch){
+            // CRITICAL: Remove from scene and add as child of globe
+            scene.remove(clickSphere);
+            globe.add(clickSphere);
+            
+            // Position at the same local position as the point mesh
+            clickSphere.position.copy(bestMatch.localPos);
+            clickSphere.updateMatrixWorld(true);
+            
+            usedMeshes.add(bestIndex);
+            matched++;
+            attached++;
+            console.log(`✅ Matched ${pointData.city.name} (${lat.toFixed(2)}, ${lng.toFixed(2)}) - distance: ${bestDist.toFixed(2)}`);
+          } else {
+            // Fallback: attach to globe anyway at calculated position
+            scene.remove(clickSphere);
+            globe.add(clickSphere);
+            
+            clickSphere.position.copy(expectedPos);
+            attached++;
+            console.warn(`⚠️ No mesh found for ${pointData.city.name} (${lat.toFixed(2)}, ${lng.toFixed(2)}), using calculated position`);
+          }
+        }
+      }
+      
+      console.log('✅ Matched', matched, 'and attached', attached, 'out of', arrowObjects.size, 'clickable spheres to globe');
+    }
     
     function initializeRenderedPoints(){
       if(pointsInitialized) return;
@@ -1117,15 +1322,56 @@
         
         // Only process if it was a click (not drag)
         if(dragDist < 8 && elapsed < 600){
-          const clickedPoint = findClosestPointFromScreen(currentMouseScreenX, currentMouseScreenY);
-          if(clickedPoint && clickedPoint.city){
-            console.log('✅ Clicked on city:', clickedPoint.city.name);
-            // Center camera on city
+          // First try raycasting to hit arrow meshes directly
+          raycaster.setFromCamera(mouse, camera);
+          
+          // Collect all objects to check (including nested children)
+          const objectsToCheck = [];
+          scene.traverse((obj) => {
+            if(obj.type === 'Mesh' && obj.userData && (obj.userData.city || obj.userData.pointData)){
+              objectsToCheck.push(obj);
+            }
+          });
+          
+          const intersects = raycaster.intersectObjects(objectsToCheck, false);
+          
+          let clickedCity = null;
+          
+          // Check if we hit a clickable object
+          if(intersects.length > 0){
+            // Sort by distance (closest first)
+            intersects.sort((a, b) => a.distance - b.distance);
+            
+            for(const intersect of intersects){
+              const obj = intersect.object;
+              if(obj.userData && obj.userData.city){
+                clickedCity = obj.userData.city;
+                console.log('✅ Clicked on city:', clickedCity.name);
+                break;
+              }
+              if(obj.userData && obj.userData.pointData && obj.userData.pointData.city){
+                clickedCity = obj.userData.pointData.city;
+                console.log('✅ Clicked on city (via pointData):', clickedCity.name);
+                break;
+              }
+            }
+          }
+          
+          // Fallback: find closest city point by screen distance
+          if(!clickedCity){
+            const clickedPoint = findClosestPointFromScreen(currentMouseScreenX, currentMouseScreenY);
+            if(clickedPoint && clickedPoint.city){
+              clickedCity = clickedPoint.city;
+              console.log('✅ Clicked on closest city point:', clickedCity.name);
+            }
+          }
+          
+          if(clickedCity){
+            // Center camera on city and show sidebar
             if(typeof window.centerCameraOnCity === 'function'){
-              window.centerCameraOnCity(clickedPoint.city);
+              window.centerCameraOnCity(clickedCity);
             } else {
-              console.warn('centerCameraOnCity function not available yet');
-              showCity(clickedPoint.city);
+              showCity(clickedCity);
             }
             event.preventDefault();
             event.stopPropagation();
@@ -1135,11 +1381,12 @@
         }
         
         pointerDownMeta = null;
-        setTimeout(()=>{
-          if(controls){
-            controls.autoRotate = true;
-          }
-        }, 1200);
+        // Keep auto-rotate disabled (user requested no automatic rotation)
+        // setTimeout(()=>{
+        //   if(controls){
+        //     controls.autoRotate = true;
+        //   }
+        // }, 1200);
       }
     });
 
@@ -1283,16 +1530,21 @@
           .polygonSideColor(f=> f?.properties?.__isCityBoundary ? 'rgba(25,78,48,0.65)' : 'rgba(20,40,28,0.55)')
           .polygonsTransitionDuration(220);
 
+        // Check if methods exist before using them
+        if(typeof globe.onPolygonHover === 'function'){
         globe.onPolygonHover(feat=>{
           hoverPolygon = feat || null;
         });
+        }
 
+        if(typeof globe.onPolygonClick === 'function'){
         globe.onPolygonClick(feat=>{
           if(!feat) return;
           const name = feat.properties?.cityName || feat.properties?.name || feat.properties?.NAME;
           const city = cities.find(c=> c.name === name);
           if(city) showCity(city);
         });
+        }
 
         const mesh = topojson.mesh(topology, topology.objects.countries, (a,b)=> a!==b);
         if(mesh && mesh.coordinates){
@@ -1355,7 +1607,7 @@
     function animateCameraTransition(startPos, endPos, startTarget, endTarget, duration, onComplete){
       const animation = { cancelled: false };
       const startTime = performance.now();
-      const currentTargetVec = new THREE.Vector3();
+      const globeCenter = new THREE.Vector3(0, 0, 0); // Always use globe center
 
       function step(){
         if(animation.cancelled) return;
@@ -1366,12 +1618,9 @@
           ? 2 * progress * progress
           : 1 - Math.pow(-2 * progress + 2, 2) / 2;
 
-        // Keep target at globe center (should always be 0,0,0)
+        // Always keep target at globe center (0,0,0) - only rotation, no panning
         if(controls){
-          currentTargetVec.copy(startTarget).lerp(endTarget, eased);
-          controls.target.copy(currentTargetVec);
-        } else {
-          currentTargetVec.copy(startTarget).lerp(endTarget, eased);
+          controls.target.copy(globeCenter);
         }
         
         // Smoothly interpolate camera position
@@ -1380,7 +1629,7 @@
         if(controls){
           controls.update();
         } else {
-          camera.lookAt(currentTargetVec);
+          camera.lookAt(globeCenter);
         }
 
         if(progress < 1){
@@ -1389,10 +1638,10 @@
           // Final position
           camera.position.copy(endPos);
           if(controls){
-            controls.target.copy(endTarget);
+            controls.target.copy(globeCenter); // Always center
             controls.update();
           } else {
-            camera.lookAt(endTarget);
+            camera.lookAt(globeCenter);
           }
           if(onComplete) onComplete();
         }
@@ -1421,6 +1670,43 @@
       const lat = Number(meta.lat);
       const lng = Number(meta.lng);
       console.log('City coordinates:', lat, lng);
+      
+      // Find the point data and get its actual rendered position
+      const pointData = pts.find(p => {
+        if(!p || !p.city) return false;
+        return p.city.name === city.name || 
+               (p.city.name && p.city.name.toLowerCase() === city.name.toLowerCase()) ||
+               (Math.abs(p.lat - lat) < 0.01 && Math.abs(p.lng - lng) < 0.01);
+      });
+      
+      let cityPosition;
+      
+      // Get the actual rendered position from the clickable sphere
+      // Since spheres are children of globe, use their LOCAL position (relative to globe center)
+      // This matches exactly where ThreeGlobe rendered the point/arrow
+      if(pointData){
+        const clickSphere = arrowObjects.get(pointData);
+        if(clickSphere && clickSphere.parent === globe){
+          // Sphere is child of globe - use its LOCAL position
+          // This is the EXACT position where ThreeGlobe rendered the point
+          cityPosition = clickSphere.position.clone();
+          console.log('✅ Using clickable sphere position for', city.name);
+          console.log('  Position:', cityPosition.x.toFixed(2), cityPosition.y.toFixed(2), cityPosition.z.toFixed(2));
+        } else {
+          // Fallback: calculate from lat/lng
+          const altitude = pointData.altitude || 0;
+          const pointRadius = 100 * (1 + altitude);
+          cityPosition = latLngToVec3(lat, lng, pointRadius);
+          console.log('⚠️ Using calculated position for', city.name);
+        }
+      } else {
+        // Fallback: calculate from lat/lng
+        const pointRadius = 100;
+        cityPosition = latLngToVec3(lat, lng, pointRadius);
+        console.log('⚠️ Point data not found, using calculated position for', city.name);
+      }
+      
+      console.log('City position:', cityPosition.x.toFixed(2), cityPosition.y.toFixed(2), cityPosition.z.toFixed(2));
 
       // Globe center is always (0,0,0) - never move it
       const globeCenter = new THREE.Vector3(0, 0, 0);
@@ -1440,126 +1726,55 @@
         controls.update(); // Apply immediately
       }
 
-      console.log('Total points in pts array:', pts.length);
-      console.log('Total arrow objects:', arrowObjects.size);
-
-      // Find the point data - try multiple matching strategies
-      let pointData = pts.find(p => p.city && p.city.name === city.name);
+      // Use the exact clickable sphere position (which matches ThreeGlobe's rendered arrow)
+      const actualCityPos = cityPosition;
       
-      // If not found, try case-insensitive match
-      if(!pointData){
-        pointData = pts.find(p => p.city && p.city.name && p.city.name.toLowerCase() === city.name.toLowerCase());
-      }
-      
-      // If still not found, try matching by coordinates
-      if(!pointData && meta){
-        pointData = pts.find(p => {
-          if(!p || !p.lat || !p.lng) return false;
-          const latMatch = Math.abs(p.lat - lat) < 0.01;
-          const lngMatch = Math.abs(p.lng - lng) < 0.01;
-          return latMatch && lngMatch;
-        });
-      }
-      
-      // CRITICAL: Since arrows render correctly, we MUST use their actual world positions
-      // Never calculate from lat/lng - only use what ThreeGlobe calculated
-      let arrowCenterPos;
-      
-      if(pointData){
-        console.log('Found point data for:', city.name, 'at', pointData.lat, pointData.lng);
-        
-        // Get arrow object position (accounts for globe rotation)
-        const arrowObject = arrowObjects.get(pointData);
-        if(arrowObject){
-          console.log('✅ Found arrow object for:', city.name);
-          
-          // CRITICAL: Use the arrow object's ACTUAL world position
-          // Since arrows are rendered correctly, their world position is correct
-          // Get the world position of the arrow's origin (where ThreeGlobe placed it)
-          arrowObject.updateMatrixWorld(true); // Ensure matrix is up to date
-          arrowCenterPos = new THREE.Vector3();
-          arrowObject.getWorldPosition(arrowCenterPos);
-          
-          console.log('🔍 Arrow object ACTUAL world position:', arrowCenterPos.x.toFixed(2), arrowCenterPos.y.toFixed(2), arrowCenterPos.z.toFixed(2));
-        } else {
-          console.error('❌ Arrow object not found for:', city.name);
-          console.error('This should not happen - arrow objects should exist');
-          // CRITICAL: Don't use fallback - it will be wrong!
-          // Instead, try to find arrow object by traversing scene
-          let foundArrow = null;
-          scene.traverse((obj) => {
-            if(obj.userData && obj.userData.pointData && obj.userData.city && obj.userData.city.name === city.name){
-              foundArrow = obj;
-            }
-          });
-          if(foundArrow){
-            console.log('✅ Found arrow by traversing scene');
-            foundArrow.updateMatrixWorld(true);
-            arrowCenterPos = new THREE.Vector3();
-            foundArrow.getWorldPosition(arrowCenterPos);
-          } else {
-            console.error('❌ Could not find arrow object - camera will be wrong!');
-            showCity(city);
-            return;
-          }
-        }
-      } else {
-        console.error('❌ Point data not found for:', city.name);
-        showCity(city);
-        return;
-      }
-      
-      const actualArrowPos = arrowCenterPos;
-      
-      console.log('Arrow BASE (bottom where it meets globe) position:', actualArrowPos.x.toFixed(2), actualArrowPos.y.toFixed(2), actualArrowPos.z.toFixed(2));
-      
-      // CRITICAL ANALYSIS: Since arrows render correctly, use their ACTUAL world position
-      // The arrow object's world position is what ThreeGlobe calculated, which is correct
-      // We should trust this position completely for camera targeting
-      
-      // CRITICAL ANALYSIS: 
-      // - Arrows render correctly → arrow world positions are correct
-      // - We're using arrowObject.getWorldPosition() → should be correct
-      // - Issue: Camera goes to wrong location
-      // - Possible cause: OrbitControls.target behavior or camera position calculation
-      
-      // Calculate camera positions
-      // For OrbitControls: target is the orbit center, camera orbits around it
-      // To center arrow on screen: camera should be positioned to look at arrow
+      // Calculate camera positions to center the city on screen
+      // Strategy: Position camera opposite to city direction, looking at globe center
+      // The city is at actualCityPos. To center it, camera should be at -k*normalized(actualCityPos)
+      // When camera looks at (0,0,0), the line from camera through center passes through the city
       const startPos = camera.position.clone();
-      const arrowDirection = actualArrowPos.clone().normalize();
       
-      // TEST: Try positioning camera on SAME side as arrow (not opposite)
-      // OrbitControls will make camera look at target, so maybe we need camera on same side?
-      const rotatedCameraPos = arrowDirection.clone().multiplyScalar(currentDistance);
+      // Get normalized direction from globe center to city
+      const cityDirection = actualCityPos.clone().normalize();
+      const cityDistance = actualCityPos.length(); // Should be ~100 (globe radius)
       
-      // Zoomed camera also on SAME side
-      const zoomedDistance = Math.max(currentDistance * 0.4, 180);
-      const zoomedCameraPos = arrowDirection.clone().multiplyScalar(zoomedDistance);
+      // Position camera on the SAME side as the city (not opposite!)
+      // When camera targets the city, it should be positioned behind the camera (further from camera)
+      // So camera should be closer to center than the city, on the same side
+      const baseCameraDistance = Math.max(currentDistance, 280);
+      // Position camera on SAME side as city (positive direction, not negative)
+      const rotatedCameraPos = cityDirection.clone().multiplyScalar(baseCameraDistance);
       
-      console.log('🔍 DEBUG: Using arrow object ACTUAL world position for camera targeting');
-      console.log('🔍 DEBUG: Arrow world pos:', actualArrowPos.x.toFixed(2), actualArrowPos.y.toFixed(2), actualArrowPos.z.toFixed(2));
-      console.log('🔍 DEBUG: Camera will be at:', rotatedCameraPos.x.toFixed(2), rotatedCameraPos.y.toFixed(2), rotatedCameraPos.z.toFixed(2));
-      console.log('🔍 DEBUG: Camera target (orbit center):', actualArrowPos.x.toFixed(2), actualArrowPos.y.toFixed(2), actualArrowPos.z.toFixed(2));
-      console.log('🔍 TEST: Camera on SAME side as arrow (not opposite)');
+      // Zoomed camera - closer for detail view, still same side
+      const zoomedDistance = Math.max(baseCameraDistance * 0.55, 200);
+      const zoomedCameraPos = cityDirection.clone().multiplyScalar(zoomedDistance);
       
-      console.log('Target rotated position:', rotatedCameraPos.x.toFixed(2), rotatedCameraPos.y.toFixed(2), rotatedCameraPos.z.toFixed(2));
-      console.log('Target zoomed position:', zoomedCameraPos.x.toFixed(2), zoomedCameraPos.y.toFixed(2), zoomedCameraPos.z.toFixed(2));
+      console.log('🔍 City position (from sphere):', actualCityPos.x.toFixed(2), actualCityPos.y.toFixed(2), actualCityPos.z.toFixed(2));
+      console.log('🔍 City distance from center:', cityDistance.toFixed(2));
+      console.log('🔍 City direction (normalized):', cityDirection.x.toFixed(2), cityDirection.y.toFixed(2), cityDirection.z.toFixed(2));
+      console.log('🔍 Camera position (rotated):', rotatedCameraPos.x.toFixed(2), rotatedCameraPos.y.toFixed(2), rotatedCameraPos.z.toFixed(2));
+      console.log('🔍 Camera position (zoomed):', zoomedCameraPos.x.toFixed(2), zoomedCameraPos.y.toFixed(2), zoomedCameraPos.z.toFixed(2));
+      console.log('🔍 Camera will look at (0,0,0) - city should be centered on line from camera through center');
       
-      // Step 1: Rotate camera to face arrow (camera looks at arrow center)
+      // Step 1: Rotate camera to face city AND center it
+      // To center the city: temporarily target the city position, then position camera opposite
+      // This ensures the city appears centered on screen
+      const currentTarget = controls ? controls.target.clone() : globeCenter.clone();
+      
       activeCameraAnimation = animateCameraTransition(
         startPos,
         rotatedCameraPos,
-        controls ? controls.target.clone() : globeCenter.clone(),
-        actualArrowPos.clone(), // Look at arrow center (city location)
+        currentTarget, // Start from current target
+        actualCityPos.clone(), // Target the city to center it
         2000,
         () => {
-          // Step 2: Zoom in (still looking at arrow center)
+          // Step 2: Zoom in (camera moves closer, still targeting city)
           activeCameraAnimation = animateCameraTransition(
             camera.position.clone(),
             zoomedCameraPos,
-            actualArrowPos.clone(),
-            actualArrowPos.clone(), // Keep looking at arrow center
+            actualCityPos.clone(), // Keep targeting city
+            actualCityPos.clone(), // Keep targeting city for centered view
             1500,
             () => {
               activeCameraAnimation = null;
@@ -1569,28 +1784,28 @@
                 const restoreTarget = restoreCameraState.target.clone();
                 const restoreAuto = restoreCameraState.autoRotate;
 
-                // Step 1: Zoom out (still looking at arrow)
+                // Step 1: Zoom out (camera moves back, still targeting city)
                 activeCameraAnimation = animateCameraTransition(
                   camera.position.clone(),
                   rotatedCameraPos,
-                  actualArrowPos.clone(),
-                  actualArrowPos.clone(),
+                  actualCityPos.clone(), // Still targeting city
+                  actualCityPos.clone(), // Keep targeting city
                   1500,
                   () => {
-                    // Step 2: Rotate back to original position
+                    // Step 2: Rotate back to original position and restore target to center
                     activeCameraAnimation = animateCameraTransition(
                       camera.position.clone(),
                       restorePos,
-                      actualArrowPos.clone(),
-                      restoreTarget,
+                      actualCityPos.clone(), // Start from city target
+                      restoreTarget, // Restore original target (globe center)
                       2000,
                       () => {
                         if(controls){
-                          controls.target.copy(restoreTarget);
-                          controls.autoRotate = restoreAuto;
+                          controls.target.copy(globeCenter); // Ensure target is at center
+                          controls.autoRotate = false; // Keep disabled (user requested no automatic rotation)
                           controls.update();
                         } else {
-                          camera.lookAt(restoreTarget);
+                          camera.lookAt(globeCenter);
                         }
                         camera.position.copy(restorePos);
                         activeCameraAnimation = null;
@@ -1616,18 +1831,22 @@
     };
 
     const setupControls = () => {
-      console.log('Map: Creating OrbitControls instance...');
       try {
+        if(typeof window.OrbitControls === 'undefined'){
+          controls = null;
+          return;
+        }
         controls = new window.OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
         controls.dampingFactor = 0.05;
         controls.enableZoom = true;
-        controls.enablePan = false; // Keep globe centered
+        controls.enablePan = false; // Keep globe centered - only rotation allowed
+        controls.enableRotate = true; // Allow rotation
+        controls.target.set(0, 0, 0); // Always target globe center
         controls.minDistance = 140;
         controls.maxDistance = 360;
-        controls.autoRotate = true;
+        controls.autoRotate = false; // Disabled - no automatic rotation
         controls.autoRotateSpeed = 0.5;
-        console.log('Map: OrbitControls created successfully');
         
         controls.addEventListener('start', () => {
           stopActiveCameraAnimation();
@@ -1642,11 +1861,12 @@
         });
 
         controls.addEventListener('end', () => {
-          if(!centerCityTimeout){
-            setTimeout(() => {
-              if (controls && !centerCityTimeout) controls.autoRotate = true;
-            }, 2000);
-          }
+          // Keep auto-rotate disabled (user requested no automatic rotation)
+          // if(!centerCityTimeout){
+          //   setTimeout(() => {
+          //     if (controls && !centerCityTimeout) controls.autoRotate = true;
+          //   }, 2000);
+          // }
         });
 
         renderer.domElement.addEventListener('wheel', () => {
@@ -1658,14 +1878,13 @@
           if (controls) {
             controls.autoRotate = false;
             clearTimeout(renderer.domElement._wheelTimeout);
-            renderer.domElement._wheelTimeout = setTimeout(() => {
-              if (controls && !centerCityTimeout) controls.autoRotate = true;
-            }, 1600);
+            // Keep auto-rotate disabled (user requested no automatic rotation)
+            // renderer.domElement._wheelTimeout = setTimeout(() => {
+            //   if (controls && !centerCityTimeout) controls.autoRotate = true;
+            // }, 1600);
           }
         }, { passive: true });
       } catch(e) {
-        console.error('Map: Error creating OrbitControls:', e);
-        // Continue without controls - globe should still render
         controls = null;
       }
     };
@@ -1716,64 +1935,52 @@
       renderer.render(scene, camera);
       declutter();
     }
+    
     // Setup controls BEFORE starting animation
-    console.log('Map: Setting up OrbitControls...');
-    if(typeof window.OrbitControls === 'undefined'){
-      console.error('Map: OrbitControls not available! Waiting for module to load...');
-      // Wait a bit for OrbitControls to load
-      setTimeout(() => {
-        if(typeof window.OrbitControls !== 'undefined'){
-          setupControls();
-          startAnimation();
-        } else {
-          console.error('Map: OrbitControls still not available after timeout');
-          container.innerHTML = '<div class="muted" style="padding:16px;text-align:center">Error: OrbitControls failed to load. Check browser console.</div>';
-        }
-      }, 500);
-    } else {
+    // Wait for OrbitControls to be available (ES module might load async)
+    const initControlsAndStart = () => {
+      if(typeof window.OrbitControls === 'undefined'){
+        setTimeout(initControlsAndStart, 100);
+        return;
+      }
       setupControls();
       startAnimation();
+    };
+    
+    // Start immediately if available, otherwise wait
+    if(typeof window.OrbitControls !== 'undefined'){
+      setupControls();
+      startAnimation();
+    } else {
+      setTimeout(initControlsAndStart, 100);
     }
     
     function startAnimation(){
-      console.log('Map: Starting animation loop, globe should be visible');
-      console.log('Map: Canvas element:', renderer.domElement);
-      console.log('Map: Canvas dimensions:', renderer.domElement.width, 'x', renderer.domElement.height);
-      console.log('Map: Canvas visible:', renderer.domElement.offsetWidth > 0 && renderer.domElement.offsetHeight > 0);
-      console.log('Map: Canvas in DOM:', document.body.contains(renderer.domElement));
-      console.log('Map: Container has canvas:', container.querySelector('canvas') !== null);
+      console.log('🎬 startAnimation called');
+      console.log('  Globe exists:', !!globe);
+      console.log('  Renderer exists:', !!renderer);
+      console.log('  Controls exists:', !!controls);
       
-      // Verify scene has objects
-      console.log('Map: Scene children:', scene.children.length);
-      scene.children.forEach((child, i) => {
-        console.log(`  [${i}] ${child.constructor.name}`, child);
-      });
+      // Set camera to look at origin
+      camera.lookAt(0, 0, 0);
       
-      // Force a render with a simple test
-      console.log('Map: Testing render...');
-      try {
-        // Set camera to look at origin
-        camera.lookAt(0, 0, 0);
-        
-        // Initial render to ensure globe appears immediately
-        if (controls) {
-          controls.update();
-        }
-        renderer.render(scene, camera);
-        console.log('Map: ✅ Initial render complete, globe should now be visible');
-        console.log('Map: Renderer info:', {
-          domElement: renderer.domElement,
-          width: renderer.domElement.width,
-          height: renderer.domElement.height,
-          style: window.getComputedStyle(renderer.domElement).display
-        });
-      } catch(e) {
-        console.error('Map: ❌ Render error:', e);
-        container.innerHTML = '<div class="muted" style="padding:16px;text-align:center">Render error: ' + e.message + '</div>';
+      // Initial render - ensure globe is visible
+      if (controls) {
+        controls.update();
+      }
+      renderer.render(scene, camera);
+      console.log('✅ Initial render in startAnimation complete');
+      
+      // Verify globe exists before starting animation
+      if (!globe) {
+        console.error('❌ Globe not found, cannot start animation');
         return;
       }
       
-      animate();
+      // Start animation loop
+      console.log('🔄 Starting animation loop...');
+    animate();
+      console.log('✅ Animation loop started');
     }
 
     const onResize = ()=>{
