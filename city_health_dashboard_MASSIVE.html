@@ -1,67 +1,313 @@
 <!DOCTYPE html>
+<!-- 
+    ====================================================================
+    OUR CITY HEALTH - CIVIC HEALTH DASHBOARD HTML FILE
+    ====================================================================
+    This HTML file creates a comprehensive dashboard for displaying city
+    health scores, topics, and detailed information. It loads data from
+    full_results.json and renders it in an interactive, user-friendly format.
+    ====================================================================
+-->
 <html lang="en">
 <head>
+    <!-- 
+        HTML Document Head Section
+        Contains metadata, title, external resources, and all CSS styling
+    -->
+    
+    <!-- Character encoding: UTF-8 ensures all international characters display correctly -->
     <meta charset="UTF-8">
+    
+    <!-- Viewport meta tag: Makes the page responsive on mobile devices -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Page title: Appears in browser tab and bookmarks -->
     <title>Our City Health — Civic Health Dashboard</title>
+    
+    <!-- 
+        Google Fonts: Loads Inter font family with multiple weights
+        This provides a modern, professional typography for the dashboard
+    -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- 
+        ====================================================================
+        CSS STYLING SECTION
+        ====================================================================
+        All visual styling for the dashboard is defined here. This includes
+        colors, layouts, typography, animations, and responsive design.
+        ====================================================================
+    -->
     <style>
+        /* 
+            Universal Reset: Removes default browser margins and padding
+            Box-sizing border-box ensures padding is included in element width
+        */
         *{margin:0;padding:0;box-sizing:border-box}
+        
+        /* 
+            CSS Custom Properties (Variables): Define color scheme and design tokens
+            These can be reused throughout the stylesheet for consistency
+            --bg1, --bg2: Gradient background colors (purple/blue tones)
+            --card: White background for card elements
+            --muted: Gray color for secondary text
+            --ink: Dark color for primary text
+            --accent: Blue accent color for highlights
+            --good, --warn, --bad: Status colors (green, orange, red)
+            --soft: Light gray for subtle backgrounds
+            --ring: Border color for subtle dividers
+        */
         :root{
             --bg1:#667eea; --bg2:#764ba2; --card:#ffffff; --muted:#64748b; --ink:#1f2937; --accent:#3b82f6;
             --good:#16a34a; --warn:#f59e0b; --bad:#dc2626; --soft:#f8fafc; --ring:#e2e8f0
         }
+        /* 
+            Body Element Styling:
+            Sets the main page background with a diagonal gradient (135deg angle)
+            Uses Inter font with system font fallbacks for better performance
+            min-height:100vh ensures the page fills the viewport height
+        */
         body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:linear-gradient(135deg,var(--bg1),var(--bg2));min-height:100vh;color:var(--ink)}
+        
+        /* 
+            Container: Main wrapper for all content
+            max-width:1400px limits content width on large screens
+            margin:0 auto centers the container horizontally
+            padding:28px provides breathing room around content
+        */
         .container{max-width:1400px;margin:0 auto;padding:28px}
+        
+        /* 
+            Hero Section: Top banner with title and description
+            Semi-transparent white background (96% opacity) for subtle overlay effect
+            Large border-radius (20px) for modern, rounded corners
+            Box-shadow creates depth and separation from background
+        */
         .hero{background:rgba(255,255,255,.96);border-radius:20px;box-shadow:0 20px 40px rgba(0,0,0,.15);padding:32px;margin-bottom:22px}
+        
+        /* Hero heading: Large, bold title text */
         .hero h1{font-size:38px;font-weight:800;margin-bottom:8px;letter-spacing:-.02em;color:#111827}
+        
+        /* Hero paragraph: Smaller, muted description text */
         .hero p{font-size:16px;color:var(--muted)}
+        
+        /* 
+            Stats Grid: Responsive grid layout for statistics cards
+            auto-fit creates as many columns as fit in the container
+            minmax(240px,1fr) ensures cards are at least 240px wide
+            gap:16px provides consistent spacing between cards
+        */
         .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin:22px 0}
+        
+        /* 
+            Stat Card: Individual statistic display card
+            White background with rounded corners and subtle shadow
+            text-align:center centers the number and label
+        */
         .stat{background:var(--card);border-radius:14px;padding:18px;text-align:center;box-shadow:0 12px 24px rgba(0,0,0,.08)}
+        
+        /* Stat number: Large, bold, blue-accented number */
         .stat .num{font-size:30px;font-weight:800;color:var(--accent)}
+        
+        /* Stat label: Small, uppercase, gray label text */
         .stat .lab{text-transform:uppercase;font-size:12px;color:var(--muted);letter-spacing:.05em}
+        
+        /* 
+            Section: Content container for major page sections
+            Similar styling to hero but used for topics, cities, methodology
+        */
         .section{background:rgba(255,255,255,.96);border-radius:20px;box-shadow:0 20px 40px rgba(0,0,0,.12);padding:24px;margin:22px 0}
+        
+        /* Section heading: Centered, large heading */
         .section h2{font-size:24px;text-align:center;margin-bottom:18px;color:#111827}
+        
+        /* 
+            Topics Grid: Responsive grid for displaying global issues/topics
+            Cards automatically adjust to fit available space
+            Minimum width of 320px ensures readability
+        */
         .topics{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}
+        
+        /* 
+            Topic Card: Individual topic/issue display card
+            Light gray background with left border accent (4px blue)
+            Rounded corners for modern appearance
+        */
         .topic{background:#f8fafc;border:1px solid var(--ring);border-left:4px solid var(--accent);border-radius:12px;padding:14px}
+        
+        /* Topic title: Bold, dark text for topic name */
         .topic .t{font-weight:800;color:#0f172a;margin-bottom:6px}
+        
+        /* Topic description: Muted gray text for explanation */
         .topic .d{color:var(--muted);font-size:14px;margin-bottom:8px}
+        
+        /* 
+            Topic signals/phrases: Small pill-shaped tags
+            Blue background with white text, rounded corners
+            Displayed inline with spacing between them
+        */
         .topic .s span{display:inline-block;background:var(--accent);color:#fff;padding:2px 8px;border-radius:999px;font-size:12px;margin:2px}
+        
+        /* 
+            Cities Grid: Responsive grid for city health score cards
+            auto-fill creates as many columns as fit
+            Minimum card width of 340px ensures adequate information display
+        */
         .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+        
+        /* 
+            City Card: Individual city health score card
+            position:relative allows absolute positioning of child elements
+            cursor:pointer indicates the card is clickable
+            transition: smooth animation on hover (transform and shadow)
+        */
         .card{position:relative;background:var(--card);border:1px solid var(--ring);border-radius:16px;padding:16px;box-shadow:0 16px 36px rgba(0,0,0,.12);cursor:pointer;transition:transform .2s,box-shadow .2s}
+        
+        /* Card hover effect: Slight scale-up and enhanced shadow */
         .card:hover{transform:scale(1.02);box-shadow:0 26px 60px rgba(0,0,0,.18)}
+        
+        /* Expanded card: Slightly larger scale when active */
         .card.expanded{transform:scale(1.04)}
+        
+        /* 
+            Card Header: Flexbox layout for city name and score
+            Space-between pushes name left and score right
+            align-items:center vertically centers content
+        */
         .c-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+        
+        /* City name: Large, bold text */
         .c-name{font-size:18px;font-weight:800}
+        
+        /* 
+            Score Badge: Large, bold score display
+            Rounded corners with padding for visual prominence
+        */
         .score{font-weight:900;font-size:28px;border-radius:12px;padding:8px 12px}
+        
+        /* Good score (75+): Green background with dark green text */
         .sc-good{color:#065f46;background:#dcfce7}
+        
+        /* Mid score (60-74): Orange background with dark orange text */
         .sc-mid{color:#7c2d12;background:#ffedd5}
+        
+        /* Bad score (<60): Red background with dark red text */
         .sc-bad{color:#7f1d1d;background:#fee2e2}
+        
+        /* 
+            Mini Dimensions: Hidden by default, shown on card hover
+            opacity:0 and max-height:0 make it invisible initially
+            transition:all .25s creates smooth reveal animation
+            Grid layout with 2 columns for dimension scores
+        */
         .mini-dims{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0;opacity:.0;max-height:0;overflow:hidden;transition:all .25s}
+        
+        /* On card hover: Reveal mini dimensions with fade-in */
         .card:hover .mini-dims{opacity:1;max-height:500px}
+        
+        /* 
+            Dimension Row: Individual dimension score display
+            Flexbox with space-between for dimension name and score
+            Light gray background with subtle border
+        */
         .dim{display:flex;justify-content:space-between;background:var(--soft);border:1px solid var(--ring);padding:6px 8px;border-radius:10px;font-size:13px}
+        
+        /* Mini Issues Section: Top issues preview on card */
         .mini-issues{margin-top:8px}
+        
+        /* Mini issues heading: Small, green, uppercase label */
         .mini-issues h4{font-size:12px;color:#065f46;margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+        
+        /* Mini issues list items: Small, muted text */
         .mini-issues li{font-size:13px;color:var(--muted);padding:3px 0}
+        
+        /* Footer: Centered, semi-transparent white text */
         .footer{text-align:center;color:#fff;opacity:.9;padding:24px 0}
-        /* Modal with tabs */
+        
+        /* 
+            ====================================================================
+            MODAL DIALOG STYLING
+            ====================================================================
+            Modal is a full-screen overlay dialog that appears when clicking
+            a city card. It displays detailed information in tabbed sections.
+            ====================================================================
+        */
+        
+        /* 
+            Modal Container: Fixed position overlay covering entire viewport
+            display:none hides it by default, .show class makes it visible
+            z-index:50 ensures it appears above all other content
+        */
         .modal{position:fixed;inset:0;display:none;z-index:50}
+        
+        /* Modal visible state: Shows the modal when .show class is added */
         .modal.show{display:block}
+        
+        /* 
+            Backdrop: Semi-transparent dark overlay behind modal content
+            Clicking this closes the modal
+            inset:0 makes it cover the entire modal container
+        */
         .backdrop{position:absolute;inset:0;background:rgba(0,0,0,.6)}
+        
+        /* 
+            Modal Sheet: The actual modal content container
+            position:relative allows absolute positioning of close button
+            max-width:1100px limits width on large screens
+            Centered with margin:40px auto
+            White background with large shadow for depth
+        */
         .sheet{position:relative;margin:40px auto;max-width:1100px;background:#fff;border-radius:16px;box-shadow:0 30px 80px rgba(0,0,0,.45);padding:16px}
+        
+        /* Close Button: X button in top-right corner */
         .close{position:absolute;top:8px;right:12px;border:none;background:transparent;font-size:28px;cursor:pointer}
+        
+        /* Modal Header: Contains city name and score */
         .head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--ring);padding-bottom:10px;margin-bottom:10px}
+        
+        /* Tab Container: Horizontal flex layout for tab buttons */
         .tabs{display:flex;gap:8px;margin:6px 0 12px}
+        
+        /* Tab Button: Individual tab styling */
         .tab{padding:8px 10px;border:1px solid var(--ring);border-radius:10px;background:#f8fafc;cursor:pointer;font-weight:700;font-size:13px}
+        
+        /* Active Tab: Highlighted with blue background */
         .tab.active{background:#e0f2fe;border-color:#93c5fd}
+        
+        /* Tab Panes: Content sections, hidden by default */
         .panes>div{display:none}
+        
+        /* Active Pane: Shows the selected tab's content */
         .panes>div.active{display:block}
+        
+        /* 
+            Scores Grid: Two-column layout for scores table and coverage info
+            2fr 1fr means scores table takes twice the space of coverage
+        */
         .scores-grid{display:grid;grid-template-columns:2fr 1fr;gap:12px}
+        
+        /* Table: Full-width table with collapsed borders */
         .tbl{width:100%;border-collapse:collapse}
+        
+        /* Table cells: Padding, left-aligned text, top-aligned vertically */
         .tbl th,.tbl td{border-bottom:1px solid var(--ring);padding:6px 8px;font-size:13px;text-align:left;vertical-align:top}
+        
+        /* 
+            List Container: Scrollable list for articles/Reddit posts
+            max-height:420px limits height, overflow:auto adds scrollbar
+        */
         .list{max-height:420px;overflow:auto}
+        
+        /* List Links: Blue links that break on long URLs */
         .list a{display:block;color:#0369a1;font-size:13px;text-decoration:none;padding:4px 0;word-break:break-all}
+        
+        /* List link hover: Underline on hover for better UX */
         .list a:hover{text-decoration:underline}
+        
+        /* 
+            Responsive Design: On screens smaller than 880px,
+            scores grid becomes single column for better mobile display
+        */
         @media(max-width:880px){.scores-grid{grid-template-columns:1fr}}
     </style>
     </head>
@@ -93,11 +339,52 @@
         </div>
         <div class="section">
             <h2>Scoring Model & Methodology</h2>
-            <div style="color:var(--muted);font-size:14px;line-height:1.7">
-                <p><strong>Data selection:</strong> We collect news and Reddit content, then perform quality scoring per city combining source reputation (30%), civic relevance from keyword density (45%), length/coverage (15%), and recency (10%). We ensure diversity via domain caps and title-dedup.</p>
-                <p><strong>Fairness normalization:</strong> For each city we sample up to a fixed cap (configurable) balanced across source types (news, posts, comments) so no city is advantaged by sheer volume.</p>
-                <p><strong>AI scoring:</strong> We feed normalized snippets to the model to produce an overall score and per-dimension scores with rationales, plus a list of top issues («why it matters»). Higher is better net of sentiment. Recency is implicitly weighted.</p>
-                <p><strong>Transparency:</strong> Every city exposes <em>all</em> links used (Articles + Reddit) for auditability. Cities with limited data are marked by lower coverage; we never fabricate citations.</p>
+            <div style="color:var(--muted);font-size:14px;line-height:1.8">
+                <h3 style="color:#111827;font-size:18px;margin:16px 0 12px 0;font-weight:800">Step 1: Document Selection Scoring</h3>
+                <p>Each article/post is scored using a weighted formula to determine which documents are most valuable for analysis:</p>
+                <ul style="margin-left:20px;margin-bottom:16px">
+                    <li><strong>45% - Civic Relevance:</strong> Keyword density matching 12 civic dimensions (affordability, services, safety, opportunity, culture, environment, transportation, governance, housing, economy, education, health). Score: min(hits/8.0, 1.0)</li>
+                    <li><strong>30% - Source Quality/Reputation:</strong> News sources get reputation scores (0.60-0.95), Reddit posts get 0.58, other sources get 0.52</li>
+                    <li><strong>15% - Length/Coverage:</strong> Longer articles (up to 600 words) score higher. Formula: min(word_count/600.0, 1.0)</li>
+                    <li><strong>10% - Recency:</strong> Recent content scores higher: ≤14 days (1.0), ≤30 days (0.9), ≤90 days (0.7), ≤180 days (0.55), ≤365 days (0.45), >365 days (0.35)</li>
+                </ul>
+                <p style="margin-bottom:16px"><strong>Final Selection Score:</strong> (0.30 × quality) + (0.45 × relevance) + (0.15 × length) + (0.10 × recency)</p>
+
+                <h3 style="color:#111827;font-size:18px;margin:16px 0 12px 0;font-weight:800">Step 2: Fairness Normalization</h3>
+                <p>To ensure no city is advantaged by sheer volume, we apply strict fairness caps:</p>
+                <ul style="margin-left:20px;margin-bottom:16px">
+                    <li><strong>Per-City Document Cap:</strong> Maximum 500 documents per city (configurable via --city_docs flag)</li>
+                    <li><strong>Source Type Balance:</strong> Documents are evenly distributed across source types (news articles, Reddit posts, Reddit comments)</li>
+                    <li><strong>Domain Diversity:</strong> Maximum documents per domain = max(3, city_docs ÷ max(8, number_of_domains))</li>
+                    <li><strong>Title Deduplication:</strong> Duplicate titles are filtered out to avoid redundancy</li>
+                </ul>
+
+                <h3 style="color:#111827;font-size:18px;margin:16px 0 12px 0;font-weight:800">Step 3: AI Scoring (OpenAI GPT Model)</h3>
+                <p>The selected documents are formatted as snippets and sent to OpenAI's language model for analysis:</p>
+                <ul style="margin-left:20px;margin-bottom:16px">
+                    <li><strong>Model:</strong> GPT-4 or GPT-3.5-turbo (configurable)</li>
+                    <li><strong>Temperature:</strong> 0.2 (low for consistent, focused results)</li>
+                    <li><strong>Input Format:</strong> Up to 100 snippets per city, each containing: Title (20 words), Text (60 words), Source, URL</li>
+                    <li><strong>Output Structure:</strong>
+                        <ul style="margin-left:20px;margin-top:8px">
+                            <li><strong>Overall Health Score:</strong> Single integer 0-100 (holistic assessment, not a weighted average)</li>
+                            <li><strong>12 Dimension Scores:</strong> Each dimension (affordability, services, safety, opportunity, culture, environment, transportation, governance, housing, economy, education, health) receives:
+                                <ul style="margin-left:20px;margin-top:4px">
+                                    <li>Score: Integer 0-100</li>
+                                    <li>Rationale: Concise explanation citing specific signals and tradeoffs</li>
+                                </ul>
+                            </li>
+                            <li><strong>Top 10 Issues:</strong> Array of issues with name and "why it matters" explanation</li>
+                        </ul>
+                    </li>
+                    <li><strong>Scoring Guidance:</strong> Higher scores indicate better civic health (net of sentiment). The model weighs recency (implied), quality/reputation, length, and diversity across sources (news vs social). It favors specificity (policies, programs, metrics) over generic text.</li>
+                </ul>
+
+                <h3 style="color:#111827;font-size:18px;margin:16px 0 12px 0;font-weight:800">Step 4: Final Scores</h3>
+                <p>The overall health score (0-100) is produced directly by the AI model as a holistic assessment of all 12 dimensions combined. It is <em>not</em> a weighted average of dimension scores, but rather the model's integrated evaluation of the city's overall civic health based on all available signals.</p>
+
+                <h3 style="color:#111827;font-size:18px;margin:16px 0 12px 0;font-weight:800">Transparency & Auditability</h3>
+                <p>Every city exposes <em>all</em> source links used (Articles + Reddit posts) for full auditability. Cities with limited data are marked by lower coverage; we never fabricate citations. All citations are preserved in the JSON output and displayed in the dashboard.</p>
             </div>
         </div>
         <div class="footer">© Our City Health • Full transparency by design</div>
@@ -137,37 +424,91 @@
         </div>
     </div>
 
+    <!-- 
+        ====================================================================
+        JAVASCRIPT FUNCTIONALITY SECTION
+        ====================================================================
+        This script handles all interactive functionality:
+        - Loading and parsing JSON data from full_results.json
+        - Rendering city cards, topics, and statistics
+        - Modal dialog for detailed city information
+        - Tab navigation within the modal
+        - Cache-busting to ensure fresh data loads
+        ====================================================================
+    -->
     <script>
+    /*
+        Immediately Invoked Function Expression (IIFE):
+        Wraps all code to avoid polluting global namespace
+        Executes immediately when script loads
+    */
     (function(){
-        const citiesEl = document.getElementById('cities');
-        const topicsEl = document.getElementById('topics');
-        const sA = id=>document.getElementById(id);
+        /*
+            DOM Element References:
+            Cache frequently accessed DOM elements for performance
+            These elements are where we'll render dynamic content
+        */
+        const citiesEl = document.getElementById('cities');  // Container for city cards grid
+        const topicsEl = document.getElementById('topics');  // Container for global topics/issues
+        const sA = id=>document.getElementById(id);  // Shorthand helper function to get element by ID
 
-        // Modal refs
-        const modal = document.getElementById('modal');
-        const mClose = document.getElementById('m-close');
-        const mTitle = document.getElementById('m-title');
-        const mScore = document.getElementById('m-score');
-        const mDim = document.getElementById('m-dim');
-        const mIssues = document.getElementById('m-issues');
-        const mArticles = document.getElementById('m-articles');
-        const mReddit = document.getElementById('m-reddit');
-        const mCoverage = document.getElementById('m-coverage');
+        /*
+            Modal Dialog Element References:
+            All elements needed to control and populate the city detail modal
+        */
+        const modal = document.getElementById('modal');  // Main modal container
+        const mClose = document.getElementById('m-close');  // Close button
+        const mTitle = document.getElementById('m-title');  // City name display
+        const mScore = document.getElementById('m-score');  // Health score display
+        const mDim = document.getElementById('m-dim');  // Dimensions scores table
+        const mIssues = document.getElementById('m-issues');  // Top issues list
+        const mArticles = document.getElementById('m-articles');  // Articles links list
+        const mReddit = document.getElementById('m-reddit');  // Reddit posts links list
+        const mCoverage = document.getElementById('m-coverage');  // Coverage statistics
 
+        /*
+            classForScore Function:
+            Determines CSS class based on health score value
+            Returns appropriate class for color-coding:
+            - 75+: 'score sc-good' (green)
+            - 60-74: 'score sc-mid' (orange)
+            - <60: 'score sc-bad' (red)
+        */
         function classForScore(n){ return n>=75? 'score sc-good' : (n>=60? 'score sc-mid' : 'score sc-bad'); }
 
+        /*
+            renderStats Function:
+            Updates all statistic displays in the dashboard header
+            Takes summary object from JSON data and populates stat cards
+            
+            Parameters:
+            - sum: Object containing summary statistics from full_results.json
+            
+            Updates:
+            - Current run stats: articles, posts, comments, cities
+            - Cumulative stats: distinct articles, distinct posts, total comments
+            - Run timestamp: formatted date/time of when data was generated
+        */
         function renderStats(sum){
+            // Helper function: Sets text content of element by ID, formats numbers with commas
             const set=(id,v)=>{ const el=sA(id); if(el) el.textContent=(v||0).toLocaleString(); };
-            set('s-articles', Number(sum.news_articles||0));
-            set('s-posts', Number(sum.reddit_posts||0));
-            set('s-comments', Number(sum.reddit_comments||0));
-            set('s-cities', Number(sum.cities_covered||0));
+            
+            // Update current run statistics (this specific scraping run)
+            set('s-articles', Number(sum.news_articles||0));  // News articles collected this run
+            set('s-posts', Number(sum.reddit_posts||0));  // Reddit posts collected this run
+            set('s-comments', Number(sum.reddit_comments||0));  // Reddit comments collected this run
+            set('s-cities', Number(sum.cities_covered||0));  // Number of cities analyzed this run
+            
+            // Get cumulative statistics (across all runs, stored in SQLite cache)
             const cum = sum.cumulative || {};
-            set('s-articles-cum', Number(cum.news_articles_distinct||0));
-            set('s-posts-cum', Number(cum.reddit_posts_distinct||0));
-            set('s-comments-cum', Number(cum.reddit_comments_total||0));
+            set('s-articles-cum', Number(cum.news_articles_distinct||0));  // Total unique articles ever seen
+            set('s-posts-cum', Number(cum.reddit_posts_distinct||0));  // Total unique Reddit posts ever seen
+            set('s-comments-cum', Number(cum.reddit_comments_total||0));  // Total Reddit comments across all runs
+            
+            // Format and display run timestamp (ISO format converted to readable date/time)
             const ts = (sum.run_timestamp||'').toString();
-            const elTs = sA('s-run-ts'); if(elTs) elTs.textContent = ts ? ts.replace('T',' ').replace('Z','') : '—';
+            const elTs = sA('s-run-ts'); 
+            if(elTs) elTs.textContent = ts ? ts.replace('T',' ').replace('Z','') : '—';  // Replace T with space, remove Z
         }
 
         function renderTopics(topics){
@@ -278,106 +619,157 @@
             document.querySelectorAll('.panes>div').forEach(p=>p.classList.toggle('active', p.id===`pane-${name}`));
         }
 
-        // Force reload button
-        function addReloadButton(){
-            const btn = document.createElement('button');
-            btn.textContent = '🔄 Force Reload Data';
-            btn.style.cssText = 'position:fixed;top:10px;right:10px;z-index:9999;padding:8px 16px;background:#22c55e;color:white;border:none;border-radius:6px;cursor:pointer;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,0.3)';
-            btn.onclick = () => {
-                console.log('🔄 Force reloading data...');
-                // Clear all possible caches
-                localStorage.clear();
-                sessionStorage.clear();
-                // Clear service worker cache if exists
-                if('caches' in window){
-                    caches.keys().then(names => {
-                        names.forEach(name => caches.delete(name));
-                        console.log('🗑️ Cleared service worker caches');
-                    });
-                }
-                // Force reload with cache bypass
-                window.location.href = window.location.href.split('?')[0] + '?nocache=' + Date.now();
-            };
-            document.body.appendChild(btn);
-        }
-        addReloadButton();
+        // Force reload button removed per user request
         
+        /*
+            loadData Function:
+            Main data loading function that fetches full_results.json from multiple possible paths
+            Implements robust error handling and cache-busting to ensure fresh data
+            
+            Strategy:
+            1. Try multiple file paths (handles worktree issues, different server configs)
+            2. Add cache-busting parameters to prevent browser caching
+            3. Use aggressive cache-control headers
+            4. Fallback to next path if current one fails
+            5. Parse JSON and render all dashboard components
+            
+            Cache-Busting Technique:
+            - Adds timestamp (_t), random string (_r), and session ID (_s) to URL
+            - Sets multiple HTTP headers to prevent caching
+            - Ensures users always see the latest data, not stale cached versions
+        */
         function loadData(){
+            // Log current page location for debugging (helps diagnose path resolution issues)
             console.log('Dashboard: Current page URL:', window.location.href);
             console.log('Dashboard: Current page pathname:', window.location.pathname);
-            // Try multiple possible paths in case of worktree issues
+            
+            /*
+                Multiple Path Strategy:
+                Tries different relative/absolute paths to find data file
+                This handles various deployment scenarios:
+                - Local development (data/latest/)
+                - GitHub Pages (./data/latest/)
+                - Worktree scenarios (../data/latest/)
+                - Different server configurations
+            */
             const tryPaths=[
-                'data/latest/full_results.json',
-                './data/latest/full_results.json',
-                '../data/latest/full_results.json',
-                window.location.pathname.replace(/\/[^/]*$/, '/data/latest/full_results.json'),
-                'full_results_MASSIVE.json'
+                'data/latest/full_results.json',  // Standard relative path
+                './data/latest/full_results.json',  // Explicit relative path
+                '../data/latest/full_results.json',  // Parent directory (worktree scenarios)
+                window.location.pathname.replace(/\/[^/]*$/, '/data/latest/full_results.json'),  // Based on current page path
+                'full_results_MASSIVE.json'  // Fallback filename
             ];
             console.log('Dashboard: Will try these paths:', tryPaths);
+            
+            /*
+                Recursive Path Trying Function:
+                Tries each path sequentially until one succeeds
+                Uses IIFE with recursion to iterate through paths
+            */
             (function next(i){
+                // If we've tried all paths, show error message
                 if(i>=tryPaths.length){ 
                     console.error('No data file found. Tried:', tryPaths);
                     document.getElementById('cities').innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted)">No data file found. Please run the scraper first.</div>';
                     return; 
                 }
-                // Add cache-busting timestamp to prevent browser caching old data
+                
+                /*
+                    Cache-Busting Implementation:
+                    Adds unique query parameters to URL to force fresh fetch
+                    - _t: Current timestamp (milliseconds since epoch)
+                    - _r: Random string (7 characters)
+                    - _s: Session ID (persists for browser session, stored in sessionStorage)
+                    
+                    This triple-layer approach ensures:
+                    1. Timestamp changes every millisecond
+                    2. Random string prevents pattern detection
+                    3. Session ID persists but changes between browser sessions
+                */
                 const path = tryPaths[i];
-                const separator = path.includes('?') ? '&' : '?';
-                const timestamp = Date.now();
-                const random = Math.random().toString(36).substring(7);
+                const separator = path.includes('?') ? '&' : '?';  // Use & if path already has query params
+                const timestamp = Date.now();  // Current time in milliseconds
+                const random = Math.random().toString(36).substring(7);  // Random alphanumeric string
                 const sessionId = sessionStorage.getItem('data_session_id') || Math.random().toString(36).substring(7);
-                sessionStorage.setItem('data_session_id', sessionId);
+                sessionStorage.setItem('data_session_id', sessionId);  // Store for future requests
                 const cacheBustedPath = path + separator + '_t=' + timestamp + '&_r=' + random + '&_s=' + sessionId;
+                
                 console.log('🔄 Attempting to load (cache-busted):', cacheBustedPath);
                 console.log('Cache-busting params: t=' + timestamp + ', r=' + random + ', s=' + sessionId);
+                
+                /*
+                    Fetch Request with Aggressive Cache Prevention:
+                    Uses multiple techniques to prevent caching:
+                    1. cache: 'no-store' - Don't store in cache
+                    2. Cache-Control header - Multiple directives
+                    3. Pragma: no-cache - HTTP/1.0 compatibility
+                    4. Expires: 0 - Expire immediately
+                    5. If-Modified-Since: 0 - Always fetch fresh
+                */
                 fetch(cacheBustedPath, {
                     method: 'GET',
-                    cache: 'no-store',
+                    cache: 'no-store',  // Don't cache this request
                     headers: {
-                        'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0',
-                        'Pragma': 'no-cache',
-                        'Expires': '0',
-                        'If-Modified-Since': '0'
+                        'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0',  // Multiple cache prevention directives
+                        'Pragma': 'no-cache',  // HTTP/1.0 cache prevention
+                        'Expires': '0',  // Expire immediately
+                        'If-Modified-Since': '0'  // Always treat as modified
                     }
                 }).then(r=>{
+                    // Log response details for debugging
                     console.log('📥 Response status:', r.status, 'for', cacheBustedPath);
                     console.log('📥 Response headers:', {
                         'cache-control': r.headers.get('cache-control'),
                         'last-modified': r.headers.get('last-modified')
                     });
+                    
+                    // Check if request was successful (status 200-299)
                     if(!r.ok) {
                         console.error('HTTP error:', r.status, r.statusText);
                         throw new Error('HTTP '+r.status + ': ' + r.statusText);
                     }
+                    
+                    // Parse JSON response
                     return r.json();
                 }).then(data=>{
+                    // Log successful data load with summary statistics
                     console.log('✅ Data loaded successfully:', {
                         cities: data.cities?.length || 0,
                         topics: data.topics?.length || 0,
                         summary: data.summary
                     });
+                    
+                    // Extract and log run timestamp for debugging
                     const runTs = data.summary?.run_timestamp || 'N/A';
                     console.log('📅 Run timestamp from data:', runTs);
                     console.log('📅 Current time:', new Date().toISOString());
-                    // Show timestamp in UI
+                    
+                    // Update timestamp display in UI (if element exists)
                     const tsEl = document.getElementById('data-timestamp');
                     if(tsEl) tsEl.textContent = 'Data from: ' + (runTs !== 'N/A' ? new Date(runTs).toLocaleString() : 'Unknown');
+                    
+                    // Validate data: Check if cities array exists and has content
                     if(!data.cities || data.cities.length === 0){
                         console.error('⚠️ No cities in data!');
                         document.getElementById('cities').innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted)">No cities found in data file.</div>';
                         return;
                     }
-                    renderStats(data.summary||{});
-                    const topics = (data.topics && data.topics.length)? data.topics : buildTopicsFallback(data);
-                    renderTopics(topics);
-                    renderCities(data);
+                    
+                    // Render all dashboard components with loaded data
+                    renderStats(data.summary||{});  // Update statistics cards
+                    const topics = (data.topics && data.topics.length)? data.topics : buildTopicsFallback(data);  // Use topics or build fallback
+                    renderTopics(topics);  // Render global topics/issues
+                    renderCities(data);  // Render city health score cards
                 }).catch(err=>{
+                    // If this path failed, try the next one
                     console.error('❌ Error loading', tryPaths[i], ':', err.message || err);
                     console.error('Full error:', err);
-                    next(i+1);
+                    next(i+1);  // Recursively try next path
                 });
-            })(0);
+            })(0);  // Start with first path (index 0)
         }
+        
+        // Execute loadData immediately when script runs
         loadData();
     })();
     </script>

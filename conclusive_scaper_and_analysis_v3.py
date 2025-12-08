@@ -418,44 +418,109 @@ class Entry:
 
 def safe_request(url: str, headers: Optional[dict] = None, timeout: int = 20, max_retries: int = 2) -> Optional[str]:
     """
-    Safely download a web page with error handling and retries
+    ====================================================================
+    SAFE HTTP REQUEST FUNCTION WITH RETRY LOGIC
+    ====================================================================
+    Safely download a web page with comprehensive error handling and retries.
+    This function implements multiple strategies to handle network failures:
+    1. Retry logic for transient failures
+    2. Exponential backoff for rate limiting (HTTP 429)
+    3. Progressive delays for server errors (5xx)
+    4. Graceful degradation on complete failure
+    
+    This is critical for web scraping reliability, as network requests can
+    fail for many reasons (timeouts, rate limits, server errors, etc.).
     
     Args:
-        url: The web address to download
-        headers: HTTP headers to send (defaults to our standard browser headers)
-        timeout: How long to wait before giving up (in seconds)
-        max_retries: How many times to try if it fails
+        url: The web address (URL) to download
+        headers: HTTP headers to send (defaults to DEFAULT_HEADERS if None)
+                 Headers make requests look like a real browser to avoid blocking
+        timeout: Maximum time to wait for response (seconds)
+                 Prevents hanging indefinitely on slow/unresponsive servers
+        max_retries: Maximum number of retry attempts (default: 2)
+                     Each retry waits progressively longer before attempting
     
     Returns:
-        The HTML content of the page, or None if it failed
-    """
-    hdrs = headers or DEFAULT_HEADERS  # Use provided headers or our default browser headers
+        The HTML content of the page as a string if successful
+        None if all retry attempts failed (allows caller to handle gracefully)
     
-    # Try multiple times in case of temporary network issues
-    for attempt in range(max_retries):         # Loop through retry attempts
+    Error Handling Strategy:
+    - HTTP 200: Success, return content immediately
+    - HTTP 429 (Rate Limit): Exponential backoff (0.5s, 1s, 2s, 4s, max 8s)
+    - HTTP 5xx (Server Error): Progressive delay (0.4s, 0.6s, 0.8s)
+    - Network/Timeout Errors: Retry with increasing delays (0.6s, 1.2s, 1.8s)
+    - All failures: Return None after max_retries exhausted
+    ====================================================================
+    """
+    # Use provided headers or fall back to default browser-like headers
+    # Default headers help avoid being blocked as a bot
+    hdrs = headers or DEFAULT_HEADERS
+    
+    # ====================================================================
+    # RETRY LOOP: Attempt request multiple times with error handling
+    # ====================================================================
+    for attempt in range(max_retries):
         try:
-            # Make the HTTP request to download the webpage
-            r = requests.get(url, headers=hdrs, timeout=timeout)  # Send GET request with headers and timeout
-            # Check if the request was successful (status code 200 means "OK")
-            if r.status_code == 200:           # If server responded with success
-                return r.text                  # Return the HTML content as text
-            # Backoff on rate-limit
+            # ============================================================
+            # ATTEMPT HTTP REQUEST
+            # ============================================================
+            # Send GET request with headers and timeout
+            # Headers make request look like a real browser
+            # Timeout prevents hanging on unresponsive servers
+            r = requests.get(url, headers=hdrs, timeout=timeout)
+            
+            # ============================================================
+            # SUCCESS CASE: HTTP 200 OK
+            # ============================================================
+            # Status code 200 means server successfully returned content
+            if r.status_code == 200:
+                return r.text  # Return HTML content as string
+            
+            # ============================================================
+            # RATE LIMITING HANDLING: HTTP 429 Too Many Requests
+            # ============================================================
+            # Server is temporarily blocking requests due to rate limiting
+            # Use exponential backoff: wait longer with each retry
+            # Formula: min(8.0, 0.5 * 2^attempt) + random(0-0.5)
+            # This prevents all retries from happening simultaneously
+            # Random component adds jitter to avoid thundering herd problem
             if r.status_code == 429:
                 backoff = min(8.0, 0.5 * (2 ** attempt)) + random.uniform(0.0, 0.5)
-                time.sleep(backoff)
-                continue
-            # Retry on transient server errors
+                time.sleep(backoff)  # Wait before retrying
+                continue  # Try again in next iteration
+            
+            # ============================================================
+            # SERVER ERROR HANDLING: HTTP 5xx Internal Server Errors
+            # ============================================================
+            # Server is experiencing temporary issues (500-599)
+            # These are often transient, so retry with progressive delay
+            # Delay increases with each attempt: 0.4s, 0.6s, 0.8s, etc.
             if 500 <= r.status_code < 600:
-                time.sleep(0.4 + 0.2 * attempt)
-                continue
-        except Exception:                      # If any error occurs (network, timeout, etc.)
-            pass                               # Ignore the error and try again
+                time.sleep(0.4 + 0.2 * attempt)  # Progressive delay
+                continue  # Try again in next iteration
+                
+        except Exception:
+            # ============================================================
+            # NETWORK/TIMEOUT ERROR HANDLING
+            # ============================================================
+            # Catches all exceptions (network errors, timeouts, DNS failures, etc.)
+            # Silently continue to retry (error details logged by caller if needed)
+            # This allows graceful degradation rather than crashing
+            pass
         
-        # Wait a bit before trying again (longer wait each time)
-        time.sleep(0.6 * (attempt + 1))       # Sleep 0.6s on first retry, 1.2s on second, etc.
+        # ============================================================
+        # RETRY DELAY: Wait before next attempt
+        # ============================================================
+        # Progressive delay: 0.6s, 1.2s, 1.8s, etc.
+        # Longer waits give server time to recover from issues
+        # Also prevents overwhelming servers with rapid retries
+        time.sleep(0.6 * (attempt + 1))
     
-    # If all attempts failed, return None
-    return None                                # Indicate that the download completely failed
+    # ====================================================================
+    # ALL RETRIES EXHAUSTED: Return None to indicate failure
+    # ====================================================================
+    # Caller can check for None and handle gracefully (skip URL, log error, etc.)
+    return None
 
 def build_http_session() -> requests.Session:
     """
@@ -1514,27 +1579,94 @@ def openai_top_topics(keyword_counts: List[Tuple[str, int]],
 
 def openai_score_city(city: str, snippets: List[str]) -> Dict[str, Any]:
     """
-    Use OpenAI to analyze and score a city's civic health across multiple dimensions
+    ====================================================================
+    AI-POWERED CITY CIVIC HEALTH SCORING FUNCTION
+    ====================================================================
+    This is the core AI analysis function that uses OpenAI's GPT model to
+    score a city's civic health across 12 dimensions based on collected
+    news articles and social media content.
+    
+    Process:
+    1. Formats snippets (articles/posts) into structured input
+    2. Sends to OpenAI GPT model with detailed scoring instructions
+    3. Receives structured JSON with scores and rationales
+    4. Returns comprehensive scoring data for dashboard display
+    
+    The AI model evaluates:
+    - Overall civic health (holistic 0-100 score)
+    - 12 dimension scores (affordability, services, safety, etc.)
+    - Rationale for each dimension (cites specific evidence)
+    - Top 10 issues affecting the city
+    
+    Fairness: Only CITY_DOCS_PER_MODEL_CALL snippets are sent (default 500)
+    This ensures equal analysis depth regardless of available content volume.
     
     Args:
-        city: Name of the city to analyze
-        snippets: Short text excerpts about this city from news/social media
+        city: Name of the city being analyzed (e.g., "New York City")
+        snippets: List of formatted text snippets, each containing:
+                 - Title (20 words max)
+                 - Text excerpt (60 words max)
+                 - Source information
+                 - URL for citation
     
     Returns:
-        Dictionary containing health scores, rationales, and top issues for the city
-    """
-    client = try_get_openai_client()           # Try to get an OpenAI client
-    
-    # If we don't have OpenAI available, return default neutral scores
-    if client is None:                         # If no OpenAI client available
-        return {                               # Return a default scoring structure
-            "overall_health": 50,              # Default overall score of 50/100
-            "category_scores": {k: {"score": 50, "rationale": "insufficient data"} for k in CIVIC_DIMENSIONS},  # 50/100 for each dimension
-            "top_issues": [],                  # Empty issues list
+        Dictionary with structure:
+        {
+            "overall_health": int (0-100),  # Holistic city health score
+            "category_scores": {
+                "affordability": {"score": int, "rationale": str},
+                "services": {"score": int, "rationale": str},
+                # ... all 12 dimensions
+            },
+            "top_issues": [
+                {"name": str, "why_it_matters": str},
+                # ... up to 10 issues
+            ]
         }
     
-    # Combine the text snippets (but limit to save on API costs)
-    bundle = "\n\n".join(snippets[:CITY_DOCS_PER_MODEL_CALL])  # Join snippets with double newlines, limit quantity
+    Error Handling:
+    - If OpenAI unavailable: Returns neutral scores (50/100) with "insufficient data"
+    - If API error: Returns neutral scores as fallback
+    - Never crashes pipeline - always returns valid structure
+    
+    Cost Considerations:
+    - Limits snippets to CITY_DOCS_PER_MODEL_CALL to control API costs
+    - Uses efficient model (gpt-4o-mini by default) for cost-effectiveness
+    - Temperature 0.2 ensures consistent, focused results
+    ====================================================================
+    """
+    # ====================================================================
+    # STEP 1: INITIALIZE OPENAI CLIENT
+    # ====================================================================
+    # Attempt to create OpenAI client using API key from environment
+    # Returns None if API key missing or library unavailable
+    client = try_get_openai_client()
+    
+    # ====================================================================
+    # FALLBACK: RETURN NEUTRAL SCORES IF OPENAI UNAVAILABLE
+    # ====================================================================
+    # This ensures pipeline continues even if OpenAI is down or misconfigured
+    # Neutral scores (50/100) indicate "no data" rather than "bad health"
+    if client is None:
+        return {
+            "overall_health": 50,  # Neutral score (middle of 0-100 range)
+            "category_scores": {
+                k: {"score": 50, "rationale": "insufficient data"} 
+                for k in CIVIC_DIMENSIONS  # All 12 dimensions get neutral score
+            },
+            "top_issues": [],  # Empty list - no issues identified without AI
+        }
+    
+    # ====================================================================
+    # STEP 2: PREPARE SNIPPETS FOR AI ANALYSIS
+    # ====================================================================
+    # Combine snippets into single text bundle for AI processing
+    # Limit to CITY_DOCS_PER_MODEL_CALL to:
+    # 1. Control API costs (fewer tokens = lower cost)
+    # 2. Stay within token limits
+    # 3. Maintain fairness (equal document count per city)
+    # Double newlines separate snippets for clarity
+    bundle = "\n\n".join(snippets[:CITY_DOCS_PER_MODEL_CALL])
     
     # Create a detailed prompt asking OpenAI to analyze this specific city
     prompt = {
@@ -1652,26 +1784,94 @@ def print_city_score(city: str, score: Dict[str, Any]):
 
 def main():
     """
-    The main function that runs our entire civic health analysis pipeline
-    This orchestrates all the steps from data collection to final analysis
+    ====================================================================
+    MAIN PIPELINE FUNCTION - ORCHESTRATES ENTIRE CIVIC HEALTH ANALYSIS
+    ====================================================================
+    This is the central function that coordinates the entire pipeline:
+    1. Parse command-line arguments for configuration
+    2. Load city list (consistent 100-city list)
+    3. Discover news sources and Reddit subreddits dynamically
+    4. Scrape news articles from global sources
+    5. Scrape Reddit posts and comments from city subreddits
+    6. Detect which cities are mentioned in each article/post
+    7. Score and select documents using fairness algorithms
+    8. Analyze topics using AI (OpenAI GPT)
+    9. Score each city's civic health across 12 dimensions using AI
+    10. Generate JSON output for dashboards
+    11. Generate GeoJSON for map visualization
+    
+    The pipeline emphasizes:
+    - Fairness: Equal document caps per city
+    - Transparency: All citations preserved
+    - Robustness: Error handling and retries throughout
+    - Efficiency: Parallel processing where safe
+    
+    Returns:
+        None (writes output files to disk)
+    ====================================================================
     """
-    # -----------------------
-    # Parse CLI flags
-    # -----------------------
-    parser = argparse.ArgumentParser()                                 # Create an argument parser for command-line flags
-    parser.add_argument("--cities_link", type=str, required=False,    # URL to a table of top cities (e.g., Wikipedia)
+    # ====================================================================
+    # STEP 1: PARSE COMMAND-LINE ARGUMENTS
+    # ====================================================================
+    # These arguments allow users to customize the pipeline behavior
+    # without modifying code. Useful for different run types:
+    # - Quick test runs (fewer cities, fewer articles)
+    # - Full production runs (all cities, maximum articles)
+    # - Custom city sets (via cities_link)
+    
+    parser = argparse.ArgumentParser(description="Our City Health - Civic Health Analysis Pipeline")
+    
+    # cities_link: Optional URL to Wikipedia table or other source for city list
+    # If provided, will attempt to scrape city names from that table
+    # If not provided, uses CONSISTENT_100_CITIES list
+    parser.add_argument("--cities_link", type=str, required=False,
                         help="URL to a table listing the top cities by population (e.g., Wikipedia list)")
-    parser.add_argument("--num_cities", type=int, default=100)        # How many cities to analyze (default now 100)
-    parser.add_argument("--per_source_limit", type=int, default=500)  # How many articles per global source to fetch
-    parser.add_argument("--reddit_pages", type=int, default=10)       # How many subreddit pages per city to fetch
-    parser.add_argument("--reddit_comments", type=int, default=100)   # How many comments per post to fetch
-    parser.add_argument("--city_docs", type=int, default=500,         # Fairness normalization: documents per city for AI
-                        help="Documents per city fed into AI scoring (fairness normalization)")
-    parser.add_argument("--out", type=str, default="data/latest",    # Where to write outputs (JSON/TXT)
-                        help="Output directory for results")
-    parser.add_argument("--clear_cache", action="store_true",        # Option to clear cache before running
+    
+    # num_cities: How many cities to analyze (default: 100)
+    # Takes first N cities from CONSISTENT_100_CITIES list
+    # Lower values = faster runs for testing
+    parser.add_argument("--num_cities", type=int, default=100,
+                        help="Number of cities to analyze (default: 100)")
+    
+    # per_source_limit: Maximum articles to fetch from each news source
+    # Higher values = more comprehensive but slower
+    # Default 500 provides good coverage without excessive runtime
+    parser.add_argument("--per_source_limit", type=int, default=500,
+                        help="Maximum articles per news source (default: 500)")
+    
+    # reddit_pages: How many pages of Reddit posts to fetch per subreddit
+    # Each page contains ~50 posts
+    # Default 10 pages = ~500 posts per city subreddit
+    parser.add_argument("--reddit_pages", type=int, default=10,
+                        help="Reddit pages per city subreddit (default: 10)")
+    
+    # reddit_comments: Maximum comments to fetch per Reddit post
+    # Comments provide additional context and sentiment
+    # Default 100 provides good coverage without excessive API calls
+    parser.add_argument("--reddit_comments", type=int, default=100,
+                        help="Comments per Reddit post (default: 100)")
+    
+    # city_docs: CRITICAL FAIRNESS PARAMETER
+    # Maximum documents (articles + posts + comments) sent to AI per city
+    # This ensures no city dominates analysis due to more available content
+    # Default 500 balances comprehensiveness with fairness
+    parser.add_argument("--city_docs", type=int, default=500,
+                        help="Documents per city fed into AI scoring (fairness normalization, default: 500)")
+    
+    # out: Output directory for all generated files
+    # Creates directory if it doesn't exist
+    # Default "data/latest" is standard location for dashboard consumption
+    parser.add_argument("--out", type=str, default="data/latest",
+                        help="Output directory for results (default: data/latest)")
+    
+    # clear_cache: Option to clear SQLite cache before running
+    # Useful when you want to re-scrape previously visited URLs
+    # Normally cache prevents re-scraping to save time and be polite
+    parser.add_argument("--clear_cache", action="store_true",
                         help="Clear the URL cache before scraping (allows re-scraping previously visited URLs)")
-    args = parser.parse_args()                                         # Parse the CLI arguments
+    
+    # Parse all command-line arguments into args object
+    args = parser.parse_args()
 
     # -----------------------
     # Apply CLI config to globals

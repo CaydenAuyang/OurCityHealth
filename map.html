@@ -107,12 +107,48 @@
     </div>
     <p class="footer">Inspired by professional civic dashboards like <a href="https://civicinfoindex.org/the-index/" target="_blank" rel="noopener">this example</a>. This page uses your local data file.</p>
     <div class="panel" style="margin-top:22px;padding:18px 16px">
-      <div class="panel-head" style="border-bottom:0;padding:0 0 10px 0"><span class="pill">About This Project</span></div>
+      <div class="panel-head" style="border-bottom:0;padding:0 0 10px 0"><span class="pill">Scoring Methodology</span></div>
       <div class="copy" style="color:var(--ink)">
-        <p><strong>Overview.</strong> Our City Health aggregates and analyzes public articles and Reddit discussions to estimate a city’s civic health across multiple dimensions. Data collection maximizes coverage via RSS/sitemaps with homepage fallback, concurrency, connection pooling, compression, retries, and SQLite caching.</p>
-        <p><strong>Fairness.</strong> Per-city AI inputs are balanced using source diversity, recency, and relevance weighting so cities with more volume don’t drown out others.</p>
-        <p><strong>Techniques.</strong> NLP keyword and NER extraction, clustering, and model scoring produce city-level health scores and top issues; link aggregation preserves full transparency.</p>
-        <p><strong>Decisions.</strong> Hybrid selection (up to 500 docs/city) balances cost and breadth; local media domain tagging ensures all related local articles are cited even if the city is not named explicitly.</p>
+        <h3 style="color:#c9f3db;font-size:18px;margin:16px 0 12px 0;font-weight:700">Step 1: Document Selection Scoring</h3>
+        <p>Each article/post is scored using a weighted formula to determine which documents are most valuable for analysis:</p>
+        <ul style="margin-left:20px;margin-bottom:16px">
+          <li><strong>45% - Civic Relevance:</strong> Keyword density matching 12 civic dimensions (affordability, services, safety, opportunity, culture, environment, transportation, governance, housing, economy, education, health). Score: min(hits/8.0, 1.0)</li>
+          <li><strong>30% - Source Quality/Reputation:</strong> News sources get reputation scores (0.60-0.95), Reddit posts get 0.58, other sources get 0.52</li>
+          <li><strong>15% - Length/Coverage:</strong> Longer articles (up to 600 words) score higher. Formula: min(word_count/600.0, 1.0)</li>
+          <li><strong>10% - Recency:</strong> Recent content scores higher: ≤14 days (1.0), ≤30 days (0.9), ≤90 days (0.7), ≤180 days (0.55), ≤365 days (0.45), >365 days (0.35)</li>
+        </ul>
+        <p style="margin-bottom:16px"><strong>Final Selection Score:</strong> (0.30 × quality) + (0.45 × relevance) + (0.15 × length) + (0.10 × recency)</p>
+
+        <h3 style="color:#c9f3db;font-size:18px;margin:16px 0 12px 0;font-weight:700">Step 2: Fairness Normalization</h3>
+        <p>To ensure no city is advantaged by sheer volume, we apply strict fairness caps:</p>
+        <ul style="margin-left:20px;margin-bottom:16px">
+          <li><strong>Per-City Document Cap:</strong> Maximum 500 documents per city (configurable via --city_docs flag)</li>
+          <li><strong>Source Type Balance:</strong> Documents are evenly distributed across source types (news articles, Reddit posts, Reddit comments)</li>
+          <li><strong>Domain Diversity:</strong> Maximum documents per domain = max(3, city_docs ÷ max(8, number_of_domains))</li>
+          <li><strong>Title Deduplication:</strong> Duplicate titles are filtered out to avoid redundancy</li>
+        </ul>
+
+        <h3 style="color:#c9f3db;font-size:18px;margin:16px 0 12px 0;font-weight:700">Step 3: AI Scoring (OpenAI GPT Model)</h3>
+        <p>The selected documents are formatted as snippets and sent to OpenAI's language model for analysis:</p>
+        <ul style="margin-left:20px;margin-bottom:16px">
+          <li><strong>Model:</strong> GPT-4 or GPT-3.5-turbo (configurable)</li>
+          <li><strong>Temperature:</strong> 0.2 (low for consistent, focused results)</li>
+          <li><strong>Input Format:</strong> Up to 100 snippets per city, each containing: Title (20 words), Text (60 words), Source, URL</li>
+          <li><strong>Output Structure:</strong>
+            <ul style="margin-left:20px;margin-top:8px">
+              <li><strong>Overall Health Score:</strong> Single integer 0-100 (holistic assessment, not a weighted average)</li>
+              <li><strong>12 Dimension Scores:</strong> Each dimension receives a score (0-100) and rationale</li>
+              <li><strong>Top 10 Issues:</strong> Array of issues with name and "why it matters" explanation</li>
+            </ul>
+          </li>
+          <li><strong>Scoring Guidance:</strong> Higher scores indicate better civic health (net of sentiment). The model weighs recency (implied), quality/reputation, length, and diversity across sources (news vs social). It favors specificity (policies, programs, metrics) over generic text.</li>
+        </ul>
+
+        <h3 style="color:#c9f3db;font-size:18px;margin:16px 0 12px 0;font-weight:700">Step 4: Final Scores</h3>
+        <p>The overall health score (0-100) is produced directly by the AI model as a holistic assessment of all 12 dimensions combined. It is <em>not</em> a weighted average of dimension scores, but rather the model's integrated evaluation of the city's overall civic health based on all available signals.</p>
+
+        <h3 style="color:#c9f3db;font-size:18px;margin:16px 0 12px 0;font-weight:700">Transparency & Auditability</h3>
+        <p>Every city exposes <em>all</em> source links used (Articles + Reddit posts) for full auditability. Cities with limited data are marked by lower coverage; we never fabricate citations. All citations are preserved in the JSON output and displayed in the sidebar when you click on a city.</p>
       </div>
     </div>
   </div>
@@ -140,18 +176,51 @@
   <!-- Hover tooltip -->
   <div id="city-tooltip" class="city-tooltip" style="display:none"></div>
 
+  <!-- 
+      ====================================================================
+      EXTERNAL LIBRARY LOADING SECTION
+      ====================================================================
+      Loads required JavaScript libraries for 3D globe visualization:
+      1. Three.js: Core 3D graphics library
+      2. ThreeGlobe: Globe visualization plugin for Three.js
+      3. TopoJSON: Geographic data format parser
+      ====================================================================
+  -->
   <script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
   <script src="https://unpkg.com/three-globe@2.30.0/dist/three-globe.min.js"></script>
   <script src="https://unpkg.com/topojson-client@3"></script>
+  
+  <!-- 
+      ====================================================================
+      LIBRARY VERIFICATION SCRIPT
+      ====================================================================
+      Verifies that all required libraries loaded successfully.
+      Runs after page load to ensure libraries are available.
+      Logs status to console for debugging.
+      ====================================================================
+  -->
   <script>
-    // Verify libraries loaded
+    // Wait for page to fully load before checking libraries
     window.addEventListener('load', function() {
       console.log('🔍 Library check:');
+      // Check if THREE.js global object exists (indicates library loaded)
       console.log('  THREE.js:', typeof THREE !== 'undefined' ? '✅ Loaded' : '❌ Missing');
+      // Check if ThreeGlobe global object exists (indicates library loaded)
       console.log('  ThreeGlobe:', typeof ThreeGlobe !== 'undefined' ? '✅ Loaded' : '❌ Missing');
+      // Check if globe container div exists in DOM
       console.log('  Globe container:', document.getElementById('globe') ? '✅ Found' : '❌ Missing');
     });
   </script>
+  
+  <!-- 
+      ====================================================================
+      ES MODULE IMPORT MAP
+      ====================================================================
+      Configures module resolution for ES6 imports.
+      Allows importing OrbitControls from Three.js addons.
+      Uses importmap to map module names to CDN URLs.
+      ====================================================================
+  -->
   <script type="importmap">
   {
     "imports": {
@@ -160,14 +229,44 @@
     }
   }
   </script>
+  
+  <!-- 
+      ====================================================================
+      ORBIT CONTROLS MODULE IMPORT
+      ====================================================================
+      Imports OrbitControls as ES module for camera interaction.
+      Makes it available globally via window.OrbitControls for compatibility.
+      OrbitControls enables: drag to rotate, scroll to zoom, auto-rotation
+      ====================================================================
+  -->
   <script type="module">
   import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-  window.OrbitControls = OrbitControls;
+  window.OrbitControls = OrbitControls;  // Make available globally
   </script>
+  
+  <!-- 
+      ====================================================================
+      MAIN JAVASCRIPT APPLICATION CODE
+      ====================================================================
+      This section contains all the interactive globe functionality:
+      - Data loading from full_results.json
+      - Globe initialization and rendering
+      - City marker placement and click detection
+      - Camera controls and animations
+      - Sidebar city detail display
+      - Search functionality
+      ====================================================================
+  -->
   <script>
-  // Sidebar functionality is handled by showCity(), closeSidebar(), and setSidebarTab() functions
-
-  // Load results JSON
+  /*
+      ====================================================================
+      GLOBAL VARIABLES AND INITIALIZATION
+      ====================================================================
+  */
+  
+  // RESULTS: Stores the loaded JSON data from full_results.json
+  // Contains: cities array, topics array, summary statistics
+  // Set to null initially, populated after successful data load
   let RESULTS = null;
   const GEO_SOURCE_PRIORITY = {
     'database': 100,  // Highest priority - verified accurate coordinates
@@ -763,8 +862,15 @@
     const pill = document.getElementById('summary-pill');
     if(pill) pill.textContent = 'Failed to load results.json: ' + (e.message || 'Unknown error');
     const listEl = document.getElementById('city-list');
-    if(listEl) listEl.innerHTML = '<div class="muted" style="padding:16px">Failed to load data. Check browser console (F12) for errors.<br>Make sure you are accessing via http://localhost:8000/map.html</div>';
+    const currentUrl = window.location.href;
+    const isGitHubPages = currentUrl.includes('github.io');
+    const errorMsg = isGitHubPages 
+      ? 'Failed to load data. The data files may not be committed to the repository or the path is incorrect. Check browser console (F12) for details.'
+      : 'Failed to load data. Check browser console (F12) for errors.<br>Make sure data/latest/full_results.json exists and is accessible.';
+    if(listEl) listEl.innerHTML = `<div class="muted" style="padding:16px">${errorMsg}</div>`;
     console.error('Full error details:', e);
+    console.error('Current URL:', currentUrl);
+    console.error('Tried paths:', ['data/latest/full_results.json', './data/latest/full_results.json', '../data/latest/full_results.json']);
   });
 
   function showCity(c){
@@ -804,34 +910,87 @@
     });
   }
 
+  /*
+      ====================================================================
+      buildGlobe FUNCTION - CORE GLOBE VISUALIZATION SETUP
+      ====================================================================
+      This is the main function that creates and configures the 3D globe.
+      It handles:
+      1. Validation of prerequisites (container, libraries, data)
+      2. Three.js scene, camera, and renderer setup
+      3. ThreeGlobe initialization with Earth textures
+      4. City marker placement and styling
+      5. Click detection and interaction
+      6. Camera controls (OrbitControls)
+      7. Animation loop for smooth rendering
+      
+      Parameters:
+      - cities: Array of city objects from full_results.json
+      - cityDetails: Map of city names to coordinate/metadata objects
+      - cityPolygons: Array of GeoJSON features for city boundaries
+      
+      Returns:
+      - None (modifies DOM and sets up global event handlers)
+      
+      Error Handling:
+      - Validates container exists
+      - Validates libraries loaded
+      - Validates cities data exists
+      - Shows user-friendly error messages if validation fails
+      ====================================================================
+  */
   function buildGlobe(cities, cityDetails, cityPolygons){
+    // Log function call with city count for debugging
     console.log('🔍 buildGlobe called with', cities?.length || 0, 'cities');
+    
+    // ====================================================================
+    // STEP 1: VALIDATE GLOBE CONTAINER ELEMENT
+    // ====================================================================
+    // Get the div element where the globe will be rendered
+    // This element is defined in HTML with id="globe"
     const container = document.getElementById('globe');
     if(!container){
+      // Container missing - cannot proceed without rendering target
       console.error('❌ Globe container not found!');
-      return;
+      return;  // Exit early
     }
     console.log('✅ Globe container found');
     
-    // Safety check: ensure we have cities to display
+    // ====================================================================
+    // STEP 2: VALIDATE CITIES DATA
+    // ====================================================================
+    // Ensure we have city data to display
+    // Without cities, globe would be empty and confusing
     if(!cities || cities.length === 0){
       console.warn('⚠️ No cities provided');
+      // Show user-friendly message in container
       container.innerHTML = '<div class="muted" style="padding:16px;text-align:center">No city data available. Please run the scraper first.</div>';
-      return;
+      return;  // Exit early
     }
     
-    // Check if Three.js and ThreeGlobe are loaded
+    // ====================================================================
+    // STEP 3: VALIDATE THREE.JS LIBRARY LOADED
+    // ====================================================================
+    // THREE.js is required for all 3D rendering
+    // Check if global THREE object exists (indicates library loaded)
     if(typeof THREE === 'undefined'){
       console.error('❌ THREE.js not loaded');
+      // Show error message to user
       container.innerHTML = '<div class="muted" style="padding:16px;text-align:center">Error: THREE.js library failed to load. Check your internet connection.</div>';
-      return;
+      return;  // Exit early
     }
     console.log('✅ THREE.js loaded');
     
+    // ====================================================================
+    // STEP 4: VALIDATE THREEGLOBE LIBRARY LOADED
+    // ====================================================================
+    // ThreeGlobe is required for globe-specific functionality
+    // Check if global ThreeGlobe object exists
     if(typeof ThreeGlobe === 'undefined'){
       console.error('❌ ThreeGlobe not loaded');
+      // Show error message to user
       container.innerHTML = '<div class="muted" style="padding:16px;text-align:center">Error: ThreeGlobe library failed to load. Check your internet connection.</div>';
-      return;
+      return;  // Exit early
     }
     console.log('✅ ThreeGlobe loaded');
 
@@ -1652,23 +1811,78 @@
       return animation;
     }
 
+    /*
+        ====================================================================
+        centerCameraOnCity FUNCTION - SMOOTH CAMERA ANIMATION TO CITY
+        ====================================================================
+        This function smoothly animates the camera to focus on a specific city
+        when the user clicks a city card or city marker on the globe.
+        
+        Animation Sequence:
+        1. Stop any existing camera animation
+        2. Rotate camera to face the city (2 seconds)
+        3. Zoom in closer to the city (1.5 seconds)
+        4. Hold position for 30 seconds
+        5. Zoom out (1.5 seconds)
+        6. Rotate back to original position (2 seconds)
+        7. Re-enable auto-rotation
+        
+        Camera Positioning Strategy:
+        - Positions camera on the SAME side of globe as the city
+        - Camera looks at globe center (0,0,0)
+        - City appears centered because it's on the line from camera through center
+        - This ensures user sees the front of the globe, not the back
+        
+        Parameters:
+        - city: City object from full_results.json (contains name, scores, etc.)
+        - cityDetails: Map of city names to coordinate/metadata objects
+        
+        Returns:
+        - None (modifies camera position and controls)
+        
+        Side Effects:
+        - Opens city detail sidebar
+        - Disables auto-rotation during animation
+        - Sets timeout to restore camera after 30 seconds
+        ====================================================================
+    */
     function centerCameraOnCity(city, cityDetails){
       console.log('centerCameraOnCity called for:', city.name);
+      
+      // ====================================================================
+      // STEP 1: VALIDATE CITY COORDINATES
+      // ====================================================================
+      // Get city metadata (coordinates, country, etc.)
       const meta = cityDetails.get(city.name);
+      
+      // Check if coordinates are valid (finite numbers)
+      // If invalid, just show sidebar without camera movement
       if(!meta || !Number.isFinite(Number(meta.lat)) || !Number.isFinite(Number(meta.lng))){
         console.warn('Cannot center on city:', city.name, '- no coordinates');
-        showCity(city);
-        return;
+        showCity(city);  // Still show sidebar even without camera movement
+        return;  // Exit early
       }
 
+      // ====================================================================
+      // STEP 2: STOP EXISTING ANIMATIONS
+      // ====================================================================
+      // Cancel any in-progress camera animation
+      // Prevents conflicts if user clicks multiple cities rapidly
       stopActiveCameraAnimation();
+      
+      // Clear any pending timeout for camera restoration
+      // Ensures only one timeout is active at a time
       if(centerCityTimeout){
         clearTimeout(centerCityTimeout);
         centerCityTimeout = null;
       }
 
-      const lat = Number(meta.lat);
-      const lng = Number(meta.lng);
+      // ====================================================================
+      // STEP 3: EXTRACT CITY COORDINATES
+      // ====================================================================
+      // Convert to numbers (ensures numeric type, not string)
+      const lat = Number(meta.lat);  // Latitude (-90 to 90)
+      const lng = Number(meta.lng);  // Longitude (-180 to 180)
       console.log('City coordinates:', lat, lng);
       
       // Find the point data and get its actual rendered position
@@ -1802,7 +2016,8 @@
                       () => {
                         if(controls){
                           controls.target.copy(globeCenter); // Ensure target is at center
-                          controls.autoRotate = false; // Keep disabled (user requested no automatic rotation)
+                          // Re-enable auto-rotate after animation completes
+                          controls.autoRotate = true;
                           controls.update();
                         } else {
                           camera.lookAt(globeCenter);
@@ -1845,7 +2060,7 @@
         controls.target.set(0, 0, 0); // Always target globe center
         controls.minDistance = 140;
         controls.maxDistance = 360;
-        controls.autoRotate = false; // Disabled - no automatic rotation
+        controls.autoRotate = true; // Enabled - automatic rotation
         controls.autoRotateSpeed = 0.5;
         
         controls.addEventListener('start', () => {
@@ -1861,12 +2076,12 @@
         });
 
         controls.addEventListener('end', () => {
-          // Keep auto-rotate disabled (user requested no automatic rotation)
-          // if(!centerCityTimeout){
-          //   setTimeout(() => {
-          //     if (controls && !centerCityTimeout) controls.autoRotate = true;
-          //   }, 2000);
-          // }
+          // Re-enable auto-rotate after user interaction ends
+          if(!centerCityTimeout){
+            setTimeout(() => {
+              if (controls && !centerCityTimeout) controls.autoRotate = true;
+            }, 2000);
+          }
         });
 
         renderer.domElement.addEventListener('wheel', () => {
@@ -1878,10 +2093,10 @@
           if (controls) {
             controls.autoRotate = false;
             clearTimeout(renderer.domElement._wheelTimeout);
-            // Keep auto-rotate disabled (user requested no automatic rotation)
-            // renderer.domElement._wheelTimeout = setTimeout(() => {
-            //   if (controls && !centerCityTimeout) controls.autoRotate = true;
-            // }, 1600);
+            // Re-enable auto-rotate after zoom interaction ends
+            renderer.domElement._wheelTimeout = setTimeout(() => {
+              if (controls && !centerCityTimeout) controls.autoRotate = true;
+            }, 1600);
           }
         }, { passive: true });
       } catch(e) {
