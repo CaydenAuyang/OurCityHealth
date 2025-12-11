@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Our City Health — Business Portfolio Configuration</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#0b1f14;--card:#10281b;--ink:#e9fff2;--muted:#b8e6cf;--accent:#22c55e;--accent2:#16a34a;--grid:#123822}
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,#07140e, #0b1f14);color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;min-height:100vh}
+    header{padding:36px 20px 8px;max-width:1140px;margin:0 auto}
+    h1{margin:0;font-size:34px;letter-spacing:.2px}
+    h2{margin:0 0 8px 0;font-size:22px}
+    h3{margin:16px 0 12px 0;font-size:18px;color:#c9f3db;font-weight:700}
+    p{margin:0 0 12px 0}
+    p.lead{margin:8px 0 0;color:var(--muted);line-height:1.7}
+    .copy{line-height:1.85;letter-spacing:.15px}
+    .section{margin:28px 0}
+    .wrap{max-width:1200px;margin:16px auto;padding:0 20px}
+    .panel{background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:14px;overflow:hidden;margin-bottom:20px}
+    .panel-head{display:flex;gap:16px;align-items:center;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.06)}
+    .pill{padding:6px 10px;border-radius:999px;background:rgba(34,197,94,.12);color:#a8f3c7;font-weight:600;font-size:12px}
+    .muted{color:var(--muted);font-size:12px}
+    
+    /* Form elements */
+    .form-group{margin-bottom:24px}
+    .form-label{display:block;margin-bottom:8px;font-weight:600;color:#c9f3db;font-size:14px}
+    .form-input{all:unset;background:rgba(255,255,255,.08);padding:12px 14px;border-radius:12px;width:100%;color:var(--ink);border:1px solid rgba(255,255,255,.1);transition:border-color 0.2s}
+    .form-input:focus{border-color:var(--accent)}
+    .form-select-wrapper{position:relative}
+    .form-select{all:unset;background:rgba(255,255,255,.08);padding:12px 14px;border-radius:12px;width:100%;color:var(--ink);border:1px solid rgba(255,255,255,.1);cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:border-color 0.2s}
+    .form-select:focus{border-color:var(--accent)}
+    .form-select.open{border-bottom-left-radius:0;border-bottom-right-radius:0}
+    .dropdown-menu{position:absolute;top:100%;left:0;right:0;background:var(--card);border:1px solid rgba(255,255,255,.1);border-top:none;border-radius:0 0 12px 12px;max-height:300px;overflow-y:auto;z-index:100;display:none;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+    .dropdown-menu.open{display:block}
+    .dropdown-search{all:unset;width:100%;padding:10px 14px;background:rgba(255,255,255,.05);color:var(--ink);border-bottom:1px solid rgba(255,255,255,.06)}
+    .dropdown-item{padding:10px 14px;cursor:pointer;transition:background 0.2s;display:flex;align-items:center;gap:8px}
+    .dropdown-item:hover{background:rgba(34,197,94,.1)}
+    .dropdown-item input[type="checkbox"]{width:16px;height:16px;cursor:pointer;accent-color:var(--accent)}
+    .dropdown-item label{cursor:pointer;flex:1}
+    .chips-container{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(34,197,94,.15);border-radius:20px;font-size:13px;color:#a8f3c7}
+    .chip-remove{cursor:pointer;font-weight:700;opacity:0.7;transition:opacity 0.2s}
+    .chip-remove:hover{opacity:1}
+    
+    /* Chatbot */
+    .chatbot-container{background:rgba(16,40,27,.5);border-radius:12px;padding:16px;margin-top:20px}
+    .chat-messages{max-height:400px;overflow-y:auto;margin-bottom:16px;padding:12px;background:rgba(0,0,0,.2);border-radius:8px}
+    .chat-message{margin-bottom:16px;padding:12px;border-radius:8px}
+    .chat-message.user{background:rgba(34,197,94,.15);margin-left:20%}
+    .chat-message.assistant{background:rgba(255,255,255,.05);margin-right:20%}
+    .chat-message-header{font-size:11px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;font-weight:600}
+    .chat-message-content{line-height:1.6}
+    .chat-input-container{display:flex;gap:8px}
+    .chat-input{all:unset;flex:1;background:rgba(255,255,255,.08);padding:12px 14px;border-radius:12px;color:var(--ink);border:1px solid rgba(255,255,255,.1)}
+    .chat-send{all:unset;padding:12px 24px;background:var(--accent);color:#0b1f14;border-radius:12px;cursor:pointer;font-weight:600;transition:background 0.2s}
+    .chat-send:hover{background:var(--accent2)}
+    .chat-send:disabled{opacity:0.5;cursor:not-allowed}
+    .loading{display:inline-block;width:12px;height:12px;border:2px solid rgba(34,197,94,.3);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    
+    /* Summary panel */
+    .summary-panel{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:12px;padding:20px;margin-top:24px}
+    .summary-section{margin-bottom:20px}
+    .summary-section:last-child{margin-bottom:0}
+    .summary-list{list-style:none;padding:0;margin:8px 0 0 0}
+    .summary-list li{padding:6px 0;color:var(--muted)}
+    
+    /* Command display */
+    .command-display{background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:14px;font-family:'Courier New',monospace;font-size:13px;color:#a8f3c7;overflow-x:auto;margin-top:12px;position:relative}
+    .copy-btn{all:unset;position:absolute;top:8px;right:8px;padding:6px 12px;background:rgba(34,197,94,.2);color:#a8f3c7;border-radius:6px;cursor:pointer;font-size:11px;font-weight:600;transition:background 0.2s}
+    .copy-btn:hover{background:rgba(34,197,94,.3)}
+    
+    /* Buttons */
+    .btn{all:unset;padding:14px 28px;background:var(--accent);color:#0b1f14;border-radius:12px;cursor:pointer;font-weight:600;transition:background 0.2s;display:inline-block;text-align:center}
+    .btn:hover{background:var(--accent2)}
+    .btn-secondary{background:rgba(255,255,255,.1);color:var(--ink)}
+    .btn-secondary:hover{background:rgba(255,255,255,.15)}
+    
+    /* Error/Success messages */
+    .alert{padding:12px 16px;border-radius:8px;margin-bottom:16px}
+    .alert-error{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#fca5a5}
+    .alert-success{background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);color:#a8f3c7}
+    
+    @media(max-width:768px){
+      .wrap{padding:0 16px}
+      header{padding:24px 16px 8px}
+      h1{font-size:28px}
+      .chat-message.user,.chat-message.assistant{margin-left:0;margin-right:0}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Our City Health — Business Portfolio Configuration</h1>
+    <p class="lead">Configure a custom city health analysis portfolio for deeper, tailored insights.</p>
+    <div class="section copy" style="color:var(--muted);max-width:1120px">
+      <h2 style="color:#c9f3db">Custom City Portfolio Analysis</h2>
+      <p>Select a portfolio of cities where your organization operates or plans to expand. We'll repurpose our existing pipeline with increased depth—more sources, more posts, longer historical data—and potentially add sector-specific sources (health, housing, labour, education) tailored to your needs.</p>
+      <p>Use the chatbot below to clarify your requirements and ensure the analysis matches exactly what you're looking for.</p>
+    </div>
+  </header>
+  
+  <div class="wrap">
+    <!-- Main Form -->
+    <div class="panel">
+      <div class="panel-head">
+        <span class="pill">Configuration</span>
+      </div>
+      <div style="padding:20px">
+        <!-- City Selector -->
+        <div class="form-group">
+          <label class="form-label">Select Cities (Multi-select)</label>
+          <div class="form-select-wrapper">
+            <div class="form-select" id="city-select" tabindex="0">
+              <span id="city-select-text">Select cities...</span>
+              <span>▼</span>
+            </div>
+            <div class="dropdown-menu" id="city-dropdown">
+              <input type="text" class="dropdown-search" id="city-search" placeholder="Search cities..." />
+              <div id="city-options"></div>
+            </div>
+          </div>
+          <div class="chips-container" id="city-chips"></div>
+        </div>
+        
+        <!-- Category Selector -->
+        <div class="form-group">
+          <label class="form-label">Select Categories / Dimensions (Multi-select)</label>
+          <div class="form-select-wrapper">
+            <div class="form-select" id="category-select" tabindex="0">
+              <span id="category-select-text">Select categories...</span>
+              <span>▼</span>
+            </div>
+            <div class="dropdown-menu" id="category-dropdown">
+              <div id="category-options"></div>
+            </div>
+          </div>
+          <div class="chips-container" id="category-chips"></div>
+        </div>
+        
+        <!-- Chatbot -->
+        <div class="form-group">
+          <label class="form-label">Chatbot Assistant</label>
+          <p class="muted" style="margin-bottom:12px">Describe what you're looking for. The assistant will help clarify your requirements and ensure the analysis is tailored to your needs.</p>
+          <div class="chatbot-container">
+            <div class="chat-messages" id="chat-messages">
+              <div class="chat-message assistant">
+                <div class="chat-message-header">Assistant</div>
+                <div class="chat-message-content">Hello! I'm here to help you configure your city health analysis portfolio. Tell me what cities you're interested in, what aspects of civic health matter most to your organization, and any specific questions or requirements you have.</div>
+              </div>
+            </div>
+            <div class="chat-input-container">
+              <input type="text" class="chat-input" id="chat-input" placeholder="Type your message..." />
+              <button class="chat-send" id="chat-send">Send</button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Submit Button -->
+        <div style="margin-top:32px;display:flex;gap:12px">
+          <button class="btn" id="submit-btn">Generate Configuration & Preview</button>
+          <button class="btn btn-secondary" id="reset-btn">Reset</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Summary/Preview Panel -->
+    <div class="panel" id="summary-panel" style="display:none">
+      <div class="panel-head">
+        <span class="pill">Analysis Preview</span>
+      </div>
+      <div style="padding:20px">
+        <div class="summary-panel" id="summary-content"></div>
+        <div style="margin-top:24px">
+          <h3>Generated Configuration</h3>
+          <p class="muted">Configuration file will be downloaded automatically. You can also copy the command below to run the analysis.</p>
+          <div class="command-display" id="command-display">
+            <button class="copy-btn" id="copy-command">Copy</button>
+            <pre id="command-text"></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // State
+    let citiesData = [];
+    let selectedCities = [];
+    let selectedCategories = [];
+    let chatHistory = [];
+    
+    const CIVIC_DIMENSIONS = [
+      {id: 'affordability', name: 'Affordability', desc: 'Cost of living, rent, prices, inflation'},
+      {id: 'services', name: 'Services', desc: 'Public services, hospitals, schools, utilities'},
+      {id: 'safety', name: 'Safety', desc: 'Crime rates, public safety measures'},
+      {id: 'opportunity', name: 'Opportunity', desc: 'Job opportunities, economic mobility'},
+      {id: 'culture', name: 'Culture', desc: 'Arts, events, cultural life, diversity'},
+      {id: 'environment', name: 'Environment', desc: 'Air quality, sustainability, climate'},
+      {id: 'transportation', name: 'Transportation', desc: 'Public transit, traffic, infrastructure'},
+      {id: 'governance', name: 'Governance', desc: 'Government effectiveness, transparency'},
+      {id: 'housing', name: 'Housing', desc: 'Housing availability, quality, accessibility'},
+      {id: 'economy', name: 'Economy', desc: 'Economic health, growth, stability'},
+      {id: 'education', name: 'Education', desc: 'Educational institutions and access'},
+      {id: 'health', name: 'Health', desc: 'Healthcare access, quality, public health'}
+    ];
+    
+    // Load cities from data file
+    async function loadCities() {
+      const paths = [
+        'data/latest/full_results.json',
+        './data/latest/full_results.json',
+        '../data/latest/full_results.json',
+        'full_results.json'
+      ];
+      
+      for (const path of paths) {
+        try {
+          const response = await fetch(path);
+          if (response.ok) {
+            const data = await response.json();
+            if (data.cities && Array.isArray(data.cities)) {
+              citiesData = data.cities.map(c => c.city || c.name || '').filter(Boolean).sort();
+              renderCityOptions();
+              return;
+            }
+          }
+        } catch (e) {
+          console.warn('Failed to load from', path, e);
+        }
+      }
+      
+      // Fallback: use a default list if data file not found
+      citiesData = [
+        'New York', 'London', 'Tokyo', 'Paris', 'Hong Kong', 'Singapore', 'Sydney',
+        'Los Angeles', 'Chicago', 'Toronto', 'Berlin', 'Madrid', 'Rome', 'Amsterdam',
+        'Seoul', 'Bangkok', 'Dubai', 'Mumbai', 'Shanghai', 'Beijing', 'Shenzhen'
+      ];
+      renderCityOptions();
+    }
+    
+    // Render city options
+    function renderCityOptions() {
+      const container = document.getElementById('city-options');
+      const searchTerm = document.getElementById('city-search').value.toLowerCase();
+      const filtered = citiesData.filter(city => city.toLowerCase().includes(searchTerm));
+      
+      container.innerHTML = filtered.map(city => {
+        const checked = selectedCities.includes(city) ? 'checked' : '';
+        return `
+          <div class="dropdown-item">
+            <input type="checkbox" id="city-${city}" ${checked} onchange="toggleCity('${city}')" />
+            <label for="city-${city}">${city}</label>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    // City selector dropdown
+    const citySelect = document.getElementById('city-select');
+    const cityDropdown = document.getElementById('city-dropdown');
+    
+    citySelect.addEventListener('click', (e) => {
+      e.stopPropagation();
+      cityDropdown.classList.toggle('open');
+      citySelect.classList.toggle('open');
+      if (cityDropdown.classList.contains('open')) {
+        document.getElementById('city-search').focus();
+      }
+    });
+    
+    document.getElementById('city-search').addEventListener('input', renderCityOptions);
+    
+    document.addEventListener('click', (e) => {
+      if (!citySelect.contains(e.target) && !cityDropdown.contains(e.target)) {
+        cityDropdown.classList.remove('open');
+        citySelect.classList.remove('open');
+      }
+    });
+    
+    // Toggle city selection
+    window.toggleCity = function(city) {
+      const index = selectedCities.indexOf(city);
+      if (index > -1) {
+        selectedCities.splice(index, 1);
+      } else {
+        selectedCities.push(city);
+      }
+      updateCityChips();
+      renderCityOptions();
+    };
+    
+    function updateCityChips() {
+      const container = document.getElementById('city-chips');
+      const text = document.getElementById('city-select-text');
+      
+      if (selectedCities.length === 0) {
+        container.innerHTML = '';
+        text.textContent = 'Select cities...';
+      } else {
+        text.textContent = `${selectedCities.length} city${selectedCities.length > 1 ? 'ies' : ''} selected`;
+        container.innerHTML = selectedCities.map(city => `
+          <span class="chip">
+            ${city}
+            <span class="chip-remove" onclick="removeCity('${city}')">×</span>
+          </span>
+        `).join('');
+      }
+    }
+    
+    window.removeCity = function(city) {
+      selectedCities = selectedCities.filter(c => c !== city);
+      updateCityChips();
+      renderCityOptions();
+    };
+    
+    // Category selector
+    const categorySelect = document.getElementById('category-select');
+    const categoryDropdown = document.getElementById('category-dropdown');
+    
+    categorySelect.addEventListener('click', (e) => {
+      e.stopPropagation();
+      categoryDropdown.classList.toggle('open');
+      categorySelect.classList.toggle('open');
+    });
+    
+    document.addEventListener('click', (e) => {
+      if (!categorySelect.contains(e.target) && !categoryDropdown.contains(e.target)) {
+        categoryDropdown.classList.remove('open');
+        categorySelect.classList.remove('open');
+      }
+    });
+    
+    // Render category options
+    function renderCategoryOptions() {
+      const container = document.getElementById('category-options');
+      container.innerHTML = CIVIC_DIMENSIONS.map(dim => {
+        const checked = selectedCategories.includes(dim.id) ? 'checked' : '';
+        return `
+          <div class="dropdown-item">
+            <input type="checkbox" id="cat-${dim.id}" ${checked} onchange="toggleCategory('${dim.id}')" />
+            <label for="cat-${dim.id}">
+              <strong>${dim.name}</strong>
+              <span class="muted" style="display:block;font-size:11px;margin-top:2px">${dim.desc}</span>
+            </label>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    renderCategoryOptions();
+    
+    window.toggleCategory = function(categoryId) {
+      const index = selectedCategories.indexOf(categoryId);
+      if (index > -1) {
+        selectedCategories.splice(index, 1);
+      } else {
+        selectedCategories.push(categoryId);
+      }
+      updateCategoryChips();
+      renderCategoryOptions();
+    };
+    
+    function updateCategoryChips() {
+      const container = document.getElementById('category-chips');
+      const text = document.getElementById('category-select-text');
+      
+      if (selectedCategories.length === 0) {
+        container.innerHTML = '';
+        text.textContent = 'Select categories...';
+      } else {
+        text.textContent = `${selectedCategories.length} categor${selectedCategories.length > 1 ? 'ies' : 'y'} selected`;
+        container.innerHTML = selectedCategories.map(catId => {
+          const dim = CIVIC_DIMENSIONS.find(d => d.id === catId);
+          return `
+            <span class="chip">
+              ${dim ? dim.name : catId}
+              <span class="chip-remove" onclick="removeCategory('${catId}')">×</span>
+            </span>
+          `;
+        }).join('');
+      }
+    }
+    
+    window.removeCategory = function(categoryId) {
+      selectedCategories = selectedCategories.filter(c => c !== categoryId);
+      updateCategoryChips();
+      renderCategoryOptions();
+    };
+    
+    // Chatbot functionality
+    const chatMessages = document.getElementById('chat-messages');
+    const chatInput = document.getElementById('chat-input');
+    const chatSend = document.getElementById('chat-send');
+    
+    function addChatMessage(role, content) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `chat-message ${role}`;
+      messageDiv.innerHTML = `
+        <div class="chat-message-header">${role === 'user' ? 'You' : 'Assistant'}</div>
+        <div class="chat-message-content">${content}</div>
+      `;
+      chatMessages.appendChild(messageDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    async function sendChatMessage() {
+      const message = chatInput.value.trim();
+      if (!message) return;
+      
+      chatInput.value = '';
+      chatSend.disabled = true;
+      addChatMessage('user', message);
+      chatHistory.push({role: 'user', content: message});
+      
+      // Show loading
+      const loadingDiv = document.createElement('div');
+      loadingDiv.className = 'chat-message assistant';
+      loadingDiv.innerHTML = `
+        <div class="chat-message-header">Assistant</div>
+        <div class="chat-message-content"><span class="loading"></span> Thinking...</div>
+      `;
+      chatMessages.appendChild(loadingDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      
+      try {
+        const systemPrompt = `You are an assistant helping clients configure a city health analysis portfolio. The system analyzes cities across 12 civic dimensions: affordability, services, safety, opportunity, culture, environment, transportation, governance, housing, economy, education, and health.
+
+The analysis pipeline:
+- Scrapes news articles and Reddit posts/comments
+- Scores documents on relevance, source quality, length, and recency
+- Uses fairness normalization (caps per city to prevent bias)
+- Sends balanced document sets to an LLM for scoring
+- Produces overall health scores (0-100) and dimension-specific scores
+
+For business portfolios, clients can:
+- Select specific cities
+- Choose which dimensions to focus on
+- Request increased depth (more sources, longer history)
+- Add sector-specific sources (health, housing, labour, education)
+
+Help the user clarify their requirements, suggest appropriate configurations, and ensure the analysis will meet their needs. Be concise and practical.`;
+        
+        // Call backend proxy endpoint instead of OpenAI directly
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model: 'gpt-4o-mini',
+            messages: [
+              {role: 'system', content: systemPrompt},
+              ...chatHistory
+            ],
+            temperature: 0.7
+          })
+        });
+        
+        if (!response.ok) {
+          const error = await response.json().catch(() => ({error: {message: 'Server error'}}));
+          throw new Error(error.error?.message || 'API request failed');
+        }
+        
+        const data = await response.json();
+        const assistantMessage = data.choices[0].message.content;
+        
+        chatMessages.removeChild(loadingDiv);
+        addChatMessage('assistant', assistantMessage);
+        chatHistory.push({role: 'assistant', content: assistantMessage});
+      } catch (error) {
+        chatMessages.removeChild(loadingDiv);
+        addChatMessage('assistant', `Error: ${error.message}. Please try again or contact support.`);
+      } finally {
+        chatSend.disabled = false;
+      }
+    }
+    
+    chatSend.addEventListener('click', sendChatMessage);
+    chatInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        sendChatMessage();
+      }
+    });
+    
+    // Form submission
+    document.getElementById('submit-btn').addEventListener('click', async () => {
+      if (selectedCities.length === 0) {
+        alert('Please select at least one city.');
+        return;
+      }
+      
+      if (selectedCategories.length === 0) {
+        alert('Please select at least one category.');
+        return;
+      }
+      
+      // Generate configuration
+      const config = {
+        cities: selectedCities,
+        categories: selectedCategories,
+        user_prompt: chatHistory.find(m => m.role === 'user')?.content || '',
+        chat_history: chatHistory,
+        scraping_config: {
+          per_source_limit: 500,
+          reddit_pages: 10,
+          reddit_comments: 100,
+          city_docs: 500,
+          increase_depth: true,
+          sector_specific_sources: selectedCategories.filter(c => ['health', 'housing', 'education'].includes(c))
+        },
+        timestamp: new Date().toISOString(),
+        metadata: {
+          total_cities: selectedCities.length,
+          total_categories: selectedCategories.length,
+          chat_messages: chatHistory.length
+        }
+      };
+      
+      // Download config JSON
+      const configJson = JSON.stringify(config, null, 2);
+      const blob = new Blob([configJson], {type: 'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `portfolio_config_${new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      
+      // Display summary
+      const summaryContent = document.getElementById('summary-content');
+      summaryContent.innerHTML = `
+        <div class="summary-section">
+          <h3 style="margin-top:0">Selected Cities (${selectedCities.length})</h3>
+          <ul class="summary-list">
+            ${selectedCities.map(c => `<li>${c}</li>`).join('')}
+          </ul>
+        </div>
+        <div class="summary-section">
+          <h3>Selected Categories (${selectedCategories.length})</h3>
+          <ul class="summary-list">
+            ${selectedCategories.map(catId => {
+              const dim = CIVIC_DIMENSIONS.find(d => d.id === catId);
+              return `<li>${dim ? dim.name : catId}</li>`;
+            }).join('')}
+          </ul>
+        </div>
+        <div class="summary-section">
+          <h3>Analysis Scope</h3>
+          <p style="color:var(--muted);margin-top:8px">
+            The analysis will focus on <strong>${selectedCities.length}</strong> cit${selectedCities.length > 1 ? 'ies' : 'y'} 
+            across <strong>${selectedCategories.length}</strong> dimension${selectedCategories.length > 1 ? 's' : ''}. 
+            Data collection will be increased in depth with more sources, longer historical data, 
+            ${config.scraping_config.sector_specific_sources.length > 0 ? `and sector-specific sources for ${config.scraping_config.sector_specific_sources.join(', ')}.` : 'and standard sources.'}
+          </p>
+        </div>
+        ${chatHistory.length > 1 ? `
+        <div class="summary-section">
+          <h3>Key Requirements (from chat)</h3>
+          <p style="color:var(--muted);margin-top:8px">
+            ${chatHistory.filter(m => m.role === 'user').slice(-3).map(m => `"${m.content}"`).join('<br>')}
+          </p>
+        </div>
+        ` : ''}
+      `;
+      
+      // Generate command
+      const cityList = selectedCities.map(c => `"${c}"`).join(', ');
+      const command = `python conclusive_scaper_and_analysis_v3.py \\
+  --num_cities ${selectedCities.length} \\
+  --per_source_limit ${config.scraping_config.per_source_limit} \\
+  --reddit_pages ${config.scraping_config.reddit_pages} \\
+  --reddit_comments ${config.scraping_config.reddit_comments} \\
+  --city_docs ${config.scraping_config.city_docs} \\
+  --out data/portfolio_${new Date().toISOString().slice(0, 10)}`;
+      
+      document.getElementById('command-text').textContent = command;
+      document.getElementById('summary-panel').style.display = 'block';
+      document.getElementById('summary-panel').scrollIntoView({behavior: 'smooth'});
+    });
+    
+    // Copy command button
+    document.getElementById('copy-command').addEventListener('click', () => {
+      const commandText = document.getElementById('command-text').textContent;
+      navigator.clipboard.writeText(commandText).then(() => {
+        const btn = document.getElementById('copy-command');
+        const originalText = btn.textContent;
+        btn.textContent = 'Copied!';
+        setTimeout(() => {
+          btn.textContent = originalText;
+        }, 2000);
+      });
+    });
+    
+    // Reset button
+    document.getElementById('reset-btn').addEventListener('click', () => {
+      if (confirm('Reset all selections and chat history?')) {
+        selectedCities = [];
+        selectedCategories = [];
+        chatHistory = [];
+        updateCityChips();
+        updateCategoryChips();
+        chatMessages.innerHTML = `
+          <div class="chat-message assistant">
+            <div class="chat-message-header">Assistant</div>
+            <div class="chat-message-content">Hello! I'm here to help you configure your city health analysis portfolio. Tell me what cities you're interested in, what aspects of civic health matter most to your organization, and any specific questions or requirements you have.</div>
+          </div>
+        `;
+        document.getElementById('summary-panel').style.display = 'none';
+      }
+    });
+    
+    // Initialize
+    loadCities();
+  </script>
+</body>
+</html>

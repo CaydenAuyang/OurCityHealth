@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our City Health — Corporate Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #0a0f14;
+            --bg-card: #161f29;
+            --bg-input: #1e293b;
+            --primary: #22c55e;
+            --primary-hover: #16a34a;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --accent: #3b82f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Layout */
+        .container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 350px;
+            background-color: var(--bg-card);
+            border-right: 1px solid var(--border);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            overflow-y: auto;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Header */
+        header {
+            padding: 20px 32px;
+            border-bottom: 1px solid var(--border);
+            background-color: var(--bg-card);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            width: 32px;
+            height: 32px;
+            background-color: var(--primary);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--bg-dark);
+            font-weight: bold;
+        }
+
+        .brand-text h1 {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        .brand-text span {
+            font-size: 12px;
+            color: var(--primary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Form Elements */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+        }
+
+        .select-custom {
+            position: relative;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .select-custom:hover {
+            border-color: var(--text-muted);
+        }
+
+        .select-header {
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .select-options {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-top: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        }
+
+        .select-custom.open .select-options {
+            display: block;
+        }
+
+        .option-item {
+            padding: 10px 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: background 0.1s;
+        }
+
+        .option-item:hover {
+            background-color: rgba(34, 197, 94, 0.1);
+        }
+
+        .option-item.selected {
+            color: var(--primary);
+            background-color: rgba(34, 197, 94, 0.05);
+        }
+
+        .option-checkbox {
+            width: 16px;
+            height: 16px;
+            border: 1px solid var(--text-muted);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .option-item.selected .option-checkbox {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .option-checkbox i {
+            font-size: 10px;
+            color: var(--bg-dark);
+            display: none;
+        }
+
+        .option-item.selected .option-checkbox i {
+            display: block;
+        }
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .tag {
+            background-color: rgba(34, 197, 94, 0.15);
+            color: var(--primary);
+            font-size: 11px;
+            font-weight: 500;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tag-remove {
+            cursor: pointer;
+            opacity: 0.6;
+        }
+
+        .tag-remove:hover {
+            opacity: 1;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--bg-dark);
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* Chat Interface */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 24px 32px;
+            overflow-y: hidden;
+            background: radial-gradient(circle at top right, rgba(34, 197, 94, 0.03), transparent 40%);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            padding-bottom: 24px;
+        }
+
+        .message {
+            display: flex;
+            gap: 16px;
+            max-width: 800px;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+            align-self: flex-end;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .avatar.ai {
+            background-color: rgba(34, 197, 94, 0.2);
+            color: var(--primary);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .avatar.user {
+            background-color: var(--bg-input);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+
+        .message-content {
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .message.ai .message-content {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+        }
+
+        .message.user .message-content {
+            background-color: var(--primary);
+            color: var(--bg-dark);
+            font-weight: 500;
+        }
+
+        .input-area {
+            margin-top: 16px;
+            position: relative;
+        }
+
+        .chat-input {
+            width: 100%;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 50px 16px 16px;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 15px;
+            resize: none;
+            height: 60px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .chat-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.1);
+        }
+
+        .send-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .send-btn:hover {
+            background-color: rgba(34, 197, 94, 0.1);
+        }
+
+        .loading-dots span {
+            animation: bounce 1.4s infinite ease-in-out both;
+            display: inline-block;
+            margin: 0 2px;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background-color: var(--text-muted);
+        }
+
+        .loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Analysis Preview Styles */
+        .analysis-card {
+            margin-top: 12px;
+            padding: 12px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            border-left: 3px solid var(--primary);
+        }
+        
+        .analysis-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand">
+            <div class="brand-icon">
+                <i class="fa-solid fa-earth-americas"></i>
+            </div>
+            <div class="brand-text">
+                <h1>Our City Health</h1>
+                <span>Corporate Intelligence</span>
+            </div>
+        </div>
+        <div style="display: flex; gap: 16px;">
+            <a href="map.html" style="color: var(--text-muted); text-decoration: none; font-size: 14px; display: flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 6px; transition: background 0.2s;">
+                <i class="fa-solid fa-globe"></i> Public Map
+            </a>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="width: 8px; height: 8px; background-color: var(--primary); border-radius: 50%;"></div>
+                <span style="font-size: 14px; color: var(--text-muted);">System Active</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Sidebar Controls -->
+        <aside class="sidebar">
+            <div style="margin-bottom: 8px;">
+                <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 8px;">Analysis Configuration</h2>
+                <p style="font-size: 14px; color: var(--text-muted); line-height: 1.5;">
+                    Configure your portfolio and focus areas to generate tailored insights.
+                </p>
+            </div>
+
+            <!-- City Portfolio Selector -->
+            <div class="form-group">
+                <label class="form-label">City Portfolio</label>
+                <div class="select-custom" id="city-select">
+                    <div class="select-header">
+                        <span id="city-select-text">Select cities...</span>
+                        <i class="fa-solid fa-chevron-down" style="font-size: 12px; color: var(--text-muted);"></i>
+                    </div>
+                    <div class="select-options" id="city-options">
+                        <!-- Options populated via JS -->
+                        <div style="padding: 12px; text-align: center; color: var(--text-muted);">Loading cities...</div>
+                    </div>
+                </div>
+                <div class="tags-container" id="city-tags"></div>
+            </div>
+
+            <!-- Dimension/Category Selector -->
+            <div class="form-group">
+                <label class="form-label">Focus Areas (ESG Dimensions)</label>
+                <div class="select-custom" id="dim-select">
+                    <div class="select-header">
+                        <span id="dim-select-text">Select dimensions...</span>
+                        <i class="fa-solid fa-chevron-down" style="font-size: 12px; color: var(--text-muted);"></i>
+                    </div>
+                    <div class="select-options" id="dim-options">
+                        <!-- Options populated via JS -->
+                    </div>
+                </div>
+                <div class="tags-container" id="dim-tags"></div>
+            </div>
+
+             <!-- Additional settings -->
+             <div class="form-group">
+                <label class="form-label">Analysis Depth</label>
+                <div style="display: flex; gap: 12px; margin-top: 4px;">
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer;">
+                        <input type="radio" name="depth" checked> Standard
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer;">
+                        <input type="radio" name="depth"> Deep Dive (Waitlist)
+                    </label>
+                </div>
+            </div>
+
+            <button class="btn-primary" id="generate-btn">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                Update Context
+            </button>
+        </aside>
+
+        <!-- Chat Interface -->
+        <main class="main-content">
+            <div class="chat-area">
+                <div class="chat-messages" id="chat-messages">
+                    <!-- Welcome Message -->
+                    <div class="message ai">
+                        <div class="avatar ai">
+                            <i class="fa-solid fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            <p><strong>Welcome to Our City Health Corporate Intelligence.</strong></p>
+                            <p style="margin-top: 8px;">I can help you analyze civic health data across your portfolio. Once you've selected your cities and focus areas on the left, you can ask me things like:</p>
+                            <ul style="margin-top: 8px; padding-left: 20px; list-style-type: disc;">
+                                <li>"Summarize the housing sentiment across my portfolio."</li>
+                                <li>"Which city has the highest risk for transportation disruption?"</li>
+                                <li>"Draft an ESG report section on community safety for London."</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-area">
+                    <textarea class="chat-input" id="prompt-input" placeholder="Ask a question about your selected cities... (e.g., 'Compare safety scores between London and New York')"></textarea>
+                    <button class="send-btn" id="send-btn">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div style="font-size: 12px; color: var(--text-muted); margin-top: 8px; text-align: center;">
+                    AI-generated insights may vary. Verify critical data against original citations provided.
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Configuration
+        const DIMENSIONS = [
+            "Affordability", "Services", "Safety", "Opportunity", "Culture", "Environment", 
+            "Transportation", "Governance", "Housing", "Economy", "Education", "Health"
+        ];
+        
+        // State
+        const state = {
+            cities: [], // Loaded from JSON
+            selectedCities: new Set(),
+            selectedDimensions: new Set(),
+            messages: []
+        };
+
+        // DOM Elements
+        const citySelect = document.getElementById('city-select');
+        const cityOptions = document.getElementById('city-options');
+        const cityTags = document.getElementById('city-tags');
+        const dimSelect = document.getElementById('dim-select');
+        const dimOptions = document.getElementById('dim-options');
+        const dimTags = document.getElementById('dim-tags');
+        const promptInput = document.getElementById('prompt-input');
+        const sendBtn = document.getElementById('send-btn');
+        const messagesContainer = document.getElementById('chat-messages');
+
+        // Data Fetching Helper
+        function tryFetch(paths) {
+            if (!paths.length) return Promise.reject(new Error('No valid paths left'));
+            const [path, ...rest] = paths;
+            return fetch(path)
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    return response.json();
+                })
+                .catch(err => {
+                    console.warn(`Failed to fetch ${path}:`, err);
+                    if (rest.length) return tryFetch(rest);
+                    throw err;
+                });
+        }
+
+        // Initialization
+        async function init() {
+            // Load Dimensions
+            renderDimensionOptions();
+
+            // Load Cities
+            try {
+                const dataPaths = [
+                    'data/latest/full_results.json',
+                    './data/latest/full_results.json',
+                    '../data/latest/full_results.json',
+                    'full_results.json'
+                ];
+                
+                const data = await tryFetch(dataPaths);
+                
+                if (data && data.cities) {
+                    // Sort cities alphabetically
+                    state.cities = data.cities.sort((a, b) => a.name.localeCompare(b.name));
+                    renderCityOptions();
+                } else {
+                    console.error('No cities found in data');
+                    cityOptions.innerHTML = '<div style="padding: 12px;">No data available</div>';
+                }
+            } catch (error) {
+                console.error('Failed to load city data:', error);
+                cityOptions.innerHTML = '<div style="padding: 12px; color: #ef4444;">Error loading data. Is the pipeline run?</div>';
+            }
+
+            setupEventListeners();
+        }
+
+        // Rendering Functions
+        function renderCityOptions() {
+            cityOptions.innerHTML = '';
+            state.cities.forEach(city => {
+                const el = document.createElement('div');
+                el.className = `option-item ${state.selectedCities.has(city.name) ? 'selected' : ''}`;
+                el.innerHTML = `
+                    <div class="option-checkbox"><i class="fa-solid fa-check"></i></div>
+                    <span>${city.name}</span>
+                `;
+                el.onclick = (e) => {
+                    e.stopPropagation();
+                    toggleCity(city.name);
+                };
+                cityOptions.appendChild(el);
+            });
+        }
+
+        function renderDimensionOptions() {
+            dimOptions.innerHTML = '';
+            DIMENSIONS.forEach(dim => {
+                const el = document.createElement('div');
+                el.className = `option-item ${state.selectedDimensions.has(dim) ? 'selected' : ''}`;
+                el.innerHTML = `
+                    <div class="option-checkbox"><i class="fa-solid fa-check"></i></div>
+                    <span>${dim}</span>
+                `;
+                el.onclick = (e) => {
+                    e.stopPropagation();
+                    toggleDimension(dim);
+                };
+                dimOptions.appendChild(el);
+            });
+        }
+
+        function renderTags() {
+            // Cities
+            cityTags.innerHTML = '';
+            state.selectedCities.forEach(city => {
+                const tag = document.createElement('div');
+                tag.className = 'tag';
+                tag.innerHTML = `
+                    ${city}
+                    <i class="fa-solid fa-xmark tag-remove" onclick="toggleCity('${city}')"></i>
+                `;
+                cityTags.appendChild(tag);
+            });
+            document.getElementById('city-select-text').textContent = 
+                state.selectedCities.size > 0 ? `${state.selectedCities.size} cities selected` : 'Select cities...';
+
+            // Dimensions
+            dimTags.innerHTML = '';
+            state.selectedDimensions.forEach(dim => {
+                const tag = document.createElement('div');
+                tag.className = 'tag';
+                tag.innerHTML = `
+                    ${dim}
+                    <i class="fa-solid fa-xmark tag-remove" onclick="toggleDimension('${dim}')"></i>
+                `;
+                dimTags.appendChild(tag);
+            });
+            document.getElementById('dim-select-text').textContent = 
+                state.selectedDimensions.size > 0 ? `${state.selectedDimensions.size} areas selected` : 'Select dimensions...';
+        }
+
+        // Logic Functions
+        function toggleCity(cityName) {
+            if (state.selectedCities.has(cityName)) {
+                state.selectedCities.delete(cityName);
+            } else {
+                state.selectedCities.add(cityName);
+            }
+            renderCityOptions(); // Re-render to update checkbox state
+            renderTags();
+        }
+
+        function toggleDimension(dimName) {
+            if (state.selectedDimensions.has(dimName)) {
+                state.selectedDimensions.delete(dimName);
+            } else {
+                state.selectedDimensions.add(dimName);
+            }
+            renderDimensionOptions();
+            renderTags();
+        }
+
+        function addMessage(text, type) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${type}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = `avatar ${type}`;
+            avatar.innerHTML = type === 'ai' ? '<i class="fa-solid fa-robot"></i>' : '<i class="fa-solid fa-user"></i>';
+            
+            const content = document.createElement('div');
+            content.className = 'message-content';
+            content.innerHTML = text; // Allow HTML
+            
+            msgDiv.appendChild(avatar);
+            msgDiv.appendChild(content);
+            messagesContainer.appendChild(msgDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function showLoading() {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'message ai loading-msg';
+            msgDiv.innerHTML = `
+                <div class="avatar ai"><i class="fa-solid fa-robot"></i></div>
+                <div class="message-content">
+                    <div class="loading-dots"><span></span><span></span><span></span></div>
+                </div>
+            `;
+            messagesContainer.appendChild(msgDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            return msgDiv;
+        }
+
+        async function handleSend() {
+            const text = promptInput.value.trim();
+            if (!text) return;
+
+            // Add User Message
+            addMessage(text, 'user');
+            promptInput.value = '';
+
+            // Show Loading
+            const loadingEl = showLoading();
+
+            // Mock AI Response (Simulating LLM Backend)
+            // In production, this would be: await fetch('/api/chat', { method: 'POST', body: ... })
+            setTimeout(() => {
+                loadingEl.remove();
+                
+                // Construct a context-aware mock response
+                const citiesList = Array.from(state.selectedCities);
+                const dimsList = Array.from(state.selectedDimensions);
+                
+                let response = "";
+                
+                if (citiesList.length === 0) {
+                    response = "Please select at least one city from the portfolio list on the left so I can analyze the specific data you need.";
+                } else {
+                    const cityNames = citiesList.join(", ");
+                    const dimNames = dimsList.length > 0 ? dimsList.join(" and ") : "general civic health";
+                    
+                    response = `<p>I've analyzed the latest signals for <strong>${cityNames}</strong> focusing on <strong>${dimNames}</strong>.</p>`;
+                    
+                    // Mock data analysis
+                    response += `<div class="analysis-card">
+                        <div class="analysis-title">Executive Summary</div>
+                        <p>Sentiment analysis indicates rising concerns in <strong>${citiesList[0]}</strong> regarding ${dimsList[0] || 'Housing'}, driven by recent policy changes and local discussions. Conversely, ${citiesList[1] || 'other regions'} show stability.</p>
+                    </div>`;
+                    
+                    response += `<p style="margin-top:12px">Would you like me to draft a detailed report or drill down into specific source citations?</p>`;
+                }
+
+                addMessage(response, 'ai');
+            }, 1500);
+        }
+
+        // Event Listeners
+        function setupEventListeners() {
+            // Dropdown Toggles
+            citySelect.addEventListener('click', (e) => {
+                e.stopPropagation();
+                citySelect.classList.toggle('open');
+                dimSelect.classList.remove('open');
+            });
+
+            dimSelect.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dimSelect.classList.toggle('open');
+                citySelect.classList.remove('open');
+            });
+
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', () => {
+                citySelect.classList.remove('open');
+                dimSelect.classList.remove('open');
+            });
+
+            // Chat Inputs
+            sendBtn.addEventListener('click', handleSend);
+            promptInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSend();
+                }
+            });
+            
+            document.getElementById('generate-btn').addEventListener('click', () => {
+                 addMessage(`Context updated. Focusing on ${state.selectedCities.size} cities and ${state.selectedDimensions.size} dimensions. Ready for your questions.`, 'ai');
+            });
+        }
+
+        // Run
+        init();
+
+    </script>
+</body>
+</html>

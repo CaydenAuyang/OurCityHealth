@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Cities — Tailored Scraping Companion</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #22c55e;
+            --primary-dark: #16a34a;
+            --secondary: #3b82f6;
+            --bg: #0a0f14;
+            --bg-light: #0f172a;
+            --card: #111827;
+            --card-2: #1f2937;
+            --text: #e5e7eb;
+            --text-muted: #9ca3af;
+            --accent: #8b5cf6;
+            --danger: #ef4444;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: radial-gradient(circle at 20% 20%, rgba(59,130,246,0.12), transparent 35%),
+                        radial-gradient(circle at 80% 0%, rgba(139,92,246,0.18), transparent 30%),
+                        linear-gradient(135deg, var(--bg) 0%, var(--bg-light) 100%);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 36px 56px 72px;
+        }
+        header {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+        .badge {
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: rgba(34,197,94,0.12);
+            color: var(--primary);
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+        h1 { font-size: 38px; font-weight: 900; }
+        p.lead { color: var(--text-muted); margin-top: 6px; max-width: 860px; line-height: 1.6; }
+        .grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 22px;
+        }
+        .panel {
+            background: linear-gradient(135deg, rgba(34,197,94,0.05), rgba(59,130,246,0.03));
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 18px;
+            padding: 22px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+        }
+        .panel h2 {
+            font-size: 16px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+        .hero {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 18px;
+            margin-bottom: 18px;
+        }
+        .hero-card {
+            background: var(--card);
+            border: 1px solid rgba(34,197,94,0.15);
+            border-radius: 16px;
+            padding: 18px 20px;
+        }
+        .hero-card h3 { font-size: 20px; margin-bottom: 8px; }
+        .hero-card p { color: var(--text-muted); line-height: 1.5; }
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        .chip {
+            padding: 8px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.05);
+            color: var(--text);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .chip:hover { border-color: rgba(34,197,94,0.5); }
+        .chip.active {
+            background: rgba(34,197,94,0.16);
+            border-color: var(--primary);
+            color: #d1fae5;
+        }
+        label { font-weight: 700; color: var(--text); display: block; margin-bottom: 6px; }
+        select, input[type="text"], input[type="password"], button {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(17,24,39,0.7);
+            color: var(--text);
+            font-size: 15px;
+            outline: none;
+        }
+        select:focus, input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(34,197,94,0.15); }
+        button {
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            border: none;
+            color: #052e16;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+        }
+        button:hover { transform: translateY(-1px); box-shadow: 0 10px 25px rgba(34,197,94,0.3); }
+        .inline {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 12px;
+            align-items: end;
+        }
+        .muted { color: var(--text-muted); font-size: 13px; margin-top: 6px; }
+        .chat {
+            background: var(--card-2);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 16px;
+            padding: 14px;
+            height: 520px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding-right: 6px;
+        }
+        .bubble {
+            padding: 12px 14px;
+            border-radius: 12px;
+            line-height: 1.4;
+            max-width: 92%;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+        }
+        .bubble.user { background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.5); align-self: flex-end; }
+        .bubble.ai { background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.4); }
+        .spec {
+            background: var(--card);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 14px;
+            padding: 14px;
+            font-family: "SFMono-Regular", Consolas, Menlo, monospace;
+            font-size: 13px;
+            color: #cbd5e1;
+            line-height: 1.5;
+            height: 240px;
+            overflow: auto;
+        }
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .pill {
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.04);
+            color: var(--text-muted);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+        }
+        .streaming { display: inline-flex; align-items: center; gap: 8px; color: var(--secondary); font-weight: 700; }
+        .dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--secondary);
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.6); opacity: 0.55; } 100% { transform: scale(1); opacity: 1; } }
+        .error { color: var(--danger); font-weight: 700; }
+        @media (max-width: 1100px) { .grid { grid-template-columns: 1fr; } .hero { grid-template-columns: 1fr; } body { padding: 24px; } }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="badge">Business Mode</div>
+        <div>
+            <h1>Portfolio City Intelligence</h1>
+            <p class="lead">Choose your strategic city set, pick sentiment categories, and co-design deeper scraping with an on-page LLM. The assistant clarifies scope, sources, and analysis depth so downstream pipelines run exactly how you want.</p>
+        </div>
+    </header>
+
+    <div class="grid">
+        <section class="panel">
+            <div class="hero">
+                <div class="hero-card">
+                    <h3>City Portfolio</h3>
+                    <p>Start with 10 key cities where you operate or are expanding. We’ll tune source depth, history windows, and sector specificity per city.</p>
+                    <div class="chips" id="city-chips"></div>
+                    <p class="muted">Tip: Select at least 3 to give the model enough context.</p>
+                </div>
+                <div class="hero-card">
+                    <h3>Sector Focus</h3>
+                    <p>Prioritize the sentiment categories that matter to your portfolio: health, housing, labour, education, or keep it broad.</p>
+                    <label for="category">Category</label>
+                    <select id="category">
+                        <option value="health">Health</option>
+                        <option value="housing">Housing</option>
+                        <option value="labour">Labour</option>
+                        <option value="education">Education</option>
+                        <option value="general">General sentiment</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row" style="margin-bottom: 10px;">
+                <div>
+                    <label for="api-key">OpenAI API Key (stays in-browser)</label>
+                    <input id="api-key" type="password" placeholder="sk-..." autocomplete="off">
+                    <p class="muted">Used only in this session for chat; not stored or sent elsewhere.</p>
+                </div>
+                <div>
+                    <label for="model">Model</label>
+                    <select id="model">
+                        <option value="gpt-4o-mini">gpt-4o-mini</option>
+                        <option value="gpt-4o">gpt-4o</option>
+                        <option value="gpt-4.1-mini">gpt-4.1-mini</option>
+                    </select>
+                    <p class="muted">You can swap models if needed.</p>
+                </div>
+            </div>
+
+            <div class="chat">
+                <div class="messages" id="messages"></div>
+                <div class="inline">
+                    <input id="prompt" type="text" placeholder="Describe the scrape/analysis you want. The assistant will clarify." />
+                    <button id="send">Send</button>
+                </div>
+                <p class="muted">The prompt bar doubles as a chatbot to shape the run spec and data sources.</p>
+                <p id="status" class="muted"></p>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2>Run Spec Preview</h2>
+            <div style="display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
+                <div class="pill">Deeper history</div>
+                <div class="pill">More sources</div>
+                <div class="pill">Sector-specific feeds</div>
+                <div class="pill">LLM-guided prompts</div>
+            </div>
+            <div class="spec" id="spec"></div>
+            <p class="muted" style="margin-top:10px;">Share this spec with the scraping pipeline. The LLM will keep it aligned with your cities & categories.</p>
+        </section>
+    </div>
+
+    <script>
+        const cityList = ["New York", "Chicago", "Los Angeles", "Houston", "Miami", "Seattle", "San Francisco", "Boston", "Atlanta", "Philadelphia", "Toronto", "London"];
+        const messagesEl = document.getElementById('messages');
+        const promptEl = document.getElementById('prompt');
+        const sendBtn = document.getElementById('send');
+        const categoryEl = document.getElementById('category');
+        const specEl = document.getElementById('spec');
+        const statusEl = document.getElementById('status');
+        const apiKeyEl = document.getElementById('api-key');
+        const modelEl = document.getElementById('model');
+        const cityChipsEl = document.getElementById('city-chips');
+
+        let selectedCities = ["New York", "Chicago", "Los Angeles"];
+        let selectedCategory = categoryEl.value;
+        let chatHistory = [];
+
+        const systemPrompt = `You are a data collection architect for city-level sentiment. Clarify user intent, then propose scraping specs: cities, categories (health, housing, labour, education, general), source breadth (news, social, sector feeds), history window, filters, and analysis outputs. Keep responses concise.`;
+
+        function renderCities() {
+            cityChipsEl.innerHTML = "";
+            cityList.forEach(city => {
+                const chip = document.createElement('div');
+                chip.className = 'chip' + (selectedCities.includes(city) ? ' active' : '');
+                chip.innerText = city;
+                chip.onclick = () => toggleCity(city);
+                cityChipsEl.appendChild(chip);
+            });
+            updateSpec();
+        }
+
+        function toggleCity(city) {
+            if (selectedCities.includes(city)) {
+                selectedCities = selectedCities.filter(c => c !== city);
+            } else {
+                selectedCities.push(city);
+            }
+            renderCities();
+        }
+
+        categoryEl.addEventListener('change', (e) => {
+            selectedCategory = e.target.value;
+            updateSpec();
+        });
+
+        function addMessage(role, content) {
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble ' + (role === 'user' ? 'user' : 'ai');
+            bubble.innerText = content;
+            messagesEl.appendChild(bubble);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+        }
+
+        function setStatus(text, isError = false, isStreaming = false) {
+            if (isStreaming) {
+                statusEl.innerHTML = `<span class="streaming"><span class="dot"></span>Streaming...</span>`;
+            } else if (text) {
+                statusEl.innerHTML = isError ? `<span class="error">${text}</span>` : text;
+            } else {
+                statusEl.innerHTML = "";
+            }
+        }
+
+        function updateSpec(latestAssistant = "") {
+            const spec = {
+                cities: selectedCities,
+                category: selectedCategory,
+                last_prompt: promptEl.value.trim() || "(not provided yet)",
+                guidance_from_llm: latestAssistant || "(awaiting chat)",
+                options: {
+                    depth: "longer history, more sources",
+                    sector_specific_sources: ["health", "housing", "labour", "education"],
+                    include_social: true,
+                    include_news: true,
+                }
+            };
+            specEl.textContent = JSON.stringify(spec, null, 2);
+        }
+
+        async function streamOpenAI(userContent) {
+            const apiKey = apiKeyEl.value.trim();
+            if (!apiKey) {
+                setStatus("Please paste your OpenAI key to chat.", true);
+                return;
+            }
+
+            const model = modelEl.value;
+            const messages = [
+                { role: "system", content: systemPrompt },
+                ...chatHistory,
+                { role: "user", content: userContent }
+            ];
+
+            const response = await fetch("https://api.openai.com/v1/chat/completions", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${apiKey}`
+                },
+                body: JSON.stringify({
+                    model,
+                    messages,
+                    temperature: 0.4,
+                    stream: true
+                })
+            });
+
+            if (!response.ok || !response.body) {
+                setStatus("OpenAI error — check key, model, or quota.", true);
+                throw new Error("OpenAI request failed");
+            }
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder("utf-8");
+            let assistantText = "";
+            setStatus("", false, true);
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                const chunk = decoder.decode(value, { stream: true });
+                const lines = chunk.split("\n").filter(l => l.trim().startsWith("data:"));
+                for (const line of lines) {
+                    const data = line.replace("data: ", "");
+                    if (data === "[DONE]") continue;
+                    try {
+                        const parsed = JSON.parse(data);
+                        const delta = parsed.choices?.[0]?.delta?.content || "";
+                        assistantText += delta;
+                        if (assistantText) {
+                            renderStreaming(assistantText);
+                        }
+                    } catch (err) {
+                        console.error("Chunk parse error", err);
+                    }
+                }
+            }
+            setStatus("");
+            return assistantText.trim();
+        }
+
+        function renderStreaming(text) {
+            const existing = messagesEl.querySelector('.bubble.ai.streaming');
+            if (existing) {
+                existing.textContent = text;
+                return;
+            }
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble ai streaming';
+            bubble.textContent = text;
+            messagesEl.appendChild(bubble);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+        }
+
+        async function handleSend() {
+            const userText = promptEl.value.trim();
+            if (!userText) return;
+            addMessage('user', userText);
+            promptEl.value = "";
+            setStatus("");
+
+            try {
+                const assistantReply = await streamOpenAI(userText);
+                if (assistantReply) {
+                    // Replace streaming bubble with final text
+                    const streamingBubble = messagesEl.querySelector('.bubble.ai.streaming');
+                    if (streamingBubble) {
+                        streamingBubble.classList.remove('streaming');
+                        streamingBubble.textContent = assistantReply;
+                    } else {
+                        addMessage('ai', assistantReply);
+                    }
+                    chatHistory.push({ role: "user", content: userText });
+                    chatHistory.push({ role: "assistant", content: assistantReply });
+                    updateSpec(assistantReply);
+                }
+            } catch (err) {
+                console.error(err);
+                setStatus("Chat failed — see console for details.", true);
+            }
+        }
+
+        sendBtn.addEventListener('click', handleSend);
+        promptEl.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+            }
+        });
+
+        // Initial render
+        renderCities();
+        updateSpec();
+        addMessage('ai', "Tell me your portfolio cities, categories, and how deep you want us to go. I’ll shape the scraping + analysis spec with you.");
+    </script>
+</body>
+</html>
