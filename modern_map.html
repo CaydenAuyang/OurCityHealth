@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>Our City Health — Global Map</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #22c55e;
+      --primary-dim: rgba(34, 197, 94, 0.2);
+      --secondary: #3b82f6;
+      --bg: #0a0f14;
+      --text: #e5e7eb;
+      --text-muted: #9ca3af;
+      --glass-bg: rgba(10, 15, 20, 0.75);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-main);
+    }
+
+    /* --- GLOBE BACKGROUND --- */
+    #globe {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: radial-gradient(circle at 50% 50%, #111827 0%, #000000 100%);
+    }
+    
+    #globe canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* --- UI LAYER --- */
+    .ui-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      pointer-events: none; /* Let clicks pass through to globe */
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 24px;
+    }
+
+    /* Common Glass Style */
+    .glass-panel {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--glass-shadow);
+      border-radius: 16px;
+      pointer-events: auto; /* Enable clicks on panels */
+      transition: transform 0.2s, opacity 0.2s;
+    }
+
+    /* Top Bar */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+    }
+
+    .branding {
+      max-width: 400px;
+    }
+    
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #fff 0%, #9ca3af 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    p.subtitle {
+      margin: 6px 0 0;
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Search Bar */
+    .search-container {
+      position: relative;
+      width: 320px;
+    }
+    
+    input#search {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 12px 16px;
+      color: white;
+      font-family: var(--font-main);
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s;
+      backdrop-filter: blur(4px);
+    }
+    
+    input#search:focus {
+      background: rgba(0, 0, 0, 0.6);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-dim);
+    }
+
+    /* Floating Stats / Info */
+    .stats-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.2);
+      border-radius: 20px;
+      font-size: 12px;
+      color: #86efac;
+      font-weight: 600;
+      margin-top: 12px;
+    }
+
+    /* Right Panel (City List) */
+    .panel-right {
+      position: absolute;
+      top: 80px;
+      right: 24px;
+      bottom: 24px;
+      width: 340px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-height: calc(100vh - 104px);
+    }
+
+    .city-list-container {
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .city-list-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--glass-border);
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    #city-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+    }
+
+    .city-card {
+      padding: 12px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .city-card:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .city-name { font-weight: 600; font-size: 14px; }
+    .city-score { font-weight: 700; color: var(--primary); font-size: 14px; }
+    .city-country { display: block; font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    /* Bottom Left Controls */
+    .bottom-controls {
+      display: flex;
+      gap: 12px;
+    }
+
+    .icon-btn {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      color: var(--text);
+      cursor: pointer;
+      font-size: 20px;
+    }
+    
+    .icon-btn:hover { background: rgba(255,255,255,0.1); }
+
+    /* Details Sidebar (Slide-over) */
+    .sidebar {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      bottom: 24px;
+      width: 400px;
+      z-index: 20;
+      transform: translateX(calc(100% + 40px));
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar.open {
+      transform: translateX(0);
+    }
+
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--glass-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sidebar-title { font-size: 24px; font-weight: 700; }
+    .close-btn { 
+      background: none; border: none; color: var(--text-muted); 
+      font-size: 24px; cursor: pointer; padding: 4px;
+    }
+    .close-btn:hover { color: var(--text); }
+
+    .sidebar-tabs {
+      display: flex;
+      padding: 12px 20px 0;
+      gap: 12px;
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .tab {
+      padding: 8px 0 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      position: relative;
+    }
+
+    .tab.active { color: var(--primary); }
+    .tab.active::after {
+      content: ''; position: absolute; bottom: -1px; left: 0; right: 0;
+      height: 2px; background: var(--primary); border-radius: 2px 2px 0 0;
+    }
+
+    .sidebar-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .score-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--glass-border);
+      font-size: 14px;
+    }
+
+    .link-card {
+      display: block;
+      padding: 12px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--glass-border);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      text-decoration: none;
+      color: var(--text);
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    .link-card:hover { border-color: var(--primary); background: rgba(34,197,94,0.05); }
+
+    /* Modals (Methodology / Issues) */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 50;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+      display: none; align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    
+    .modal-card {
+      width: 90%; max-width: 800px; max-height: 85vh;
+      display: flex; flex-direction: column;
+    }
+    
+    .modal-body { padding: 24px; overflow-y: auto; line-height: 1.6; font-size: 15px; color: #d1d5db; }
+    .modal-body h3 { color: var(--primary); margin-top: 24px; font-size: 18px; }
+    .modal-body ul { margin-left: 20px; margin-bottom: 16px; }
+    .modal-body li { margin-bottom: 6px; }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+
+    /* Globe Tooltip */
+    .globe-tooltip {
+      position: fixed;
+      background: rgba(16, 40, 27, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 8px 12px;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 600;
+      pointer-events: none;
+      z-index: 2000;
+      transform: translate(-50%, -120%);
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .globe-tooltip.visible { opacity: 1; }
+
+    @media(max-width: 900px) {
+      .panel-right { display: none; } /* Hide list on mobile, rely on search/globe */
+      .sidebar { width: 100%; top: auto; height: 70vh; transform: translateY(100%); bottom: 0; right: 0; left: 0; border-radius: 24px 24px 0 0; }
+      .sidebar.open { transform: translateY(0); }
+      .top-bar { flex-direction: column; gap: 12px; }
+      .search-container { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Full Screen Globe -->
+  <div id="globe">
+    <!-- Three.js Canvas injected here -->
+    <div class="legend glass-panel" style="position:absolute; bottom:24px; left:24px; padding:12px; font-size:12px; color:var(--text-muted); pointer-events:none;">
+      • Scroll to zoom • Drag to rotate<br>
+      • Click cities for details
+    </div>
+  </div>
+
+  <!-- UI Overlay -->
+  <div class="ui-layer">
+    
+    <!-- Header Area -->
+    <div class="top-bar pointer-events-auto">
+      <div class="branding">
+        <div class="glass-panel" style="padding: 16px 20px; display:inline-block;">
+          <h1>Our City Health</h1>
+          <p class="subtitle">Interactive civic wellbeing index. Real-time scraping & analysis.</p>
+          <div id="summary-pill" class="stats-pill">Loading data...</div>
+        </div>
+      </div>
+
+      <div class="search-container glass-panel" style="padding: 8px;">
+        <input id="search" placeholder="Search city or country..." aria-label="Search city" />
+      </div>
+    </div>
+
+    <!-- Right Panel: City List -->
+    <div class="panel-right glass-panel city-list-container">
+      <div class="city-list-header">
+        <span>Ranked Cities</span>
+        <span style="font-size:10px; opacity:0.6;">High → Low</span>
+      </div>
+      <div id="city-list">
+        <!-- Populated by JS -->
+        <div style="padding:16px; text-align:center; color:var(--text-muted);">Loading...</div>
+      </div>
+    </div>
+
+    <!-- Bottom Left Controls -->
+    <div class="bottom-controls pointer-events-auto" style="position: absolute; bottom: 24px; left: 24px;">
+       <!-- Moved legend into globe container, but we can put buttons here -->
+       <div class="glass-panel icon-btn" onclick="openModal('issues')" title="Global Issues">⚠</div>
+       <div class="glass-panel icon-btn" onclick="openModal('methodology')" title="Methodology">ℹ</div>
+    </div>
+
+  </div>
+
+  <!-- Slide-out Details Sidebar -->
+  <div id="sidebar" class="sidebar glass-panel">
+    <div class="sidebar-header">
+      <div class="sidebar-title" id="sidebar-title">City Name</div>
+      <button class="close-btn" onclick="closeSidebar()">×</button>
+    </div>
+    <div class="sidebar-tabs">
+      <div class="tab active" data-tab="scores" onclick="setSidebarTab('scores')">Scores</div>
+      <div class="tab" data-tab="issues" onclick="setSidebarTab('issues')">Issues</div>
+      <div class="tab" data-tab="articles" onclick="setSidebarTab('articles')">News</div>
+      <div class="tab" data-tab="reddit" onclick="setSidebarTab('reddit')">Reddit</div>
+    </div>
+    <div class="sidebar-content">
+      <div id="sidebar-scores" class="tab-content active"></div>
+      <div id="sidebar-issues" class="tab-content" style="display:none"></div>
+      <div id="sidebar-articles" class="tab-content" style="display:none"></div>
+      <div id="sidebar-reddit" class="tab-content" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- Tooltip -->
+  <div id="city-tooltip" class="globe-tooltip"></div>
+
+  <!-- Modals -->
+  <div id="modal-overlay" class="modal-overlay" onclick="if(event.target===this) closeModal()">
+    <div class="glass-panel modal-card">
+      <div class="sidebar-header">
+        <div class="sidebar-title" id="modal-title">Info</div>
+        <button class="close-btn" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <!-- Content injected here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden Content for Modals -->
+  <div id="content-methodology" style="display:none">
+    <h3>Scoring Methodology</h3>
+    <p>Our City Health measures 12 civic dimensions using news and social signals.</p>
+    <h3>Step 1: Document Selection</h3>
+    <ul>
+      <li><strong>Civic Relevance (45%):</strong> Keyword matching 12 dimensions.</li>
+      <li><strong>Source Quality (30%):</strong> News reputation vs social.</li>
+      <li><strong>Length (15%) & Recency (10%)</strong></li>
+    </ul>
+    <h3>Step 2: Fairness</h3>
+    <ul>
+      <li>Capped at 500 docs/city. Balanced sources.</li>
+    </ul>
+    <h3>Step 3: AI Analysis</h3>
+    <ul>
+      <li>GPT-4 analyzes snippets for a holistic health score (0-100).</li>
+      <li>Scores are NOT weighted averages but integrated assessments.</li>
+    </ul>
+  </div>
+
+  <div id="content-issues" style="display:none">
+    <h3>Global Top Issues</h3>
+    <div id="issues-list-container">Loading...</div>
+  </div>
+
+  <!-- Scripts: FIXED LOADING ORDER -->
+  <script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three-globe@2.30.0/dist/three-globe.min.js"></script>
+  <script src="https://unpkg.com/topojson-client@3"></script>
+  
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.158.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.158.0/examples/jsm/"
+    }
+  }
+  </script>
+  
+  <script type="module">
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    window.OrbitControls = OrbitControls;
+    
+    // Dispatch event to signal OrbitControls is ready
+    window.dispatchEvent(new Event('OrbitControlsReady'));
+  </script>
+
+  <script>
+    // --- UI LOGIC ---
+    function setSidebarTab(tabName) {
+      document.querySelectorAll('.sidebar-tabs .tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.tab === tabName);
+      });
+      document.querySelectorAll('.sidebar-content .tab-content').forEach(c => {
+        c.style.display = c.id === `sidebar-${tabName}` ? 'block' : 'none';
+      });
+    }
+
+    function closeSidebar() {
+      document.getElementById('sidebar').classList.remove('open');
+    }
+
+    function openModal(type) {
+      const overlay = document.getElementById('modal-overlay');
+      const title = document.getElementById('modal-title');
+      const body = document.getElementById('modal-body');
+      
+      overlay.classList.add('open');
+      
+      if(type === 'methodology') {
+        title.textContent = 'Methodology';
+        body.innerHTML = document.getElementById('content-methodology').innerHTML;
+      } else if(type === 'issues') {
+        title.textContent = 'Global Issues';
+        // Clone the live issues content if available
+        const liveContent = document.getElementById('issues-list-container').innerHTML;
+        body.innerHTML = liveContent;
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('modal-overlay').classList.remove('open');
+    }
+
+    // --- DATA & MAP LOGIC ---
+    let RESULTS = null;
+    const GEO_SOURCE_PRIORITY = { 'database': 100, 'boundary': 80, 'dataset': 60, 'hint': 40 };
+    
+    // Coordinates
+    const CITY_COORDINATES = {
+      'Tokyo': [35.6895, 139.6917], 'Delhi': [28.6139, 77.2090], 'Shanghai': [31.2304, 121.4737],
+      'São Paulo': [-23.5505, -46.6333], 'Mexico City': [19.4326, -99.1332], 'Cairo': [30.0444, 31.2357],
+      'Mumbai': [19.0760, 72.8777], 'Beijing': [39.9042, 116.4074], 'Dhaka': [23.8103, 90.4125],
+      'Osaka': [34.6937, 135.5023], 'New York City': [40.7128, -74.0060], 'Karachi': [24.8607, 67.0011],
+      'Buenos Aires': [-34.6037, -58.3816], 'Chongqing': [29.5630, 106.5516], 'Istanbul': [41.0082, 28.9784],
+      'Kolkata': [22.5726, 88.3639], 'Manila': [14.5995, 120.9842], 'Lagos': [6.5244, 3.3792],
+      'Rio de Janeiro': [-22.9068, -43.1729], 'Tianjin': [39.3434, 117.3616], 'Guangzhou': [23.1291, 113.2644],
+      'Moscow': [55.7558, 37.6173], 'Lahore': [31.5204, 74.3587], 'Bangalore': [12.9716, 77.5946],
+      'Paris': [48.8566, 2.3522], 'Bogotá': [4.7110, -74.0721], 'Jakarta': [-6.2088, 106.8456],
+      'Chennai': [13.0827, 80.2707], 'Lima': [-12.0464, -77.0428], 'Bangkok': [13.7563, 100.5018],
+      'Seoul': [37.5665, 126.9780], 'Nagoya': [35.1815, 136.9066], 'London': [51.5074, -0.1278],
+      'Tehran': [35.6892, 51.3890], 'Chicago': [41.8781, -87.6298], 'Chengdu': [30.6624, 104.0633],
+      'Nanjing': [32.0603, 118.7969], 'Wuhan': [30.5928, 114.3055], 'Ho Chi Minh City': [10.8231, 106.6297],
+      'Luanda': [-8.8383, 13.2344], 'Ahmedabad': [23.0225, 72.5714], 'Kuala Lumpur': [3.1390, 101.6869],
+      'Xi\'an': [34.3416, 108.9398], 'Hong Kong': [22.3193, 114.1694], 'Dongguan': [23.0207, 113.7518],
+      'Hangzhou': [30.2741, 120.1551], 'Foshan': [23.0215, 113.1214], 'Shenyang': [41.8057, 123.4315],
+      'Riyadh': [24.7136, 46.6753], 'Baghdad': [33.3152, 44.3661], 'Santiago': [-33.4489, -70.6693],
+      'Surat': [21.1702, 72.8311], 'Madrid': [40.4168, -3.7038], 'Suzhou': [31.2989, 120.5853],
+      'Pune': [18.5204, 73.8567], 'Harbin': [45.7736, 126.6228], 'Houston': [29.7604, -95.3698],
+      'Dallas': [32.7767, -96.7970], 'Toronto': [43.6532, -79.3832], 'Dar es Salaam': [-6.7924, 39.2083],
+      'Miami': [25.7617, -80.1918], 'Belo Horizonte': [-19.9167, -43.9345], 'Singapore': [1.3521, 103.8198],
+      'Nairobi': [-1.2921, 36.8219], 'Philadelphia': [39.9526, -75.1652], 'Atlanta': [33.7490, -84.3880],
+      'Fukuoka': [33.5904, 130.4017], 'Khartoum': [15.5007, 32.5599], 'Barcelona': [41.3851, 2.1734],
+      'Johannesburg': [-26.2041, 28.0473], 'Saint Petersburg': [59.9343, 30.3351], 'Qingdao': [36.0671, 120.3826],
+      'Dalian': [38.9140, 121.6147], 'Washington': [38.9072, -77.0369], 'Yangon': [16.8661, 96.1951],
+      'Alexandria': [31.2001, 29.9187], 'Jinan': [36.6512, 117.1201], 'Guadalajara': [20.6597, -103.3496],
+      'Los Angeles': [34.0522, -118.2437], 'San Francisco': [37.7749, -122.4194], 'Boston': [42.3601, -71.0589],
+      'Seattle': [47.6062, -122.3321], 'Berlin': [52.5200, 13.4050], 'Rome': [41.9028, 12.4964],
+      'Amsterdam': [52.3676, 4.9041], 'Vienna': [48.2082, 16.3738], 'Sydney': [-33.8688, 151.2093],
+      'Melbourne': [-37.8136, 144.9631], 'Dubai': [25.2048, 55.2708], 'Vancouver': [49.2827, -123.1207],
+      'Montreal': [45.5017, -73.5673], 'Brisbane': [-27.4698, 153.0251], 'Perth': [-31.9505, 115.8605],
+      'Auckland': [-36.8485, 174.7633], 'Stockholm': [59.3293, 18.0686], 'Copenhagen': [55.6761, 12.5683],
+      'Oslo': [59.9139, 10.7522], 'Helsinki': [60.1699, 24.9384], 'Dublin': [53.3498, -6.2603],
+      'Brussels': [50.8503, 4.3517], 'Zurich': [47.3769, 8.5417],
+      // Aliases
+      'New York': [40.7128, -74.0060], 'NYC': [40.7128, -74.0060], 'San Fran': [37.7749, -122.4194],
+      'SF': [37.7749, -122.4194], 'LA': [34.0522, -118.2437], 'Mexico': [19.4326, -99.1332],
+      'St. Petersburg': [59.9343, 30.3351]
+    };
+
+    function normalizeName(str){
+      return (str || '').toString().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9\s]/gi, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
+    }
+
+    function colorFromScore(score){
+      if(score == null || Number.isNaN(score)) return '#9ca3af';
+      if(score >= 80) return '#22c55e';
+      if(score >= 65) return '#4ade80';
+      if(score >= 50) return '#facc15';
+      if(score >= 35) return '#f97316';
+      return '#ef4444';
+    }
+
+    // --- FETCHING & INIT ---
+    function tryFetch(paths){
+      if(!paths.length) throw new Error('no paths');
+      const [p, ...rest] = paths;
+      const separator = p.includes('?') ? '&' : '?';
+      const url = p + separator + '_t=' + Date.now();
+      
+      return fetch(url, { cache: 'no-store' }).then(r=>{
+        if(!r.ok) throw new Error('HTTP '+r.status);
+        return r.json();
+      }).catch(err => {
+        return rest.length ? tryFetch(rest) : Promise.reject(err);
+      });
+    }
+
+    // Wait for OrbitControls
+    function waitForControls() {
+      return new Promise(resolve => {
+        if (window.OrbitControls) return resolve();
+        window.addEventListener('OrbitControlsReady', resolve, {once:true});
+        // Fallback polling
+        const i = setInterval(() => {
+          if(window.OrbitControls) { clearInterval(i); resolve(); }
+        }, 100);
+      });
+    }
+
+    const dataPaths = [
+      'data/latest/full_results.json',
+      './data/latest/full_results.json',
+      '../data/latest/full_results.json',
+      'full_results.json'
+    ];
+
+    tryFetch(dataPaths).then(d => {
+      RESULTS = d;
+      updateUI(d);
+      
+      // Load Geo & Build Globe
+      Promise.all([
+        fetch('https://raw.githubusercontent.com/lutangar/cities.json/master/cities.json').then(r=>r.ok?r.json():[]).catch(()=>[]),
+        tryFetch(['data/latest/city_boundaries.geojson','city_boundaries.geojson']).catch(()=>null),
+        waitForControls()
+      ]).then(([catalog, boundaries, _]) => {
+        bootstrapGeodata(d.cities || [], catalog, boundaries);
+      });
+
+    }).catch(e => {
+      console.error(e);
+      document.getElementById('summary-pill').textContent = "Failed to load data";
+    });
+
+    function updateUI(data) {
+      const cities = (data.cities || []).sort((a,b) => (b.health_score||0) - (a.health_score||0));
+      const summary = data.summary || {};
+      
+      // Update Summary Pill
+      const count = cities.length;
+      const arts = (summary.news_articles || 0).toLocaleString();
+      document.getElementById('summary-pill').textContent = `${count} cities • ${arts} articles`;
+
+      // Populate City List
+      const listEl = document.getElementById('city-list');
+      listEl.innerHTML = '';
+      
+      cities.forEach(c => {
+        const div = document.createElement('div');
+        div.className = 'city-card';
+        div.innerHTML = `
+          <div>
+            <div class="city-name">${c.name}</div>
+            <div class="city-country">Score: ${c.health_score ?? '-'}</div>
+          </div>
+          <div class="city-score" style="color:${colorFromScore(c.health_score)}">${c.health_score ?? '-'}</div>
+        `;
+        div.onclick = () => {
+           if(window.centerCameraOnCity) window.centerCameraOnCity(c);
+           else showCity(c);
+        };
+        listEl.appendChild(div);
+      });
+
+      // Populate Issues for Modal
+      const topics = (data.topics || []).slice(0,10);
+      const issuesEl = document.getElementById('issues-list-container');
+      if(topics.length){
+        issuesEl.innerHTML = topics.map((t,i) => `
+          <div style="margin-bottom:16px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:12px;">
+            <div style="font-weight:700; color:var(--text);">${i+1}. ${t.name}</div>
+            <div style="font-size:13px; color:var(--text-muted); margin-top:4px;">${t.description}</div>
+          </div>
+        `).join('');
+      } else {
+        issuesEl.textContent = "No global issues data available.";
+      }
+      
+      // Attach Search
+      const searchIn = document.getElementById('search');
+      searchIn.addEventListener('input', (e) => {
+        const val = e.target.value.toLowerCase();
+        Array.from(listEl.children).forEach(card => {
+          const txt = card.textContent.toLowerCase();
+          card.style.display = txt.includes(val) ? 'flex' : 'none';
+        });
+      });
+    }
+
+    function showCity(c) {
+      const sb = document.getElementById('sidebar');
+      document.getElementById('sidebar-title').textContent = c.name;
+      
+      // Scores
+      const dims = c.dimensions || {};
+      const scoreHTML = Object.entries(dims).map(([k,v]) => `
+        <div class="score-row">
+          <span>${k}</span>
+          <strong style="color:${colorFromScore(v.score)}">${v.score ?? '-'}</strong>
+        </div>
+      `).join('');
+      document.getElementById('sidebar-scores').innerHTML = scoreHTML || '<div class="text-muted">No scores</div>';
+
+      // Issues
+      const issues = (c.top_issues || []).slice(0,10);
+      document.getElementById('sidebar-issues').innerHTML = issues.length 
+        ? `<ul style="padding-left:20px; color:#d1d5db;">${issues.map(i=>`<li>${i}</li>`).join('')}</ul>`
+        : 'No issues';
+
+      // Links
+      const arts = (c.articles || c.citations || []).filter(u => !u.includes('reddit.com'));
+      const reds = (c.reddit_posts || c.citations || []).filter(u => u.includes('reddit.com'));
+
+      document.getElementById('sidebar-articles').innerHTML = arts.length 
+        ? arts.map(u => `<a href="${u}" target="_blank" class="link-card">${u}</a>`).join('')
+        : 'No articles';
+        
+      document.getElementById('sidebar-reddit').innerHTML = reds.length 
+        ? reds.map(u => `<a href="${u}" target="_blank" class="link-card">${u}</a>`).join('')
+        : 'No reddit posts';
+
+      // Reset Tab & Open
+      setSidebarTab('scores');
+      sb.classList.add('open');
+    }
+
+    // --- GLOBE LOGIC ---
+    function bootstrapGeodata(cities, catalog, boundaries) {
+      // Indexing logic preserved from original
+      const geoIndex = new Map();
+      const cityPolygons = [];
+      
+      // Helpers
+      const register = (name, lat, lng, src) => {
+        const n = normalizeName(name);
+        if(!geoIndex.has(n) || (GEO_SOURCE_PRIORITY[src] > (geoIndex.get(n).p||0))) {
+          geoIndex.set(n, {lat, lng, p: GEO_SOURCE_PRIORITY[src]});
+        }
+      };
+
+      // 1. Coordinates hardcoded
+      Object.entries(CITY_COORDINATES).forEach(([k,v]) => register(k, v[0], v[1], 'database'));
+      
+      // 2. Catalog
+      (catalog||[]).forEach(c => {
+         if(c.lat && c.lng) register(c.name, Number(c.lat), Number(c.lng), 'dataset');
+      });
+      
+      // 3. Match
+      const resolved = [];
+      cities.forEach(c => {
+        const norm = normalizeName(c.name);
+        const hit = geoIndex.get(norm);
+        if(hit) {
+          resolved.push({ ...c, lat: hit.lat, lng: hit.lng });
+        }
+      });
+      
+      buildGlobe(resolved);
+    }
+
+    function buildGlobe(cities) {
+      const container = document.getElementById('globe');
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      
+      let isAnimating = false;
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(45, width/height, 0.1, 4000);
+      camera.position.set(0, 0, 320); // Heroic start position
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      container.appendChild(renderer.domElement);
+
+      // Lighting
+      scene.add(new THREE.AmbientLight(0xffffff, 0.6)); // Brighter ambient
+      const dLight = new THREE.DirectionalLight(0xffffff, 1.2);
+      dLight.position.set(100, 100, 50);
+      scene.add(dLight);
+      
+      // Globe
+      const globe = new ThreeGlobe()
+        .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+        .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
+        .showAtmosphere(true)
+        .atmosphereColor('#3b82f6')
+        .atmosphereAltitude(0.15);
+
+      // Points
+      const pointsData = cities.map(c => ({
+        lat: c.lat,
+        lng: c.lng,
+        size: 0.5,
+        color: colorFromScore(c.health_score),
+        city: c
+      }));
+
+      globe.pointsData(pointsData)
+        .pointAltitude(0.01)
+        .pointColor('color')
+        .pointRadius(0.6)
+        .pointResolution(12)
+        .pointsMerge(true);
+        
+      // Labels (Only visible when close or for major cities)
+      globe.labelsData(pointsData)
+        .labelLat(d => d.lat)
+        .labelLng(d => d.lng)
+        .labelText(d => d.city.name)
+        .labelSize(1.2)
+        .labelDotRadius(0.4)
+        .labelColor(() => 'rgba(255,255,255,0.9)')
+        .labelResolution(2)
+        .labelAltitude(0.02);
+
+      scene.add(globe);
+
+      // Controls
+      const controls = new window.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      controls.enablePan = false;
+      controls.minDistance = 105; // Revert to safe close distance
+      controls.maxDistance = 600;
+      controls.autoRotate = true;
+      controls.autoRotateSpeed = 0.35;
+
+      // Click Interaction (Raycaster)
+      const raycaster = new THREE.Raycaster();
+      const mouse = new THREE.Vector2();
+      const globeSphere = new THREE.Sphere(new THREE.Vector3(0,0,0), 100); // Approximation of globe surface
+      
+      renderer.domElement.addEventListener('click', (e) => {
+        // Calculate mouse position
+        mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+        
+        // Raycast
+        raycaster.setFromCamera(mouse, camera);
+        
+        // Check intersection with globe surface first
+        const surfaceHit = new THREE.Vector3();
+        const hitGlobe = raycaster.ray.intersectSphere(globeSphere, surfaceHit);
+        
+        // If we didn't hit the globe ball, we didn't hit any city
+        if (!hitGlobe) return;
+        
+        const distToSurface = surfaceHit.distanceTo(camera.position);
+
+        // Find closest visible point
+        let closest = null;
+        let minDist = 0.05; // Screen distance threshold
+        
+        pointsData.forEach(p => {
+          const pos = globe.getCoords(p.lat, p.lng, 0.01);
+          const worldPos = new THREE.Vector3(pos.x, pos.y, pos.z).applyMatrix4(globe.matrixWorld);
+          
+          // Project to screen
+          const screenVec = worldPos.clone().project(camera);
+          
+          const dx = screenVec.x - mouse.x;
+          const dy = screenVec.y - mouse.y;
+          const d = Math.sqrt(dx*dx + dy*dy);
+          
+          // 1. Must be within click radius on screen
+          if(d < minDist) {
+            // 2. Occlusion Check:
+            // Calculate real distance from camera to this city point
+            const distToPoint = worldPos.distanceTo(camera.position);
+            
+            // If the point is significantly further than the surface hit, it's on the back
+            // (Front points are at ~distToSurface or slightly less/more depending on altitude)
+            // Back points are at ~distToSurface + 200
+            if (distToPoint < distToSurface + 50) {
+               minDist = d; // Prioritize closer hits on screen
+               closest = p;
+            }
+          }
+        });
+
+        if(closest) {
+          showCity(closest.city);
+          window.centerCameraOnCity(closest.city);
+        }
+      });
+
+      // Hover Tooltip
+      const tooltip = document.getElementById('city-tooltip');
+      renderer.domElement.addEventListener('mousemove', (e) => {
+        mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+        
+        raycaster.setFromCamera(mouse, camera);
+        const surfaceHit = new THREE.Vector3();
+        const hitGlobe = raycaster.ray.intersectSphere(globeSphere, surfaceHit);
+        
+        let hovered = null;
+        let minDist = 0.025;
+        
+        if (hitGlobe) {
+          const distToSurface = surfaceHit.distanceTo(camera.position);
+          
+          pointsData.forEach(p => {
+            const pos = globe.getCoords(p.lat, p.lng, 0.01);
+            const worldPos = new THREE.Vector3(pos.x, pos.y, pos.z).applyMatrix4(globe.matrixWorld);
+            const screenVec = worldPos.clone().project(camera);
+            
+            const dx = screenVec.x - mouse.x;
+            const dy = screenVec.y - mouse.y;
+            const d = Math.sqrt(dx*dx + dy*dy);
+            
+            if(d < minDist) {
+               const distToPoint = worldPos.distanceTo(camera.position);
+               if (distToPoint < distToSurface + 50) {
+                 minDist = d;
+                 hovered = p;
+               }
+            }
+          });
+        }
+
+        if(hovered) {
+          tooltip.textContent = `${hovered.city.name} (${hovered.city.health_score})`;
+          tooltip.style.left = e.clientX + 'px';
+          tooltip.style.top = e.clientY + 'px';
+          tooltip.classList.add('visible');
+          container.style.cursor = 'pointer';
+        } else {
+          tooltip.classList.remove('visible');
+          container.style.cursor = 'default';
+        }
+      });
+
+      // Export center function
+      window.centerCameraOnCity = (city) => {
+        const meta = pointsData.find(p => p.city.name === city.name);
+        if(!meta) return;
+
+        isAnimating = true;
+        controls.autoRotate = false;
+        controls.enabled = false; // Disable controls during animation
+        
+        // Calculate position
+        const coords = globe.getCoords(meta.lat, meta.lng, 1.5); // 1.5 altitude (zoom out slightly)
+        const v = new THREE.Vector3(coords.x, coords.y, coords.z);
+        
+        // Move camera
+        const duration = 3000;
+        const startPos = camera.position.clone();
+        const endPos = v.multiplyScalar(1.25); // Zoom extremely close (1.25x radius)
+        
+        let start = null;
+        function animateCam(t) {
+          if(!start) start = t;
+          const progress = Math.min((t - start) / duration, 1);
+          // Ease
+          const ease = 1 - Math.pow(1 - progress, 3);
+          
+          camera.position.lerpVectors(startPos, endPos, ease);
+          camera.lookAt(0,0,0);
+          // Note: NOT calling controls.update() here to prevent conflict
+          
+          if(progress < 1) {
+            requestAnimationFrame(animateCam);
+          } else {
+             isAnimating = false;
+             controls.enabled = true;
+             controls.autoRotate = true; // Resume rotation
+             controls.update(); // Sync controls to new position
+          }
+        }
+        requestAnimationFrame(animateCam);
+      };
+
+      // Animation Loop
+      function animate() {
+        requestAnimationFrame(animate);
+        // Only update controls if not manually animating
+        if (controls && !isAnimating) {
+          controls.update();
+        }
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      // Resize
+      window.addEventListener('resize', () => {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.setSize(w, h);
+      });
+    }
+  </script>
+</body>
+</html>
