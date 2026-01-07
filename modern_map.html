@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -24,7 +25,9 @@
       --font-main: 'Inter', system-ui, -apple-system, sans-serif;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
@@ -44,7 +47,7 @@
       z-index: 1;
       background: radial-gradient(circle at 50% 50%, #111827 0%, #000000 100%);
     }
-    
+
     #globe canvas {
       display: block;
       width: 100%;
@@ -56,7 +59,8 @@
       position: absolute;
       inset: 0;
       z-index: 10;
-      pointer-events: none; /* Let clicks pass through to globe */
+      pointer-events: none;
+      /* Let clicks pass through to globe */
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -71,7 +75,8 @@
       border: 1px solid var(--glass-border);
       box-shadow: var(--glass-shadow);
       border-radius: 16px;
-      pointer-events: auto; /* Enable clicks on panels */
+      pointer-events: auto;
+      /* Enable clicks on panels */
       transition: transform 0.2s, opacity 0.2s;
     }
 
@@ -86,7 +91,7 @@
     .branding {
       max-width: 400px;
     }
-    
+
     h1 {
       margin: 0;
       font-size: 28px;
@@ -95,7 +100,7 @@
       background: linear-gradient(135deg, #fff 0%, #9ca3af 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     }
 
     p.subtitle {
@@ -110,7 +115,7 @@
       position: relative;
       width: 320px;
     }
-    
+
     input#search {
       width: 100%;
       background: rgba(0, 0, 0, 0.4);
@@ -124,7 +129,7 @@
       transition: all 0.2s;
       backdrop-filter: blur(4px);
     }
-    
+
     input#search:focus {
       background: rgba(0, 0, 0, 0.6);
       border-color: var(--primary);
@@ -199,9 +204,23 @@
       background: rgba(255, 255, 255, 0.05);
     }
 
-    .city-name { font-weight: 600; font-size: 14px; }
-    .city-score { font-weight: 700; color: var(--primary); font-size: 14px; }
-    .city-country { display: block; font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .city-name {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .city-score {
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 14px;
+    }
+
+    .city-country {
+      display: block;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
 
     /* Bottom Left Controls */
     .bottom-controls {
@@ -210,18 +229,22 @@
     }
 
     .icon-btn {
-      width: 44px;
       height: 44px;
+      padding: 0 20px;
+      gap: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
       border-radius: 12px;
       color: var(--text);
       cursor: pointer;
-      font-size: 20px;
+      font-size: 14px;
+      font-weight: 600;
     }
-    
-    .icon-btn:hover { background: rgba(255,255,255,0.1); }
+
+    .icon-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
 
     /* Details Sidebar (Slide-over) */
     .sidebar {
@@ -249,12 +272,23 @@
       align-items: center;
     }
 
-    .sidebar-title { font-size: 24px; font-weight: 700; }
-    .close-btn { 
-      background: none; border: none; color: var(--text-muted); 
-      font-size: 24px; cursor: pointer; padding: 4px;
+    .sidebar-title {
+      font-size: 24px;
+      font-weight: 700;
     }
-    .close-btn:hover { color: var(--text); }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 24px;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .close-btn:hover {
+      color: var(--text);
+    }
 
     .sidebar-tabs {
       display: flex;
@@ -272,10 +306,19 @@
       position: relative;
     }
 
-    .tab.active { color: var(--primary); }
+    .tab.active {
+      color: var(--primary);
+    }
+
     .tab.active::after {
-      content: ''; position: absolute; bottom: -1px; left: 0; right: 0;
-      height: 2px; background: var(--primary); border-radius: 2px 2px 0 0;
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--primary);
+      border-radius: 2px 2px 0 0;
     }
 
     .sidebar-content {
@@ -295,7 +338,7 @@
     .link-card {
       display: block;
       padding: 12px;
-      background: rgba(255,255,255,0.03);
+      background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--glass-border);
       border-radius: 8px;
       margin-bottom: 8px;
@@ -304,31 +347,76 @@
       font-size: 13px;
       transition: all 0.2s;
     }
-    .link-card:hover { border-color: var(--primary); background: rgba(34,197,94,0.05); }
+
+    .link-card:hover {
+      border-color: var(--primary);
+      background: rgba(34, 197, 94, 0.05);
+    }
 
     /* Modals (Methodology / Issues) */
     .modal-overlay {
-      position: fixed; inset: 0; z-index: 50;
-      background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
-      display: none; align-items: center; justify-content: center;
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
     }
-    .modal-overlay.open { display: flex; }
-    
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
     .modal-card {
-      width: 90%; max-width: 800px; max-height: 85vh;
-      display: flex; flex-direction: column;
+      width: 90%;
+      max-width: 800px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
     }
-    
-    .modal-body { padding: 24px; overflow-y: auto; line-height: 1.6; font-size: 15px; color: #d1d5db; }
-    .modal-body h3 { color: var(--primary); margin-top: 24px; font-size: 18px; }
-    .modal-body ul { margin-left: 20px; margin-bottom: 16px; }
-    .modal-body li { margin-bottom: 6px; }
+
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+      line-height: 1.6;
+      font-size: 15px;
+      color: #d1d5db;
+    }
+
+    .modal-body h3 {
+      color: var(--primary);
+      margin-top: 24px;
+      font-size: 18px;
+    }
+
+    .modal-body ul {
+      margin-left: 20px;
+      margin-bottom: 16px;
+    }
+
+    .modal-body li {
+      margin-bottom: 6px;
+    }
 
     /* Custom Scrollbar */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
 
     /* Globe Tooltip */
     .globe-tooltip {
@@ -346,23 +434,51 @@
       opacity: 0;
       transition: opacity 0.15s;
     }
-    .globe-tooltip.visible { opacity: 1; }
+
+    .globe-tooltip.visible {
+      opacity: 1;
+    }
 
     @media(max-width: 900px) {
-      .panel-right { display: none; } /* Hide list on mobile, rely on search/globe */
-      .sidebar { width: 100%; top: auto; height: 70vh; transform: translateY(100%); bottom: 0; right: 0; left: 0; border-radius: 24px 24px 0 0; }
-      .sidebar.open { transform: translateY(0); }
-      .top-bar { flex-direction: column; gap: 12px; }
-      .search-container { width: 100%; }
+      .panel-right {
+        display: none;
+      }
+
+      /* Hide list on mobile, rely on search/globe */
+      .sidebar {
+        width: 100%;
+        top: auto;
+        height: 70vh;
+        transform: translateY(100%);
+        bottom: 0;
+        right: 0;
+        left: 0;
+        border-radius: 24px 24px 0 0;
+      }
+
+      .sidebar.open {
+        transform: translateY(0);
+      }
+
+      .top-bar {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .search-container {
+        width: 100%;
+      }
     }
   </style>
 </head>
+
 <body>
 
   <!-- Full Screen Globe -->
   <div id="globe">
     <!-- Three.js Canvas injected here -->
-    <div class="legend glass-panel" style="position:absolute; bottom:24px; left:24px; padding:12px; font-size:12px; color:var(--text-muted); pointer-events:none;">
+    <div class="legend glass-panel"
+      style="position:absolute; bottom:96px; left:24px; padding:12px; font-size:12px; color:var(--text-muted); pointer-events:none;">
       • Scroll to zoom • Drag to rotate<br>
       • Click cities for details
     </div>
@@ -370,7 +486,7 @@
 
   <!-- UI Overlay -->
   <div class="ui-layer">
-    
+
     <!-- Header Area -->
     <div class="top-bar pointer-events-auto">
       <div class="branding">
@@ -400,9 +516,13 @@
 
     <!-- Bottom Left Controls -->
     <div class="bottom-controls pointer-events-auto" style="position: absolute; bottom: 24px; left: 24px;">
-       <!-- Moved legend into globe container, but we can put buttons here -->
-       <div class="glass-panel icon-btn" onclick="openModal('issues')" title="Global Issues">⚠</div>
-       <div class="glass-panel icon-btn" onclick="openModal('methodology')" title="Methodology">ℹ</div>
+      <!-- Moved legend into globe container, but we can put buttons here -->
+      <div class="glass-panel icon-btn" onclick="openModal('issues')" title="Global Issues">
+        <span>⚠</span> Global Issues
+      </div>
+      <div class="glass-panel icon-btn" onclick="openModal('methodology')" title="Methodology">
+        <span>ℹ</span> Methodology
+      </div>
     </div>
 
   </div>
@@ -473,7 +593,7 @@
   <script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
   <script src="https://unpkg.com/three-globe@2.30.0/dist/three-globe.min.js"></script>
   <script src="https://unpkg.com/topojson-client@3"></script>
-  
+
   <script type="importmap">
   {
     "imports": {
@@ -482,11 +602,11 @@
     }
   }
   </script>
-  
+
   <script type="module">
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     window.OrbitControls = OrbitControls;
-    
+
     // Dispatch event to signal OrbitControls is ready
     window.dispatchEvent(new Event('OrbitControlsReady'));
   </script>
@@ -510,13 +630,13 @@
       const overlay = document.getElementById('modal-overlay');
       const title = document.getElementById('modal-title');
       const body = document.getElementById('modal-body');
-      
+
       overlay.classList.add('open');
-      
-      if(type === 'methodology') {
+
+      if (type === 'methodology') {
         title.textContent = 'Methodology';
         body.innerHTML = document.getElementById('content-methodology').innerHTML;
-      } else if(type === 'issues') {
+      } else if (type === 'issues') {
         title.textContent = 'Global Issues';
         // Clone the live issues content if available
         const liveContent = document.getElementById('issues-list-container').innerHTML;
@@ -531,7 +651,7 @@
     // --- DATA & MAP LOGIC ---
     let RESULTS = null;
     const GEO_SOURCE_PRIORITY = { 'database': 100, 'boundary': 80, 'dataset': 60, 'hint': 40 };
-    
+
     // Coordinates
     const CITY_COORDINATES = {
       'Tokyo': [35.6895, 139.6917], 'Delhi': [28.6139, 77.2090], 'Shanghai': [31.2304, 121.4737],
@@ -574,28 +694,28 @@
       'St. Petersburg': [59.9343, 30.3351]
     };
 
-    function normalizeName(str){
+    function normalizeName(str) {
       return (str || '').toString().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9\s]/gi, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
     }
 
-    function colorFromScore(score){
-      if(score == null || Number.isNaN(score)) return '#9ca3af';
-      if(score >= 80) return '#22c55e';
-      if(score >= 65) return '#4ade80';
-      if(score >= 50) return '#facc15';
-      if(score >= 35) return '#f97316';
+    function colorFromScore(score) {
+      if (score == null || Number.isNaN(score)) return '#9ca3af';
+      if (score >= 80) return '#22c55e';
+      if (score >= 65) return '#4ade80';
+      if (score >= 50) return '#facc15';
+      if (score >= 35) return '#f97316';
       return '#ef4444';
     }
 
     // --- FETCHING & INIT ---
-    function tryFetch(paths){
-      if(!paths.length) throw new Error('no paths');
+    function tryFetch(paths) {
+      if (!paths.length) throw new Error('no paths');
       const [p, ...rest] = paths;
       const separator = p.includes('?') ? '&' : '?';
       const url = p + separator + '_t=' + Date.now();
-      
-      return fetch(url, { cache: 'no-store' }).then(r=>{
-        if(!r.ok) throw new Error('HTTP '+r.status);
+
+      return fetch(url, { cache: 'no-store' }).then(r => {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
         return r.json();
       }).catch(err => {
         return rest.length ? tryFetch(rest) : Promise.reject(err);
@@ -606,10 +726,10 @@
     function waitForControls() {
       return new Promise(resolve => {
         if (window.OrbitControls) return resolve();
-        window.addEventListener('OrbitControlsReady', resolve, {once:true});
+        window.addEventListener('OrbitControlsReady', resolve, { once: true });
         // Fallback polling
         const i = setInterval(() => {
-          if(window.OrbitControls) { clearInterval(i); resolve(); }
+          if (window.OrbitControls) { clearInterval(i); resolve(); }
         }, 100);
       });
     }
@@ -624,11 +744,11 @@
     tryFetch(dataPaths).then(d => {
       RESULTS = d;
       updateUI(d);
-      
+
       // Load Geo & Build Globe
       Promise.all([
-        fetch('https://raw.githubusercontent.com/lutangar/cities.json/master/cities.json').then(r=>r.ok?r.json():[]).catch(()=>[]),
-        tryFetch(['data/latest/city_boundaries.geojson','city_boundaries.geojson']).catch(()=>null),
+        fetch('https://raw.githubusercontent.com/lutangar/cities.json/master/cities.json').then(r => r.ok ? r.json() : []).catch(() => []),
+        tryFetch(['data/latest/city_boundaries.geojson', 'city_boundaries.geojson']).catch(() => null),
         waitForControls()
       ]).then(([catalog, boundaries, _]) => {
         bootstrapGeodata(d.cities || [], catalog, boundaries);
@@ -640,9 +760,9 @@
     });
 
     function updateUI(data) {
-      const cities = (data.cities || []).sort((a,b) => (b.health_score||0) - (a.health_score||0));
+      const cities = (data.cities || []).sort((a, b) => (b.health_score || 0) - (a.health_score || 0));
       const summary = data.summary || {};
-      
+
       // Update Summary Pill
       const count = cities.length;
       const arts = (summary.news_articles || 0).toLocaleString();
@@ -651,7 +771,7 @@
       // Populate City List
       const listEl = document.getElementById('city-list');
       listEl.innerHTML = '';
-      
+
       cities.forEach(c => {
         const div = document.createElement('div');
         div.className = 'city-card';
@@ -663,26 +783,26 @@
           <div class="city-score" style="color:${colorFromScore(c.health_score)}">${c.health_score ?? '-'}</div>
         `;
         div.onclick = () => {
-           if(window.centerCameraOnCity) window.centerCameraOnCity(c);
-           else showCity(c);
+          if (window.centerCameraOnCity) window.centerCameraOnCity(c);
+          else showCity(c);
         };
         listEl.appendChild(div);
       });
 
       // Populate Issues for Modal
-      const topics = (data.topics || []).slice(0,10);
+      const topics = (data.topics || []).slice(0, 10);
       const issuesEl = document.getElementById('issues-list-container');
-      if(topics.length){
-        issuesEl.innerHTML = topics.map((t,i) => `
+      if (topics.length) {
+        issuesEl.innerHTML = topics.map((t, i) => `
           <div style="margin-bottom:16px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:12px;">
-            <div style="font-weight:700; color:var(--text);">${i+1}. ${t.name}</div>
+            <div style="font-weight:700; color:var(--text);">${i + 1}. ${t.name}</div>
             <div style="font-size:13px; color:var(--text-muted); margin-top:4px;">${t.description}</div>
           </div>
         `).join('');
       } else {
         issuesEl.textContent = "No global issues data available.";
       }
-      
+
       // Attach Search
       const searchIn = document.getElementById('search');
       searchIn.addEventListener('input', (e) => {
@@ -697,10 +817,10 @@
     function showCity(c) {
       const sb = document.getElementById('sidebar');
       document.getElementById('sidebar-title').textContent = c.name;
-      
+
       // Scores
       const dims = c.dimensions || {};
-      const scoreHTML = Object.entries(dims).map(([k,v]) => `
+      const scoreHTML = Object.entries(dims).map(([k, v]) => `
         <div class="score-row">
           <span>${k}</span>
           <strong style="color:${colorFromScore(v.score)}">${v.score ?? '-'}</strong>
@@ -709,20 +829,20 @@
       document.getElementById('sidebar-scores').innerHTML = scoreHTML || '<div class="text-muted">No scores</div>';
 
       // Issues
-      const issues = (c.top_issues || []).slice(0,10);
-      document.getElementById('sidebar-issues').innerHTML = issues.length 
-        ? `<ul style="padding-left:20px; color:#d1d5db;">${issues.map(i=>`<li>${i}</li>`).join('')}</ul>`
+      const issues = (c.top_issues || []).slice(0, 10);
+      document.getElementById('sidebar-issues').innerHTML = issues.length
+        ? `<ul style="padding-left:20px; color:#d1d5db;">${issues.map(i => `<li>${i}</li>`).join('')}</ul>`
         : 'No issues';
 
       // Links
       const arts = (c.articles || c.citations || []).filter(u => !u.includes('reddit.com'));
       const reds = (c.reddit_posts || c.citations || []).filter(u => u.includes('reddit.com'));
 
-      document.getElementById('sidebar-articles').innerHTML = arts.length 
+      document.getElementById('sidebar-articles').innerHTML = arts.length
         ? arts.map(u => `<a href="${u}" target="_blank" class="link-card">${u}</a>`).join('')
         : 'No articles';
-        
-      document.getElementById('sidebar-reddit').innerHTML = reds.length 
+
+      document.getElementById('sidebar-reddit').innerHTML = reds.length
         ? reds.map(u => `<a href="${u}" target="_blank" class="link-card">${u}</a>`).join('')
         : 'No reddit posts';
 
@@ -736,33 +856,33 @@
       // Indexing logic preserved from original
       const geoIndex = new Map();
       const cityPolygons = [];
-      
+
       // Helpers
       const register = (name, lat, lng, src) => {
         const n = normalizeName(name);
-        if(!geoIndex.has(n) || (GEO_SOURCE_PRIORITY[src] > (geoIndex.get(n).p||0))) {
-          geoIndex.set(n, {lat, lng, p: GEO_SOURCE_PRIORITY[src]});
+        if (!geoIndex.has(n) || (GEO_SOURCE_PRIORITY[src] > (geoIndex.get(n).p || 0))) {
+          geoIndex.set(n, { lat, lng, p: GEO_SOURCE_PRIORITY[src] });
         }
       };
 
       // 1. Coordinates hardcoded
-      Object.entries(CITY_COORDINATES).forEach(([k,v]) => register(k, v[0], v[1], 'database'));
-      
+      Object.entries(CITY_COORDINATES).forEach(([k, v]) => register(k, v[0], v[1], 'database'));
+
       // 2. Catalog
-      (catalog||[]).forEach(c => {
-         if(c.lat && c.lng) register(c.name, Number(c.lat), Number(c.lng), 'dataset');
+      (catalog || []).forEach(c => {
+        if (c.lat && c.lng) register(c.name, Number(c.lat), Number(c.lng), 'dataset');
       });
-      
+
       // 3. Match
       const resolved = [];
       cities.forEach(c => {
         const norm = normalizeName(c.name);
         const hit = geoIndex.get(norm);
-        if(hit) {
+        if (hit) {
           resolved.push({ ...c, lat: hit.lat, lng: hit.lng });
         }
       });
-      
+
       buildGlobe(resolved);
     }
 
@@ -770,11 +890,11 @@
       const container = document.getElementById('globe');
       const width = window.innerWidth;
       const height = window.innerHeight;
-      
+
       let isAnimating = false;
 
       const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(45, width/height, 0.1, 4000);
+      const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 4000);
       camera.position.set(0, 0, 320); // Heroic start position
 
       const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -787,7 +907,7 @@
       const dLight = new THREE.DirectionalLight(0xffffff, 1.2);
       dLight.position.set(100, 100, 50);
       scene.add(dLight);
-      
+
       // Globe
       const globe = new ThreeGlobe()
         .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
@@ -811,7 +931,7 @@
         .pointRadius(0.6)
         .pointResolution(12)
         .pointsMerge(true);
-        
+
       // Labels (Only visible when close or for major cities)
       globe.labelsData(pointsData)
         .labelLat(d => d.lat)
@@ -838,57 +958,57 @@
       // Click Interaction (Raycaster)
       const raycaster = new THREE.Raycaster();
       const mouse = new THREE.Vector2();
-      const globeSphere = new THREE.Sphere(new THREE.Vector3(0,0,0), 100); // Approximation of globe surface
-      
+      const globeSphere = new THREE.Sphere(new THREE.Vector3(0, 0, 0), 100); // Approximation of globe surface
+
       renderer.domElement.addEventListener('click', (e) => {
         // Calculate mouse position
         mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
         mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-        
+
         // Raycast
         raycaster.setFromCamera(mouse, camera);
-        
+
         // Check intersection with globe surface first
         const surfaceHit = new THREE.Vector3();
         const hitGlobe = raycaster.ray.intersectSphere(globeSphere, surfaceHit);
-        
+
         // If we didn't hit the globe ball, we didn't hit any city
         if (!hitGlobe) return;
-        
+
         const distToSurface = surfaceHit.distanceTo(camera.position);
 
         // Find closest visible point
         let closest = null;
         let minDist = 0.05; // Screen distance threshold
-        
+
         pointsData.forEach(p => {
           const pos = globe.getCoords(p.lat, p.lng, 0.01);
           const worldPos = new THREE.Vector3(pos.x, pos.y, pos.z).applyMatrix4(globe.matrixWorld);
-          
+
           // Project to screen
           const screenVec = worldPos.clone().project(camera);
-          
+
           const dx = screenVec.x - mouse.x;
           const dy = screenVec.y - mouse.y;
-          const d = Math.sqrt(dx*dx + dy*dy);
-          
+          const d = Math.sqrt(dx * dx + dy * dy);
+
           // 1. Must be within click radius on screen
-          if(d < minDist) {
+          if (d < minDist) {
             // 2. Occlusion Check:
             // Calculate real distance from camera to this city point
             const distToPoint = worldPos.distanceTo(camera.position);
-            
+
             // If the point is significantly further than the surface hit, it's on the back
             // (Front points are at ~distToSurface or slightly less/more depending on altitude)
             // Back points are at ~distToSurface + 200
             if (distToPoint < distToSurface + 50) {
-               minDist = d; // Prioritize closer hits on screen
-               closest = p;
+              minDist = d; // Prioritize closer hits on screen
+              closest = p;
             }
           }
         });
 
-        if(closest) {
+        if (closest) {
           showCity(closest.city);
           window.centerCameraOnCity(closest.city);
         }
@@ -899,37 +1019,37 @@
       renderer.domElement.addEventListener('mousemove', (e) => {
         mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
         mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-        
+
         raycaster.setFromCamera(mouse, camera);
         const surfaceHit = new THREE.Vector3();
         const hitGlobe = raycaster.ray.intersectSphere(globeSphere, surfaceHit);
-        
+
         let hovered = null;
         let minDist = 0.025;
-        
+
         if (hitGlobe) {
           const distToSurface = surfaceHit.distanceTo(camera.position);
-          
+
           pointsData.forEach(p => {
             const pos = globe.getCoords(p.lat, p.lng, 0.01);
             const worldPos = new THREE.Vector3(pos.x, pos.y, pos.z).applyMatrix4(globe.matrixWorld);
             const screenVec = worldPos.clone().project(camera);
-            
+
             const dx = screenVec.x - mouse.x;
             const dy = screenVec.y - mouse.y;
-            const d = Math.sqrt(dx*dx + dy*dy);
-            
-            if(d < minDist) {
-               const distToPoint = worldPos.distanceTo(camera.position);
-               if (distToPoint < distToSurface + 50) {
-                 minDist = d;
-                 hovered = p;
-               }
+            const d = Math.sqrt(dx * dx + dy * dy);
+
+            if (d < minDist) {
+              const distToPoint = worldPos.distanceTo(camera.position);
+              if (distToPoint < distToSurface + 50) {
+                minDist = d;
+                hovered = p;
+              }
             }
           });
         }
 
-        if(hovered) {
+        if (hovered) {
           tooltip.textContent = `${hovered.city.name} (${hovered.city.health_score})`;
           tooltip.style.left = e.clientX + 'px';
           tooltip.style.top = e.clientY + 'px';
@@ -944,39 +1064,39 @@
       // Export center function
       window.centerCameraOnCity = (city) => {
         const meta = pointsData.find(p => p.city.name === city.name);
-        if(!meta) return;
+        if (!meta) return;
 
         isAnimating = true;
         controls.autoRotate = false;
         controls.enabled = false; // Disable controls during animation
-        
+
         // Calculate position
         const coords = globe.getCoords(meta.lat, meta.lng, 1.5); // 1.5 altitude (zoom out slightly)
         const v = new THREE.Vector3(coords.x, coords.y, coords.z);
-        
+
         // Move camera
         const duration = 3000;
         const startPos = camera.position.clone();
         const endPos = v.multiplyScalar(1.25); // Zoom extremely close (1.25x radius)
-        
+
         let start = null;
         function animateCam(t) {
-          if(!start) start = t;
+          if (!start) start = t;
           const progress = Math.min((t - start) / duration, 1);
           // Ease
           const ease = 1 - Math.pow(1 - progress, 3);
-          
+
           camera.position.lerpVectors(startPos, endPos, ease);
-          camera.lookAt(0,0,0);
+          camera.lookAt(0, 0, 0);
           // Note: NOT calling controls.update() here to prevent conflict
-          
-          if(progress < 1) {
+
+          if (progress < 1) {
             requestAnimationFrame(animateCam);
           } else {
-             isAnimating = false;
-             controls.enabled = true;
-             controls.autoRotate = true; // Resume rotation
-             controls.update(); // Sync controls to new position
+            isAnimating = false;
+            controls.enabled = true;
+            controls.autoRotate = true; // Resume rotation
+            controls.update(); // Sync controls to new position
           }
         }
         requestAnimationFrame(animateCam);
@@ -1004,4 +1124,5 @@
     }
   </script>
 </body>
+
 </html>

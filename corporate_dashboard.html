@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -151,7 +152,7 @@
             max-height: 200px;
             overflow-y: auto;
             z-index: 100;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
         }
 
         .select-custom.open .select-options {
@@ -376,28 +377,48 @@
             background-color: var(--text-muted);
         }
 
-        .loading-dots span:nth-child(1) { animation-delay: -0.32s; }
-        .loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+        .loading-dots span:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .loading-dots span:nth-child(2) {
+            animation-delay: -0.16s;
+        }
 
         @keyframes bounce {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1); }
+
+            0%,
+            80%,
+            100% {
+                transform: scale(0);
+            }
+
+            40% {
+                transform: scale(1);
+            }
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        
+
         /* Analysis Preview Styles */
         .analysis-card {
             margin-top: 12px;
             padding: 12px;
-            background: rgba(0,0,0,0.2);
+            background: rgba(0, 0, 0, 0.2);
             border-radius: 8px;
             border-left: 3px solid var(--primary);
         }
-        
+
         .analysis-title {
             font-size: 13px;
             font-weight: 700;
@@ -407,6 +428,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <header>
@@ -420,7 +442,8 @@
             </div>
         </div>
         <div style="display: flex; gap: 16px;">
-            <a href="map.html" style="color: var(--text-muted); text-decoration: none; font-size: 14px; display: flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 6px; transition: background 0.2s;">
+            <a href="modern_map.html"
+                style="color: var(--text-muted); text-decoration: none; font-size: 14px; display: flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 6px; transition: background 0.2s;">
                 <i class="fa-solid fa-globe"></i> Public Map
             </a>
             <div style="display: flex; align-items: center; gap: 8px;">
@@ -450,7 +473,8 @@
                     </div>
                     <div class="select-options" id="city-options">
                         <!-- Options populated via JS -->
-                        <div style="padding: 12px; text-align: center; color: var(--text-muted);">Loading cities...</div>
+                        <div style="padding: 12px; text-align: center; color: var(--text-muted);">Loading cities...
+                        </div>
                     </div>
                 </div>
                 <div class="tags-container" id="city-tags"></div>
@@ -471,8 +495,8 @@
                 <div class="tags-container" id="dim-tags"></div>
             </div>
 
-             <!-- Additional settings -->
-             <div class="form-group">
+            <!-- Additional settings -->
+            <div class="form-group">
                 <label class="form-label">Analysis Depth</label>
                 <div style="display: flex; gap: 12px; margin-top: 4px;">
                     <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer;">
@@ -501,7 +525,9 @@
                         </div>
                         <div class="message-content">
                             <p><strong>Welcome to Our City Health Corporate Intelligence.</strong></p>
-                            <p style="margin-top: 8px;">I can help you analyze civic health data across your portfolio. Once you've selected your cities and focus areas on the left, you can ask me things like:</p>
+                            <p style="margin-top: 8px;">I can help you analyze civic health data across your portfolio.
+                                Once you've selected your cities and focus areas on the left, you can ask me things
+                                like:</p>
                             <ul style="margin-top: 8px; padding-left: 20px; list-style-type: disc;">
                                 <li>"Summarize the housing sentiment across my portfolio."</li>
                                 <li>"Which city has the highest risk for transportation disruption?"</li>
@@ -512,7 +538,8 @@
                 </div>
 
                 <div class="input-area">
-                    <textarea class="chat-input" id="prompt-input" placeholder="Ask a question about your selected cities... (e.g., 'Compare safety scores between London and New York')"></textarea>
+                    <textarea class="chat-input" id="prompt-input"
+                        placeholder="Ask a question about your selected cities... (e.g., 'Compare safety scores between London and New York')"></textarea>
                     <button class="send-btn" id="send-btn">
                         <i class="fa-solid fa-paper-plane"></i>
                     </button>
@@ -527,10 +554,10 @@
     <script>
         // Configuration
         const DIMENSIONS = [
-            "Affordability", "Services", "Safety", "Opportunity", "Culture", "Environment", 
+            "Affordability", "Services", "Safety", "Opportunity", "Culture", "Environment",
             "Transportation", "Governance", "Housing", "Economy", "Education", "Health"
         ];
-        
+
         // State
         const state = {
             cities: [], // Loaded from JSON
@@ -579,9 +606,9 @@
                     '../data/latest/full_results.json',
                     'full_results.json'
                 ];
-                
+
                 const data = await tryFetch(dataPaths);
-                
+
                 if (data && data.cities) {
                     // Sort cities alphabetically
                     state.cities = data.cities.sort((a, b) => a.name.localeCompare(b.name));
@@ -645,7 +672,7 @@
                 `;
                 cityTags.appendChild(tag);
             });
-            document.getElementById('city-select-text').textContent = 
+            document.getElementById('city-select-text').textContent =
                 state.selectedCities.size > 0 ? `${state.selectedCities.size} cities selected` : 'Select cities...';
 
             // Dimensions
@@ -659,7 +686,7 @@
                 `;
                 dimTags.appendChild(tag);
             });
-            document.getElementById('dim-select-text').textContent = 
+            document.getElementById('dim-select-text').textContent =
                 state.selectedDimensions.size > 0 ? `${state.selectedDimensions.size} areas selected` : 'Select dimensions...';
         }
 
@@ -687,15 +714,15 @@
         function addMessage(text, type) {
             const msgDiv = document.createElement('div');
             msgDiv.className = `message ${type}`;
-            
+
             const avatar = document.createElement('div');
             avatar.className = `avatar ${type}`;
             avatar.innerHTML = type === 'ai' ? '<i class="fa-solid fa-robot"></i>' : '<i class="fa-solid fa-user"></i>';
-            
+
             const content = document.createElement('div');
             content.className = 'message-content';
             content.innerHTML = text; // Allow HTML
-            
+
             msgDiv.appendChild(avatar);
             msgDiv.appendChild(content);
             messagesContainer.appendChild(msgDiv);
@@ -731,27 +758,27 @@
             // In production, this would be: await fetch('/api/chat', { method: 'POST', body: ... })
             setTimeout(() => {
                 loadingEl.remove();
-                
+
                 // Construct a context-aware mock response
                 const citiesList = Array.from(state.selectedCities);
                 const dimsList = Array.from(state.selectedDimensions);
-                
+
                 let response = "";
-                
+
                 if (citiesList.length === 0) {
                     response = "Please select at least one city from the portfolio list on the left so I can analyze the specific data you need.";
                 } else {
                     const cityNames = citiesList.join(", ");
                     const dimNames = dimsList.length > 0 ? dimsList.join(" and ") : "general civic health";
-                    
+
                     response = `<p>I've analyzed the latest signals for <strong>${cityNames}</strong> focusing on <strong>${dimNames}</strong>.</p>`;
-                    
+
                     // Mock data analysis
                     response += `<div class="analysis-card">
                         <div class="analysis-title">Executive Summary</div>
                         <p>Sentiment analysis indicates rising concerns in <strong>${citiesList[0]}</strong> regarding ${dimsList[0] || 'Housing'}, driven by recent policy changes and local discussions. Conversely, ${citiesList[1] || 'other regions'} show stability.</p>
                     </div>`;
-                    
+
                     response += `<p style="margin-top:12px">Would you like me to draft a detailed report or drill down into specific source citations?</p>`;
                 }
 
@@ -788,9 +815,9 @@
                     handleSend();
                 }
             });
-            
+
             document.getElementById('generate-btn').addEventListener('click', () => {
-                 addMessage(`Context updated. Focusing on ${state.selectedCities.size} cities and ${state.selectedDimensions.size} dimensions. Ready for your questions.`, 'ai');
+                addMessage(`Context updated. Focusing on ${state.selectedCities.size} cities and ${state.selectedDimensions.size} dimensions. Ready for your questions.`, 'ai');
             });
         }
 
@@ -799,4 +826,5 @@
 
     </script>
 </body>
+
 </html>
