@@ -18,61 +18,49 @@ We solve this by building a **Universal Resolution Engine** that scrapes unstruc
 
 ---
 
-## 📂 Key Components
+## 📂 Core Products & Mechanisms
 
-### 1. The Presentations (HKSTP Ideation)
-We have developed a set of pitch decks for the HKSTP Ideation Programme application.
+### 1. The Public Layer: Global 3D Map (`modern_map.html`)
+The public-facing portal designed to build brand authority and validate our data models through transparency.
 
-*   **`REAL_pitch_deck.html` (Use This One):**
-    *   The **official** pitch deck for the application.
-    *   **Style:** Modern PowerPoint / Keynote aesthetic (Clean, Professional, Apple-style).
-    *   **Tech:** HTML/CSS with smooth CSS transitions and staggered animations.
-    *   **Content:** Covers the full narrative from the "Resolution Crisis" to the 12-Month Roadmap and Business Model.
+*   **Mechanism:**
+    *   **WebGL Core:** Powered by a high-performance **Three.js** rendering engine (`canvas` context) to visualize 100+ cities on an interactive 3D globe.
+    *   **Data Visualization:** Uses glowing particle markers and arc-connections to represent real-time sentiment flows and connectivity between global economic hubs.
+    *   **Glassmorphism UI:** A custom-built User Interface layer (`.ui-layer`) that floats above the canvas. It utilizes CSS `backdrop-filter: blur(12px)` and rgba layers to create a "Minority Report" style HUD that functions smoothly without obstructing the data view.
+    *   **Interaction:** Features a responsive search & filter system that allows users to drill down from a global view to specific city metrics instantly.
 
-*   **`OLD_pitchdeck.html` (Deprecated):**
-    *   An alternative "Minority Report" / "Cyberpunk" styled deck.
-    *   Kept for archival purposes to demonstrate design versatility.
-    *   **Style:** Dark Mode, Neon Green/Blue accents, Scanlines, Monospace fonts.
+### 2. The B2B Layer: Corporate Intelligence Dashboard (`corporate_dashboard.html`)
+ The specialized tool for high-value Enterprise clients (Property Developers, Hedge Funds, Risk Managers).
 
-### 2. The Visualizations (Frontend)
-These files demonstrate the "Front-End" of our Intelligence Platform.
+*   **Mechanism:**
+    *   **Portfolio Management Logic:** Unlike the public map (exploratory), this dashboard is built for *monitoring*. It features a sidebar-driven layout (`.sidebar` + `.main-content`) optimized for rapid switching between different asset portfolios.
+    *   **Deep-Dive Analytics:** Designed to render complex historical trend lines and comparative bar charts, allowing analysts to compare "Safety Scores" of London vs. Hong Kong over a 5-year timeline.
+    *   **Custom Filtering Components:** Implements custom-built dropdowns (`.select-custom`) and multi-select forms, bypassing default browser controls to allow for sophisticated filtering (e.g., "Show me cities with >80 Housing Stress AND <50 Safety").
+    *   **Watchlist Architecture:** Optimized to track specific "At-Risk" assets, alerting users when sentiment shifts in specific districts.
 
-*   **`modern_map.html` (The Public Layer):**
-    *   A high-performance 3D Globe visualization powered by **Three.js**.
-    *   Features glowing city markers, arc connections, and a futuristic UI.
-    *   Designed as a free public tool to build brand authority and validate data models.
-
-*   **`corporate_dashboard.html` (The B2B Platform):**
-    *   A professional dashboard for Enterprise clients (Property Developers, Hedge Funds).
-    *   Provides deep-dive analytics, trend comparisons, and "Watchlists" for portfolio management.
-    *   Demonstrates the commercial application of our data.
-
-### 3. The Engine (Backend)
-The core logic that powers the system.
-
-*   **`conclusive_scaper_and_analysis_v3.py`:**
-    *   The **Production Pipeline (v3)**.
-    *   **Function:** Orchestrates the scraping of data, cleaning via LLM, sentiment analysis, and scoring.
-    *   **Status:** Validated Proof of Concept (POC) capable of handling concurrent city data streams.
+### 3. The Pitch (`REAL_pitch_deck.html`)
+The official pitch deck for the **HKSTP Ideation Programme**.
+*   **Style:** Modern PowerPoint / Keynote aesthetic (Clean, Professional).
+*   **Tech:** Pure HTML/CSS with smooth CSS transitions and staggered animations.
 
 ---
 
-## 🛠️ Technical Stack
+## 🛠️ Combined Technical Stack
 
-*   **Frontend:**
-    *   **HTML5 / CSS3:** Uses modern features (Flexbox, Grid, CSS Variables, Backdrop Filters).
-    *   **JavaScript:** Vanilla JS for lightweight performance + Three.js for 3D visualization.
-    *   **Design System:** Custom "Glassmorphism" UI with standardized design tokens.
-*   **Backend / Data:**
-    *   **Python:** Core scripting language.
-    *   **LLMs:** Used for semantic analysis, entity extraction, and sentiment scoring.
-    *   **Data Sources:** News APIs, Social Media Scrapers (Reddit, etc.).
+*   **Frontend Architecture:**
+    *   **Core:** HTML5, CSS3 (Custom Properties for theming), Vanilla JavaScript (ES6+).
+    *   **3D Rendering:** Three.js / WebGL.
+    *   **UI System:** Custom "Glassmorphism" Design System (Dark Mode optimized).
+*   **Backend / Data Engine (`conclusive_scaper_and_analysis_v3.py`):**
+    *   **Pipeline:** Python-based orchestration.
+    *   **LLM Integration:** Semantic analysis for standardizing unstructured text.
+    *   **Scrapers:** Targeted ingestion of News APIs and social threads.
 
 ---
 
 ## 🚀 How to Run
 
-To view the dashboards and pitch decks locally:
+To view the full suite locally:
 
 1.  **Start a local server** (Python 3):
     ```bash
@@ -81,7 +69,7 @@ To view the dashboards and pitch decks locally:
 
 2.  **Open in your browser:**
     *   **Pitch Deck:** [http://localhost:8080/REAL_pitch_deck.html](http://localhost:8080/REAL_pitch_deck.html)
-    *   **Public Map:** [http://localhost:8080/modern_map.html](http://localhost:8080/modern_map.html)
+    *   **Global Map:** [http://localhost:8080/modern_map.html](http://localhost:8080/modern_map.html)
     *   **Corporate Dashboard:** [http://localhost:8080/corporate_dashboard.html](http://localhost:8080/corporate_dashboard.html)
 
 ---
