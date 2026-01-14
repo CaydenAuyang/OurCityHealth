@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --glass-bg: rgba(10, 15, 20, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+body {
+  margin: 0;
+  background-color: #0a0f14 !important; /* Force background */
+  color: #e5e7eb;
+  font-family: 'Inter', system-ui, sans-serif;
+  background-image: radial-gradient(circle at 50% 0%, #111827 0%, #000000 100%);
+  min-height: 100vh;
+}
+
+/* Force a visible border on everything to check if CSS loads if tailwind fails */
+body[data-debug="true"] * {
+    outline: 1px solid red;
+}
+
+@layer utilities {
+  .glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+  }
+  
+  .glass-button {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(4px);
+    transition: all 0.2s;
+  }
+  
+  .glass-button:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .text-glow {
+    text-shadow: 0 0 20px rgba(34, 197, 94, 0.5);
+  }
+}
+
+/* Custom Scrollbar to match map */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
