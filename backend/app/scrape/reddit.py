@@ -137,14 +137,18 @@ def scrape_reddit_for_cities(city_subreddits: Dict[str, str], max_pages: int, co
         comments_by_post: Dict[str, List[str]] = {}
         
         if permalinks:
+            print(f"  -> Fetching comments for {len(permalinks)} posts...")
             with ThreadPoolExecutor(max_workers=8) as ex:
                 futs = {ex.submit(reddit_fetch_comments_json, pl, comments_per_post_limit): p for p, pl in permalinks}
-                for fut in as_completed(futs):
+                for idx, fut in enumerate(as_completed(futs), 1):
                     post = futs[fut]
                     try:
                         comments_by_post[post["url"]] = fut.result() or []
                     except Exception:
                         comments_by_post[post["url"]] = []
+                    
+                    if idx % 5 == 0:
+                        print(f"    Progress: {idx}/{len(permalinks)} posts processed")
                         
         for p in posts:
             for c in comments_by_post.get(p["url"], []):

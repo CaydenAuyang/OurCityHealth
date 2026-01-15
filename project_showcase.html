@@ -322,22 +322,22 @@
                         <li>✓ <strong>Civic Health Index:</strong> Standardized 0-100 scoring</li>
                     </ul>
                 </div>
-                <div class="reveal" style="display: flex; flex-direction: column; gap: 32px;">
+                <div class="reveal">
                     <!-- VISUAL: Map Screenshot 1 -->
-                    <div class="screenshot-frame">
+                    <div class="screenshot-frame" style="margin-bottom: 40px;">
                         <div class="placeholder-card">
-                            <span>Map Interface A</span>
-                            <span style="font-size: 0.7em; opacity: 0.5; margin-top: 8px;">Screenshot 2026-01-15 at 12.05.04 PM.png</span>
+                            <span>Map Interface</span>
+                            <span style="font-size: 0.7em; opacity: 0.5; margin-top: 8px;">map_interface.png</span>
                         </div>
-                        <img src="Screenshot 2026-01-15 at 12.05.04 PM.png" alt="Global Map Interface" class="screenshot" onload="this.style.opacity=1" onerror="this.style.display='none'">
+                        <img src="map_interface.png" alt="Global Map Interface" class="screenshot" onload="this.style.opacity=1" onerror="this.style.display='none'">
                     </div>
-                    <!-- VISUAL: Map Screenshot 2 (Moved from Enterprise) -->
+                    <!-- VISUAL: Map Screenshot 2 -->
                     <div class="screenshot-frame">
                         <div class="placeholder-card">
-                            <span>Map Interface B</span>
+                            <span>Map Detail</span>
                             <span style="font-size: 0.7em; opacity: 0.5; margin-top: 8px;">Screenshot 2026-01-15 at 12.05.14 PM.png</span>
                         </div>
-                        <img src="Screenshot 2026-01-15 at 12.05.14 PM.png" alt="Global Map Detail" class="screenshot" onload="this.style.opacity=1" onerror="this.style.display='none'">
+                        <img src="map_detail.png" alt="Global Map Detail" class="screenshot" onload="this.style.opacity=1" onerror="this.style.display='none'">
                     </div>
                 </div>
             </div>
@@ -381,19 +381,27 @@
                     </div>
                 </div>
                 <div class="reveal" style="order: 1;">
-                    <!-- VISUAL: Dashboard Main View -->
+                    <!-- VISUAL: New Dashboard Screenshot -->
                     <div class="screenshot-frame" style="margin-bottom: 40px;">
                         <div class="placeholder-card" style="background: linear-gradient(135deg, #05080c, #0a0f14);">
-                            <span style="color: #3b82f6;">Corporate Dashboard</span>
-                            <span style="font-size: 0.7em; opacity: 0.5; margin-top: 8px;">Screenshot 2026-01-15 at 12.05.14 PM.png</span>
+                            <span style="color: #3b82f6;">New Dashboard View</span>
+                            <span style="font-size: 0.7em; opacity: 0.5; margin-top: 8px;">Save image as 'enterprise_new.png'</span>
                         </div>
-                        <img src="Screenshot 2026-01-15 at 12.05.14 PM.png" alt="Corporate Dashboard" class="screenshot" onload="this.style.opacity=1" onerror="this.style.display='none'">
+                        <img src="enterprise_new.png" alt="Enterprise Dashboard" class="screenshot" onload="this.style.opacity=1" onerror="this.style.display='none'">
                     </div>
-                    <!-- VISUAL: Deep Analysis / Chat -->
+                    <!-- VISUAL: Execution Log -->
+                    <div class="screenshot-frame" style="margin-bottom: 40px;">
+                        <div class="placeholder-card" style="background: linear-gradient(135deg, #05080c, #0a0f14);">
+                            <span style="color: #3b82f6;">Processing Logic</span>
+                            <span style="font-size: 0.7em; opacity: 0.5; margin-top: 8px;">Screenshot 2026-01-15 at 12.32.16 AM.png</span>
+                        </div>
+                        <img src="terminal_1.png" alt="Backend Processing" class="screenshot" onload="this.style.opacity=1" onerror="this.style.display='none'">
+                    </div>
+                    <!-- VISUAL: Deep Analysis / Chat (Added as 3rd image) -->
                     <div class="screenshot-frame">
                         <div class="placeholder-card" style="background: linear-gradient(135deg, #05080c, #0a0f14);">
                             <span style="color: #3b82f6;">Deep Analysis</span>
-                            <span style="font-size: 0.7em; opacity: 0.5; margin-top: 8px;">Screenshot 2026-01-15 at 1.05.02 AM.png</span>
+                            <span style="font-size: 0.7em; opacity: 0.5; margin-top: 8px;">dashboard_chat.png</span>
                         </div>
                         <img src="Screenshot 2026-01-15 at 1.05.02 AM.png" alt="Deep Dive Analysis" class="screenshot" onload="this.style.opacity=1" onerror="this.style.display='none'">
                     </div>
@@ -418,9 +426,9 @@
                 <div class="screenshot-frame" style="aspect-ratio: 16/10; font-family: monospace;">
                     <div class="placeholder-card" style="background: #000; color: #0f0; border: 1px solid #333;">
                         <span>> Terminal_Output_Final</span>
-                        <span style="font-size: 0.7em; opacity: 0.5; margin-top: 8px;">Screenshot 2026-01-15 at 12.32.32 AM.png</span>
+                        <span style="font-size: 0.7em; opacity: 0.5; margin-top: 8px;">terminal_2.png</span>
                     </div>
-                    <img src="Screenshot 2026-01-15 at 12.32.32 AM.png" alt="Terminal Output" class="screenshot" onload="this.style.opacity=1" onerror="this.style.display='none'">
+                    <img src="terminal_2.png" alt="Terminal Output" class="screenshot" onload="this.style.opacity=1" onerror="this.style.display='none'">
                 </div>
             </div>
             
@@ -517,6 +525,20 @@
             duration: 1,
             stagger: 0.2,
             ease: "power3.out"
+        });
+
+        // Parallax Effect for Images
+        gsap.utils.toArray(".image-container").forEach((container, i) => {
+            gsap.to(container, {
+                yPercent: i % 2 === 0 ? -10 : 10, // Alternate direction for variety
+                ease: "none",
+                scrollTrigger: {
+                    trigger: container,
+                    start: "top bottom",
+                    end: "bottom top",
+                    scrub: 1
+                }
+            });
         });
 
         // Section Reveals
