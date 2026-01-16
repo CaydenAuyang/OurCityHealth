@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our City Health — Project Overview</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- GSAP for Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <!-- Lenis for Smooth Scroll -->
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+
+    <style>
+        :root {
+            --bg-dark: #0a0f14;
+            --bg-card: #111827;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --primary: #22c55e;
+            --secondary: #3b82f6;
+            --accent: #f43f5e;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --font-main: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- UTILS --- */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #fff 0%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        /* --- SECTIONS --- */
+        section {
+            padding: 140px 0;
+            position: relative;
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: radial-gradient(circle at 50% 30%, #1e293b 0%, var(--bg-dark) 70%);
+        }
+
+        .hero h1 {
+            font-size: clamp(3.5rem, 8vw, 7rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 32px;
+            line-height: 1.1;
+        }
+
+        .hero p {
+            font-size: clamp(1.2rem, 2vw, 1.8rem);
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .hero-tag {
+            font-family: var(--font-mono);
+            color: var(--primary);
+            background: rgba(34, 197, 94, 0.1);
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 100px;
+            align-items: center;
+        }
+
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+        }
+
+        /* Text Styles */
+        .section-label {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            color: var(--secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        h2 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        p.body-text {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin-bottom: 32px;
+        }
+
+        /* Screenshots */
+        .screenshot-frame {
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 40px 80px -20px rgba(0,0,0,0.8);
+            border: 1px solid var(--glass-border);
+            position: relative;
+            background: #000;
+        }
+
+        .screenshot-frame img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.7s ease;
+        }
+
+        .screenshot-frame:hover img {
+            transform: scale(1.02);
+        }
+
+        /* Placeholder Styles */
+        .placeholder-card {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(17, 24, 39, 1), rgba(0, 0, 0, 1));
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.9rem;
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+        }
+
+        .placeholder-card::before {
+            content: '';
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background: var(--primary);
+            filter: blur(80px);
+            opacity: 0.2;
+            border-radius: 50%;
+        }
+
+        /* Hide placeholder if image loads */
+        .screenshot {
+            position: relative;
+            z-index: 2;
+            opacity: 0; 
+            transition: opacity 0.5s;
+        }
+        
+        .screenshot[src*=".png"] {
+            opacity: 1;
+            background: #0a0f14;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 40px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 32px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .stat-value {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Tech Stack Grid */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            width: 100%;
+            margin-top: 60px;
+        }
+
+        .tech-card {
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            transition: transform 0.3s ease;
+        }
+
+        .tech-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.05);
+        }
+
+        .tech-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .tech-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .tech-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="container">
+            <span class="hero-tag reveal">PROJECT MILESTONE</span>
+            <h1 class="text-gradient reveal">Our City Health</h1>
+            <p class="reveal">
+                A dual-layer civic intelligence platform. 
+                We quantify urban wellbeing through a Universal Resolution Engine that transforms unstructured sentiment into actionable metrics.
+            </p>
+        </div>
+    </section>
+
+    <!-- ANGLE 1: PUBLIC / NGO LAYER -->
+    <section style="background: linear-gradient(to bottom, var(--bg-dark), #111827);">
+        <div class="container">
+            <div class="content-grid">
+                <div class="reveal">
+                    <span class="section-label" style="color: var(--secondary);">Angle 1: Public Engagement</span>
+                    <h2>The Global Map</h2>
+                    <p class="body-text">
+                        The public-facing portal designed to build brand authority and transparency. 
+                        It validates our data models by visualizing the sheer scale of our ingestion engine.
+                    </p>
+                    <ul style="list-style: none; padding: 0; color: var(--text-main); font-size: 1.1rem; line-height: 2;">
+                        <li>✓ <strong>Three.js / WebGL Core:</strong> Interactive 3D visualization</li>
+                        <li>✓ <strong>Real-time Flows:</strong> Visualizing sentiment connectivity</li>
+                        <li>✓ <strong>Civic Health Index:</strong> Standardized 0-100 scoring</li>
+                    </ul>
+                </div>
+                <div class="reveal">
+                    <!-- VISUAL: Map Screenshot 1 -->
+                    <div class="screenshot-frame" style="margin-bottom: 40px;">
+                        <div class="placeholder-card">
+                            <span>Map Interface</span>
+                            <span style="font-size: 0.7em; opacity: 0.5; margin-top: 8px;">map_interface.png</span>
+                        </div>
+                        <img src="map_interface.png" alt="Global Map Interface" class="screenshot" onload="this.style.opacity=1" onerror="this.style.display='none'">
+                    </div>
+                    <!-- VISUAL: Map Screenshot 2 -->
+                    <div class="screenshot-frame">
+                        <div class="placeholder-card">
+                            <span>Map Detail</span>
+                            <span style="font-size: 0.7em; opacity: 0.5; margin-top: 8px;">Screenshot 2026-01-15 at 12.05.14 PM.png</span>
+                        </div>
+                        <img src="map_detail.png" alt="Global Map Detail" class="screenshot" onload="this.style.opacity=1" onerror="this.style.display='none'">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stats-grid reveal" style="margin-top: 80px;">
+                <div class="stat-item">
+                    <span class="stat-value">Broad</span>
+                    <span class="stat-label">Global Coverage</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">Open</span>
+                    <span class="stat-label">Public Access</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">Live</span>
+                    <span class="stat-label">Daily Updates</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ANGLE 2: CORPORATE INTELLIGENCE -->
+    <section>
+        <div class="container">
+            <div class="content-grid" style="align-items: flex-start;">
+                <div class="reveal" style="position: sticky; top: 100px; order: 2;">
+                    <span class="section-label" style="color: var(--primary);">Angle 2: Corporate Intelligence</span>
+                    <h2>The Enterprise Unit</h2>
+                    <p class="body-text">
+                        The specialized tool for high-value Enterprise clients. While the map offers exploration, this dashboard is built for <strong>monitoring and deep-dive analytics</strong>.
+                    </p>
+                    <div style="margin-top: 40px;">
+                        <h4 style="color: var(--text-main); margin-bottom: 12px;">Deep Scrape Capability</h4>
+                        <p class="body-text" style="font-size: 1rem;">
+                            Unlike the public layer, this unit allows analysts to trigger specific, resource-intensive scraping jobs on demand.
+                        </p>
+                        <h4 style="color: var(--text-main); margin-bottom: 12px; margin-top: 24px;">Grounded AI</h4>
+                        <p class="body-text" style="font-size: 1rem;">
+                            The "Chat with Context" feature allows users to query the dataset with zero hallucinations, as every answer is cited from the scraping job.
+                        </p>
+                    </div>
+                </div>
+                <div class="reveal" style="order: 1;">
+                    <!-- VISUAL: New Dashboard Screenshot -->
+                    <div class="screenshot-frame" style="margin-bottom: 40px;">
+                        <div class="placeholder-card" style="background: linear-gradient(135deg, #05080c, #0a0f14);">
+                            <span style="color: #3b82f6;">New Dashboard View</span>
+                            <span style="font-size: 0.7em; opacity: 0.5; margin-top: 8px;">Save image as 'enterprise_new.png'</span>
+                        </div>
+                        <img src="enterprise_new.png" alt="Enterprise Dashboard" class="screenshot" onload="this.style.opacity=1" onerror="this.style.display='none'">
+                    </div>
+                    <!-- VISUAL: Execution Log -->
+                    <div class="screenshot-frame" style="margin-bottom: 40px;">
+                        <div class="placeholder-card" style="background: linear-gradient(135deg, #05080c, #0a0f14);">
+                            <span style="color: #3b82f6;">Processing Logic</span>
+                            <span style="font-size: 0.7em; opacity: 0.5; margin-top: 8px;">Screenshot 2026-01-15 at 12.32.16 AM.png</span>
+                        </div>
+                        <img src="terminal_1.png" alt="Backend Processing" class="screenshot" onload="this.style.opacity=1" onerror="this.style.display='none'">
+                    </div>
+                    <!-- VISUAL: Deep Analysis / Chat (Added as 3rd image) -->
+                    <div class="screenshot-frame">
+                        <div class="placeholder-card" style="background: linear-gradient(135deg, #05080c, #0a0f14);">
+                            <span style="color: #3b82f6;">Deep Analysis</span>
+                            <span style="font-size: 0.7em; opacity: 0.5; margin-top: 8px;">dashboard_chat.png</span>
+                        </div>
+                        <img src="dashboard_chat.png" alt="Deep Dive Analysis" class="screenshot" onload="this.style.opacity=1" onerror="this.style.display='none'">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TECHNICAL FOUNDATION -->
+    <section class="container" style="flex-direction: column; align-items: flex-start; background: radial-gradient(circle at 80% 50%, rgba(59, 130, 246, 0.05), transparent 50%); border-radius: 40px;">
+        <div class="showcase-text reveal" style="padding-left: 0; max-width: 800px;">
+            <span class="section-label">Shared Infrastructure</span>
+            <h2>The Universal Engine</h2>
+            <p class="body-text">
+                Both products are powered by a single, robust Python backend (`conclusive_scraper_v3.py`) that orchestrates targeted scraping jobs and an OpenAI-powered analysis pipeline.
+            </p>
+        </div>
+        
+        <div class="content-grid" style="width: 100%; margin-top: 40px;">
+            <div class="reveal">
+                <!-- VISUAL: Terminal Execution (New Screenshot) -->
+                <div class="screenshot-frame" style="aspect-ratio: 16/10; font-family: monospace;">
+                    <div class="placeholder-card" style="background: #000; color: #0f0; border: 1px solid #333;">
+                        <span>> Terminal_Output_Final</span>
+                        <span style="font-size: 0.7em; opacity: 0.5; margin-top: 8px;">terminal_2.png</span>
+                    </div>
+                    <img src="terminal_2.png" alt="Terminal Output" class="screenshot" onload="this.style.opacity=1" onerror="this.style.display='none'">
+                </div>
+            </div>
+            
+            <div class="tech-grid reveal" style="margin-top: 0; grid-template-columns: 1fr 1fr;">
+                <div class="glass-panel tech-card">
+                    <div class="tech-icon" style="color: #22c55e;">⚡️</div>
+                    <div class="tech-title">FastAPI Backend</div>
+                    <div class="tech-desc">Async job queues & SQLite persistence.</div>
+                </div>
+                <div class="glass-panel tech-card">
+                    <div class="tech-icon" style="color: #3b82f6;">⚛️</div>
+                    <div class="tech-title">React + Vite</div>
+                    <div class="tech-desc">Glassmorphism design system.</div>
+                </div>
+                <div class="glass-panel tech-card">
+                    <div class="tech-icon" style="color: #f472b6;">🤖</div>
+                    <div class="tech-title">LLM Analysis</div>
+                    <div class="tech-desc">Contextual scoring with citations.</div>
+                </div>
+                <div class="glass-panel tech-card">
+                    <div class="tech-icon" style="color: #fbbf24;">🕷️</div>
+                    <div class="tech-title">Scraping</div>
+                    <div class="tech-desc">Global News + Reddit API ingestion.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 5: VISION & ROADMAP -->
+    <section>
+        <div class="container">
+            <div class="showcase-text reveal" style="text-align: center; max-width: 900px; margin: 0 auto 60px auto;">
+                <span class="section-label" style="color: var(--primary);">Looking Forward</span>
+                <h2>The Road to Standardization</h2>
+                <p class="body-text">
+                    This prototype establishes the technical baseline. Our vision is to forge the definitive global standard for urban risk intelligence, providing institutional-grade data for the world's most complex challenges.
+                </p>
+            </div>
+
+            <div class="stats-grid reveal" style="grid-template-columns: repeat(4, 1fr); gap: 20px;">
+                <div class="stat-item" style="border-top: 4px solid var(--secondary);">
+                    <span class="stat-label" style="color: var(--secondary); margin-bottom: 12px; display: block;">Phase 1 (Q1)</span>
+                    <h3 style="font-size: 1.2rem; color: white; margin-bottom: 8px;">Architecture</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">Scaling the v3 pipeline to handle 100-city concurrency.</p>
+                </div>
+                <div class="stat-item" style="border-top: 4px solid var(--primary);">
+                    <span class="stat-label" style="color: var(--primary); margin-bottom: 12px; display: block;">Phase 2 (Q2)</span>
+                    <h3 style="font-size: 1.2rem; color: white; margin-bottom: 8px;">Expansion</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">Integrating high-volume alternative sources (Forums/Telegram).</p>
+                </div>
+                <div class="stat-item" style="border-top: 4px solid var(--accent);">
+                    <span class="stat-label" style="color: var(--accent); margin-bottom: 12px; display: block;">Phase 3 (Q3)</span>
+                    <h3 style="font-size: 1.2rem; color: white; margin-bottom: 8px;">API Launch</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">Opening the live data stream for third-party developers.</p>
+                </div>
+                <div class="stat-item" style="border-top: 4px solid #f59e0b;">
+                    <span class="stat-label" style="color: #f59e0b; margin-bottom: 12px; display: block;">Phase 4 (Q4)</span>
+                    <h3 style="font-size: 1.2rem; color: white; margin-bottom: 8px;">Enterprise</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">Securing pilot contracts with 3 major property developers.</p>
+                </div>
+            </div>
+            
+            <div class="reveal" style="text-align: center; margin-top: 80px;">
+                <p style="font-size: 1.1rem; color: var(--text-muted); max-width: 600px; margin: 0 auto;">
+                    <em>Currently developing a comprehensive investment memorandum and pitch deck detailing the commercialization strategy for these milestones.</em>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p style="font-size: 1.5rem; font-weight: 700; margin-bottom: 16px;">Our City Health</p>
+            <p style="color: var(--text-muted);">Confidential Project Milestone 2026</p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth Scroll
+        const lenis = new Lenis();
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        // GSAP Animations
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Hero Reveal
+        gsap.to(".hero .reveal", {
+            y: 0,
+            opacity: 1,
+            duration: 1,
+            stagger: 0.2,
+            ease: "power3.out"
+        });
+
+        // Parallax Effect for Images
+        gsap.utils.toArray(".image-container").forEach((container, i) => {
+            gsap.to(container, {
+                yPercent: i % 2 === 0 ? -10 : 10, // Alternate direction for variety
+                ease: "none",
+                scrollTrigger: {
+                    trigger: container,
+                    start: "top bottom",
+                    end: "bottom top",
+                    scrub: 1
+                }
+            });
+        });
+
+        // Section Reveals
+        document.querySelectorAll("section").forEach(section => {
+            const elements = section.querySelectorAll(".reveal");
+            if(elements.length) {
+                gsap.to(elements, {
+                    scrollTrigger: {
+                        trigger: section,
+                        start: "top 75%",
+                    },
+                    y: 0,
+                    opacity: 1,
+                    duration: 0.8,
+                    stagger: 0.2,
+                    ease: "power2.out"
+                });
+            }
+        });
+    </script>
+</body>
+</html>
