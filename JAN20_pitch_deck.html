@@ -11,7 +11,7 @@
             theme: {
                 extend: {
                     colors: {
-                        dark: { 900: '#0f172a', 800: '#1e293b', 700: '#334155', 600: '#475569' },
+                        dark: { 900: '#0a0f14', 800: '#111827', 700: '#1e293b', 600: '#334155' },
                         neon: { 400: '#4ade80', 500: '#22c55e', 600: '#16a34a' }
                     },
                     fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
@@ -21,7 +21,7 @@
     </script>
     <style>
         html { scroll-behavior: smooth; }
-        body { background: #0f172a; }
+        body { background: #0a0f14; }
         
         /* Globe Animation */
         .globe { animation: rotate 20s linear infinite; transform-style: preserve-3d; }
@@ -1177,27 +1177,111 @@
             </div>
 
             <!-- Current Progress -->
-            <div class="bg-neon-500/10 border border-neon-500/30 rounded-xl p-6 mt-16 max-w-5xl mx-auto">
-                <h3 class="text-neon-400 font-semibold text-sm uppercase tracking-wider mb-4">Current Progress</h3>
-                <div class="grid md:grid-cols-4 gap-6 text-sm">
-                    <div>
+            <div class="bg-neon-500/10 border border-neon-500/30 rounded-2xl p-8 mt-16 max-w-6xl mx-auto">
+                <h3 class="text-neon-400 font-semibold text-sm uppercase tracking-wider mb-2">Current Progress</h3>
+                <p class="text-gray-400 text-sm mb-6">Working prototype demonstrating proof-of-concept for key pipeline elements. Incomplete but functional.</p>
+                
+                <!-- Progress Stats -->
+                <div class="grid md:grid-cols-4 gap-4 text-sm mb-8">
+                    <div class="bg-dark-800/50 rounded-lg p-4">
                         <p class="text-white font-medium mb-1">City Coverage</p>
-                        <p class="text-gray-400"><span class="text-neon-400 font-bold">100 cities</span> currently operational — architecture designed for easy horizontal scaling to 1,000+</p>
+                        <p class="text-gray-400 text-xs"><span class="text-neon-400 font-bold">100 cities</span> operational — scalable to 1,000+</p>
                     </div>
-                    <div>
+                    <div class="bg-dark-800/50 rounded-lg p-4">
                         <p class="text-white font-medium mb-1">News Sources</p>
-                        <p class="text-gray-400"><span class="text-neon-400 font-bold">Hundreds of news outlets</span> integrated including major wire services and regional papers</p>
+                        <p class="text-gray-400 text-xs"><span class="text-neon-400 font-bold">Hundreds of outlets</span> including wire services</p>
                     </div>
-                    <div>
+                    <div class="bg-dark-800/50 rounded-lg p-4">
                         <p class="text-white font-medium mb-1">Social Platforms</p>
-                        <p class="text-gray-400"><span class="text-yellow-400 font-bold">Reddit only</span> — expansion to X, Weibo, regional forums is a Q1 priority</p>
+                        <p class="text-gray-400 text-xs"><span class="text-yellow-400 font-bold">Reddit only</span> — X, Weibo in Q1</p>
                     </div>
-                    <div>
-                        <p class="text-white font-medium mb-1">Interactive Interface</p>
-                        <p class="text-gray-400"><span class="text-neon-400 font-bold">3D globe visualization</span> built — real-time city selection with instant score display and drill-down navigation</p>
+                    <div class="bg-dark-800/50 rounded-lg p-4">
+                        <p class="text-white font-medium mb-1">Interface</p>
+                        <p class="text-gray-400 text-xs"><span class="text-neon-400 font-bold">3D globe + dashboard</span> built</p>
                     </div>
                 </div>
-                <p class="text-xs text-gray-500 mt-4 border-t border-dark-600/50 pt-4">We have a working prototype demonstrating proof-of-concept for key pipeline elements. Core infrastructure validated — ready for Q1 scaling push.</p>
+                
+                <!-- Screenshots Section -->
+                <div class="space-y-8">
+                    <!-- Screenshot 1: 3D Globe -->
+                    <div class="bg-dark-900/50 rounded-xl overflow-hidden border border-dark-600/30">
+                        <div class="p-4 border-b border-dark-600/30">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-neon-500/20 rounded-lg flex items-center justify-center text-neon-400 text-sm font-bold">1</div>
+                                <div>
+                                    <h4 class="font-bold text-white">Interactive 3D Globe Interface</h4>
+                                    <p class="text-xs text-gray-500">Public-facing visualization layer</p>
+                                </div>
+                            </div>
+                        </div>
+                        <img src="docs/big_globe.png" alt="3D Globe Interface" class="w-full" onerror="this.style.display='none'">
+                        <div class="p-4 bg-dark-800/30">
+                            <p class="text-sm text-gray-400 mb-2">
+                                <span class="text-neon-400 font-medium">What you're seeing:</span> A WebGL-powered 3D globe displaying real-time Civic Health Index scores for 108 cities. Users can rotate, zoom, and click on any city to see detailed scores across all 12 dimensions.
+                            </p>
+                            <div class="flex flex-wrap gap-2 text-xs">
+                                <span class="bg-neon-500/10 text-neon-400 px-2 py-1 rounded">Three.js rendering</span>
+                                <span class="bg-neon-500/10 text-neon-400 px-2 py-1 rounded">Real-time scores</span>
+                                <span class="bg-neon-500/10 text-neon-400 px-2 py-1 rounded">Ranked city leaderboard</span>
+                                <span class="bg-neon-500/10 text-neon-400 px-2 py-1 rounded">Search & filter</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Screenshot 2: Corporate Dashboard -->
+                    <div class="bg-dark-900/50 rounded-xl overflow-hidden border border-dark-600/30">
+                        <div class="p-4 border-b border-dark-600/30">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center text-blue-400 text-sm font-bold">2</div>
+                                <div>
+                                    <h4 class="font-bold text-white">Corporate Intelligence Dashboard</h4>
+                                    <p class="text-xs text-gray-500">Enterprise B2B interface (early prototype)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <img src="docs/terminal_1.png" alt="Corporate Dashboard" class="w-full" onerror="this.style.display='none'">
+                        <div class="p-4 bg-dark-800/30">
+                            <p class="text-sm text-gray-400 mb-2">
+                                <span class="text-blue-400 font-medium">What you're seeing:</span> Early prototype of the Corporate Intelligence Unit. Portfolio selection (Hong Kong), dimension filtering (affordability + safety), and a "Grounded Context" AI chat that answers questions using only scraped data — no hallucinations.
+                            </p>
+                            <div class="flex flex-wrap gap-2 text-xs">
+                                <span class="bg-blue-500/10 text-blue-400 px-2 py-1 rounded">Portfolio management</span>
+                                <span class="bg-blue-500/10 text-blue-400 px-2 py-1 rounded">Dimension filtering</span>
+                                <span class="bg-blue-500/10 text-blue-400 px-2 py-1 rounded">Grounded AI chat</span>
+                                <span class="bg-blue-500/10 text-blue-400 px-2 py-1 rounded">Deep scrape on demand</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Screenshot 3: Terminal/Backend -->
+                    <div class="bg-dark-900/50 rounded-xl overflow-hidden border border-dark-600/30">
+                        <div class="p-4 border-b border-dark-600/30">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center text-purple-400 text-sm font-bold">3</div>
+                                <div>
+                                    <h4 class="font-bold text-white">Universal Scraping Engine</h4>
+                                    <p class="text-xs text-gray-500">Backend data pipeline in action</p>
+                                </div>
+                            </div>
+                        </div>
+                        <img src="docs/terminal_2.png" alt="Terminal Backend" class="w-full" onerror="this.style.display='none'">
+                        <div class="p-4 bg-dark-800/30">
+                            <p class="text-sm text-gray-400 mb-2">
+                                <span class="text-purple-400 font-medium">What you're seeing:</span> The FastAPI backend running live scraping jobs. The engine ingests from multiple news sources (NYTimes, BBC, Reuters, The Guardian, Bloomberg) and Reddit communities simultaneously, processing data for the selected city (Hong Kong).
+                            </p>
+                            <div class="flex flex-wrap gap-2 text-xs">
+                                <span class="bg-purple-500/10 text-purple-400 px-2 py-1 rounded">FastAPI + Uvicorn</span>
+                                <span class="bg-purple-500/10 text-purple-400 px-2 py-1 rounded">Multi-source ingestion</span>
+                                <span class="bg-purple-500/10 text-purple-400 px-2 py-1 rounded">Real-time job tracking</span>
+                                <span class="bg-purple-500/10 text-purple-400 px-2 py-1 rounded">Reddit API integration</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <p class="text-xs text-gray-500 mt-6 pt-4 border-t border-dark-600/50 text-center">
+                    <span class="text-neon-400 font-medium">Status:</span> Core infrastructure validated. These POC elements demonstrate the technical feasibility. Ready for Q1 scaling push.
+                </p>
             </div>
         </div>
     </section>
