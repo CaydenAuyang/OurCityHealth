@@ -741,6 +741,34 @@
       'full_results.json'
     ];
 
+    // Demo data for GitHub Pages
+    const DEMO_DATA = {
+      "summary": {
+        "news_articles": 12450,
+        "reddit_posts": 3420,
+        "reddit_comments": 15600,
+        "cities_covered": 10,
+        "run_timestamp": "2026-01-16T12:00:00Z"
+      },
+      "topics": [
+        {"name": "Housing Affordability Crisis", "description": "Rising rental costs creating stress across major metropolitan areas"},
+        {"name": "Public Transportation Infrastructure", "description": "Cities investing in expanding and modernizing public transit"},
+        {"name": "Climate Resilience Planning", "description": "Urban areas developing strategies for climate change impacts"}
+      ],
+      "cities": [
+        {"name": "New York City", "health_score": 72, "lat": 40.7128, "lng": -74.0060, "category_scores": {}, "top_issues": [], "citations": [], "reddit_posts": []},
+        {"name": "London", "health_score": 75, "lat": 51.5074, "lng": -0.1278, "category_scores": {}, "top_issues": [], "citations": [], "reddit_posts": []},
+        {"name": "Singapore", "health_score": 88, "lat": 1.3521, "lng": 103.8198, "category_scores": {}, "top_issues": [], "citations": [], "reddit_posts": []},
+        {"name": "Tokyo", "health_score": 82, "lat": 35.6762, "lng": 139.6503, "category_scores": {}, "top_issues": [], "citations": [], "reddit_posts": []},
+        {"name": "San Francisco", "health_score": 68, "lat": 37.7749, "lng": -122.4194, "category_scores": {}, "top_issues": [], "citations": [], "reddit_posts": []},
+        {"name": "Hong Kong", "health_score": 74, "lat": 22.3193, "lng": 114.1694, "category_scores": {}, "top_issues": [], "citations": [], "reddit_posts": []},
+        {"name": "Paris", "health_score": 73, "lat": 48.8566, "lng": 2.3522, "category_scores": {}, "top_issues": [], "citations": [], "reddit_posts": []},
+        {"name": "Sydney", "health_score": 80, "lat": -33.8688, "lng": 151.2093, "category_scores": {}, "top_issues": [], "citations": [], "reddit_posts": []},
+        {"name": "Toronto", "health_score": 76, "lat": 43.6532, "lng": -79.3832, "category_scores": {}, "top_issues": [], "citations": [], "reddit_posts": []},
+        {"name": "Berlin", "health_score": 78, "lat": 52.5200, "lng": 13.4050, "category_scores": {}, "top_issues": [], "citations": [], "reddit_posts": []}
+      ]
+    };
+
     tryFetch(dataPaths).then(d => {
       RESULTS = d;
       updateUI(d);
@@ -755,8 +783,19 @@
       });
 
     }).catch(e => {
-      console.error(e);
-      document.getElementById('summary-pill').textContent = "Failed to load data";
+      console.warn('Using demo data:', e);
+      // Use demo data as fallback
+      RESULTS = DEMO_DATA;
+      updateUI(DEMO_DATA);
+
+      // Load Geo & Build Globe with demo data
+      Promise.all([
+        fetch('https://raw.githubusercontent.com/lutangar/cities.json/master/cities.json').then(r => r.ok ? r.json() : []).catch(() => []),
+        Promise.resolve(null), // No boundaries for demo
+        waitForControls()
+      ]).then(([catalog, boundaries, _]) => {
+        bootstrapGeodata(DEMO_DATA.cities || [], catalog, boundaries);
+      });
     });
 
     function updateUI(data) {
