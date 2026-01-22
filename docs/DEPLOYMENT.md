@@ -27,6 +27,7 @@ Your project showcase is now ready to deploy! Follow these steps:
 
 - `index.html` - Main project showcase page
 - `corporate_dashboard.html` - Corporate Intelligence Dashboard
+- `modern_map.html` - Interactive 3D Globe Map
 - All required images (PNG files)
 - `.nojekyll` - Ensures GitHub Pages serves files correctly
 
@@ -34,6 +35,7 @@ Your project showcase is now ready to deploy! Follow these steps:
 
 - **Project Showcase**: https://caydenauyang.github.io/Our-City-Health---Sentiment-Project/
 - **Corporate Dashboard**: https://caydenauyang.github.io/Our-City-Health---Sentiment-Project/corporate_dashboard.html
+- **3D Globe Map**: https://caydenauyang.github.io/Our-City-Health---Sentiment-Project/modern_map.html
 
 ## Updating the Site
 

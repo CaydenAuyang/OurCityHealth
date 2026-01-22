@@ -262,8 +262,13 @@ We're targeting Hong Kong companies first — they're already in HKSTP's ecosyst
 
 ## 🔗 Links
 
-- **Live Pitch Deck:** [GitHub Pages](https://caydenauyang.github.io/Our-City-Health---Sentiment-Project/JAN20_pitch_deck.html)
-- **3D Globe Demo:** [modern_map.html](https://caydenauyang.github.io/Our-City-Health---Sentiment-Project/modern_map.html)
+### GitHub Pages (Live Demos)
+- **Project Showcase:** [Landing Page](https://caydenauyang.github.io/Our-City-Health---Sentiment-Project/)
+- **Corporate Dashboard:** [Enterprise Intelligence Dashboard](https://caydenauyang.github.io/Our-City-Health---Sentiment-Project/corporate_dashboard.html)
+- **3D Globe Map:** [Interactive Global Map](https://caydenauyang.github.io/Our-City-Health---Sentiment-Project/modern_map.html)
+- **Pitch Deck:** [Investor Pitch](https://caydenauyang.github.io/Our-City-Health---Sentiment-Project/JAN20_pitch_deck.html)
+
+### Documentation
 - **API Documentation:** [README_API.md](README_API.md)
 
 ---
