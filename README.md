@@ -23,7 +23,7 @@ We don't replace existing tools — we **complete them**. By scoring 12 dimensio
 
 ### The Killer Pitch
 
-> *"Dataminr tells you when the riot starts. We tell you which neighborhood is ready to explode 3 months in advance."*
+> *"Dataminr tells you when the riot starts. We tell you which neighborhood will reach a tipping point 3 months in advance."*
 
 ---
 
