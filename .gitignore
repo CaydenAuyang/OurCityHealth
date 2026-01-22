@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+
+# Build outputs
+dist/
+build/
+*.egg-info/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Data (large files)
+data/jobs.sqlite
+data/jobs/
+data/latest/*.json
+*.sqlite
+
+# Temporary files
+*.tmp
+*.temp
+server_debug.txt
+
+# OS
+Thumbs.db
+.DS_Store
+
+# API keys (never commit)
+*_key.txt
+*_secret.txt

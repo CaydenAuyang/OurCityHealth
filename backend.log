@@ -1,4 +1,0 @@
-Traceback (most recent call last):
-  File "/Users/caydenauyang/Code/Our-City-Health---Sentiment-Project/backend/app/main.py", line 8, in <module>
-    from backend.app.models import JobRequest, JobStatus
-ModuleNotFoundError: No module named 'backend'
