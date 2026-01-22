@@ -192,110 +192,84 @@
             <p class="text-xl text-gray-400 mb-6 max-w-4xl">The High Cost of "Low-Resolution" Decisions.</p>
             <p class="text-gray-500 mb-16 max-w-4xl">Organizations manage billions in assets using data that is fundamentally broken in three ways: <span class="text-white font-medium">Latency</span>, <span class="text-white font-medium">Resolution</span>, and <span class="text-white font-medium">Trust</span>.</p>
             
-            <!-- Data Freshness Comparison -->
+            <!-- Two-Dimensional Intelligence Gap -->
             <div class="bg-dark-800/50 rounded-2xl p-8 border border-dark-600/30 mb-16">
-                <h3 class="text-2xl font-bold mb-2 text-center">The Data Freshness Gap</h3>
-                <p class="text-gray-400 text-sm text-center mb-10">Comparing data latency across intelligence sources</p>
+                <h3 class="text-2xl font-bold mb-2 text-center">The Intelligence Gap: Speed vs. Context</h3>
+                <p class="text-gray-400 text-sm text-center mb-10">Data tools fail on one of two dimensions — speed or context. Only we deliver both.</p>
                 
-                <!-- Data Freshness Scale Visualization -->
-                <div class="max-w-3xl mx-auto mb-10">
-                    <!-- Scale with aligned labels and bars -->
-                    <div class="flex items-start gap-3">
-                        <!-- Left column for source names -->
-                        <div class="w-28 shrink-0"></div>
+                <!-- 2D Matrix Visualization -->
+                <div class="max-w-4xl mx-auto mb-10">
+                    <div class="relative aspect-[4/3] bg-dark-900/50 rounded-xl border border-dark-600/30 p-8">
+                        <!-- Axis Labels -->
+                        <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-sm font-semibold text-neon-400">⚡ FAST (Real-Time)</div>
+                        <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-sm font-semibold text-red-400">🐢 SLOW (Lagging)</div>
+                        <div class="absolute top-1/2 -left-6 -translate-y-1/2 -rotate-90 text-sm font-semibold text-gray-500 whitespace-nowrap">Low Context</div>
+                        <div class="absolute top-1/2 -right-6 -translate-y-1/2 rotate-90 text-sm font-semibold text-blue-400 whitespace-nowrap">High Context (Why)</div>
                         
-                        <!-- Right column for scale -->
-                        <div class="flex-1">
-                            <!-- Scale Header -->
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-neon-400 font-bold text-xs">REAL-TIME</span>
-                                <span class="text-gray-500 text-xs">← DATA FRESHNESS →</span>
-                                <span class="text-red-400 font-bold text-xs">2+ YEARS OLD</span>
+                        <!-- Grid Lines -->
+                        <div class="absolute inset-8 border border-dark-600/30"></div>
+                        <div class="absolute top-8 bottom-8 left-1/2 w-px bg-dark-600/30"></div>
+                        <div class="absolute left-8 right-8 top-1/2 h-px bg-dark-600/30"></div>
+                        
+                        <!-- Quadrant Labels -->
+                        <div class="absolute top-10 left-10 text-[10px] text-gray-600 uppercase tracking-wider">Fast but Shallow</div>
+                        <div class="absolute top-10 right-10 text-[10px] text-neon-400 uppercase tracking-wider font-bold">The Sweet Spot</div>
+                        <div class="absolute bottom-10 left-10 text-[10px] text-gray-600 uppercase tracking-wider">Worst of Both</div>
+                        <div class="absolute bottom-10 right-10 text-[10px] text-gray-600 uppercase tracking-wider">Deep but Stale</div>
+                        
+                        <!-- Company Positions -->
+                        <!-- ChatGPT: Fast, Low Context (top-left) -->
+                        <div class="absolute top-[18%] left-[22%] flex flex-col items-center group">
+                            <div class="w-10 h-10 bg-gray-500/20 border-2 border-gray-500 rounded-full flex items-center justify-center">
+                                <span class="text-lg">🤖</span>
                             </div>
-                            
-                            <!-- Scale Bar -->
-                            <div class="relative h-3 bg-gradient-to-r from-neon-500/30 via-yellow-500/30 to-red-500/30 rounded-full mb-2">
-                                <div class="absolute inset-0 flex justify-between items-center px-1">
-                                    <div class="w-0.5 h-2 bg-dark-400 rounded"></div>
-                                    <div class="w-0.5 h-2 bg-dark-400 rounded"></div>
-                                    <div class="w-0.5 h-2 bg-dark-400 rounded"></div>
-                                    <div class="w-0.5 h-2 bg-dark-400 rounded"></div>
-                                    <div class="w-0.5 h-2 bg-dark-400 rounded"></div>
-                                </div>
-                            </div>
-                            
-                            <!-- Scale Labels -->
-                            <div class="flex justify-between text-xs text-gray-500 mb-8">
-                                <span>Live</span>
-                                <span>6 mo</span>
-                                <span>12 mo</span>
-                                <span>18 mo</span>
-                                <span>24+ mo</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Data Sources Positioned on Scale -->
-                    <!-- Scale positions: Live=0%, 6mo=25%, 12mo=50%, 18mo=75%, 24mo=100% -->
-                    <div class="space-y-4">
-                        <!-- Our City Health - LIVE (aligned to 0%) -->
-                        <div class="flex items-center gap-3">
-                            <div class="w-28 shrink-0 text-right">
-                                <p class="text-neon-400 font-bold text-sm">Our City Health</p>
-                                <p class="text-gray-500 text-xs">Civic Health Index</p>
-                            </div>
-                            <div class="flex-1 relative h-10">
-                                <div class="absolute left-0 top-1/2 -translate-y-1/2 w-[6%] h-2.5 bg-neon-500 rounded-full shadow-lg shadow-neon-500/50 animate-pulse"></div>
-                                <div class="absolute left-[8%] top-1/2 -translate-y-1/2 bg-neon-500/20 border border-neon-500/50 rounded px-2 py-0.5">
-                                    <span class="text-neon-400 text-xs font-bold">LIVE</span>
-                                    <span class="text-gray-400 text-xs ml-1">Updated hourly</span>
-                                </div>
-                            </div>
+                            <span class="text-xs text-gray-400 mt-1 font-medium">ChatGPT</span>
+                            <span class="text-[9px] text-gray-600">Fast but hallucinates</span>
                         </div>
                         
-                        <!-- ChatGPT - Unreliable (spans entire range) -->
-                        <div class="flex items-center gap-3">
-                            <div class="w-28 shrink-0 text-right">
-                                <p class="text-gray-400 font-bold text-sm">ChatGPT</p>
-                                <p class="text-gray-500 text-xs">AI Assistant</p>
+                        <!-- Dataminr: Fast, Low Context (top-left) -->
+                        <div class="absolute top-[25%] left-[35%] flex flex-col items-center">
+                            <div class="w-10 h-10 bg-yellow-500/20 border-2 border-yellow-500 rounded-full flex items-center justify-center">
+                                <span class="text-lg">⚡</span>
                             </div>
-                            <div class="flex-1 relative h-10">
-                                <div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-2.5 bg-gradient-to-r from-gray-500/30 via-gray-500/40 to-gray-500/20 rounded-full border border-dashed border-gray-500/50"></div>
-                                <div class="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 bg-gray-700 border border-gray-500/50 rounded px-2 py-0.5">
-                                    <span class="text-gray-400 text-xs font-bold">UNRELIABLE</span>
-                                    <span class="text-gray-500 text-xs ml-1">No memory</span>
-                                </div>
-                            </div>
+                            <span class="text-xs text-yellow-400 mt-1 font-medium">Dataminr</span>
+                            <span class="text-[9px] text-gray-600">Alerts only, no "why"</span>
                         </div>
                         
-                        <!-- Consultancy Reports - 6-12 months (aligned from 25% to 50%) -->
-                        <div class="flex items-center gap-3">
-                            <div class="w-28 shrink-0 text-right">
-                                <p class="text-yellow-400 font-bold text-sm">Consultancy</p>
-                                <p class="text-gray-500 text-xs">McKinsey, Deloitte</p>
+                        <!-- Placer.ai: Fast, Low Context (top-left) -->
+                        <div class="absolute top-[15%] left-[40%] flex flex-col items-center">
+                            <div class="w-10 h-10 bg-blue-500/20 border-2 border-blue-500 rounded-full flex items-center justify-center">
+                                <span class="text-lg">📍</span>
                             </div>
-                            <div class="flex-1 relative h-10">
-                                <div class="absolute left-[25%] top-1/2 -translate-y-1/2 w-[25%] h-2.5 bg-yellow-500 rounded-full shadow-lg shadow-yellow-500/30"></div>
-                                <div class="absolute left-[52%] top-1/2 -translate-y-1/2 bg-yellow-500/20 border border-yellow-500/50 rounded px-2 py-0.5">
-                                    <span class="text-yellow-400 text-xs font-bold">6-12 MO</span>
-                                    <span class="text-gray-400 text-xs ml-1">Research lag</span>
-                                </div>
-                            </div>
+                            <span class="text-xs text-blue-400 mt-1 font-medium">Placer.ai</span>
+                            <span class="text-[9px] text-gray-600">Numbers, no context</span>
                         </div>
                         
-                        <!-- Census Data - 24+ months (aligned to 100% / right) -->
-                        <div class="flex items-center gap-3">
-                            <div class="w-28 shrink-0 text-right">
-                                <p class="text-red-400 font-bold text-sm">Census Data</p>
-                                <p class="text-gray-500 text-xs">Gov. Surveys</p>
+                        <!-- McKinsey: Slow, High Context (bottom-right) -->
+                        <div class="absolute bottom-[22%] right-[18%] flex flex-col items-center">
+                            <div class="w-10 h-10 bg-purple-500/20 border-2 border-purple-500 rounded-full flex items-center justify-center">
+                                <span class="text-lg">📊</span>
                             </div>
-                            <div class="flex-1 relative h-10">
-                                <div class="absolute left-[90%] top-1/2 -translate-y-1/2 w-[10%] h-2.5 bg-red-500 rounded-full shadow-lg shadow-red-500/30"></div>
-                                <div class="absolute left-[58%] top-1/2 -translate-y-1/2 bg-red-500/20 border border-red-500/50 rounded px-2 py-0.5">
-                                    <span class="text-red-400 text-xs font-bold">24+ MO</span>
-                                    <span class="text-gray-400 text-xs ml-1">Already outdated</span>
-                                </div>
+                            <span class="text-xs text-purple-400 mt-1 font-medium">McKinsey</span>
+                            <span class="text-[9px] text-gray-600">Deep but 6-12mo lag</span>
+                        </div>
+                        
+                        <!-- Census: Very Slow, Medium Context (bottom-middle) -->
+                        <div class="absolute bottom-[15%] left-[45%] flex flex-col items-center">
+                            <div class="w-10 h-10 bg-red-500/20 border-2 border-red-500 rounded-full flex items-center justify-center">
+                                <span class="text-lg">🏛️</span>
                             </div>
+                            <span class="text-xs text-red-400 mt-1 font-medium">Census</span>
+                            <span class="text-[9px] text-gray-600">24+ months old</span>
+                        </div>
+                        
+                        <!-- Our City Health: Fast AND High Context (top-right - THE SWEET SPOT) -->
+                        <div class="absolute top-[15%] right-[15%] flex flex-col items-center">
+                            <div class="w-14 h-14 bg-neon-500/30 border-3 border-neon-500 rounded-full flex items-center justify-center glow animate-pulse">
+                                <span class="text-xl">🎯</span>
+                            </div>
+                            <span class="text-sm text-neon-400 mt-1 font-bold">Our City Health</span>
+                            <span class="text-[9px] text-neon-400/80">Fast + Context + Citations</span>
                         </div>
                     </div>
                 </div>
@@ -303,10 +277,10 @@
                 <!-- Key Insight -->
                 <div class="bg-dark-900/50 rounded-xl p-6 max-w-4xl mx-auto">
                     <p class="text-gray-300 leading-relaxed mb-4">
-                        <span class="text-white font-semibold">The problem is clear:</span> By the time traditional data reaches decision-makers, the reality it describes has already changed. Census data describes a city that no longer exists. Consultancy reports analyze situations that have evolved. ChatGPT appears instant but has no persistent memory and cannot cite sources — it hallucinates facts.
+                        <span class="text-white font-semibold">The trade-off everyone else makes:</span> Fast tools (ChatGPT, Dataminr, Placer.ai) give you speed but can't explain <span class="text-neon-400 font-medium">why</span> something changed. Deep tools (McKinsey, Census) give you context but are 6-24 months stale. AI assistants are instant but hallucinate — they can't cite sources or track trends over time.
                     </p>
                     <p class="text-gray-400 leading-relaxed">
-                        <span class="text-neon-400 font-semibold">Our City Health is different.</span> Our Civic Health Index is calculated from live data — continuously ingested from thousands of sources, scored across 12 dimensions (Safety, Housing, Economy, etc.), and updated hourly. The scores fluctuate in real-time as public sentiment responds to events on the ground. Every score is backed by citations and fully auditable. <span class="text-white font-medium">This is intelligence that reflects reality as it exists today, not years ago.</span>
+                        <span class="text-neon-400 font-semibold">We occupy the only valuable quadrant:</span> Real-time data that explains the "why." Every score is backed by citations. Every trend has causal attribution. You get the speed of AI with the auditability of research. <span class="text-white font-medium">That's why we're the missing context layer.</span>
                     </p>
                 </div>
             </div>
@@ -1445,41 +1419,182 @@
                 </div>
             </div>
 
-            <!-- Magic Quadrant -->
+            <!-- 3-Dimension Competitive Positioning -->
             <div class="bg-dark-900/50 rounded-2xl p-8 border border-dark-600/30">
-                <h3 class="text-xl font-semibold mb-8 text-center">Competitive Positioning</h3>
-                <div class="relative w-full max-w-2xl mx-auto aspect-square">
-                    <!-- Axes -->
-                    <div class="absolute inset-0 border border-dark-600/50"></div>
-                    <div class="absolute top-0 bottom-0 left-1/2 w-px bg-dark-600/50"></div>
-                    <div class="absolute left-0 right-0 top-1/2 h-px bg-dark-600/50"></div>
-                    <!-- Axis Labels -->
-                    <div class="absolute -top-8 left-1/2 -translate-x-1/2 text-sm text-gray-400">Fast (Real-Time)</div>
-                    <div class="absolute -bottom-8 left-1/2 -translate-x-1/2 text-sm text-gray-400">Slow (Lagging)</div>
-                    <div class="absolute top-1/2 -left-4 -translate-y-1/2 -rotate-90 text-sm text-gray-400 whitespace-nowrap">Low Context</div>
-                    <div class="absolute top-1/2 -right-4 -translate-y-1/2 rotate-90 text-sm text-gray-400 whitespace-nowrap">High Context</div>
-                    <!-- Quadrant Labels -->
-                    <div class="absolute top-4 left-4 text-xs text-gray-600">Fast / Low Context</div>
-                    <div class="absolute top-4 right-4 text-xs text-gray-600">Fast / High Context</div>
-                    <div class="absolute bottom-4 left-4 text-xs text-gray-600">Slow / Low Context</div>
-                    <div class="absolute bottom-4 right-4 text-xs text-gray-600">Slow / High Context</div>
-                    <!-- Company Positions -->
-                    <div class="absolute top-[15%] left-[25%] flex flex-col items-center">
-                        <div class="w-4 h-4 bg-yellow-500 rounded-full"></div>
-                        <span class="text-xs text-yellow-400 mt-1">Dataminr</span>
+                <h3 class="text-xl font-semibold mb-2 text-center">Competitive Positioning: 3 Dimensions That Matter</h3>
+                <p class="text-gray-500 text-sm text-center mb-8">Every tool optimizes for 1-2 dimensions. We're the only one that delivers all three.</p>
+                
+                <!-- 3 Dimension Headers -->
+                <div class="grid grid-cols-4 gap-4 mb-6 text-center">
+                    <div></div>
+                    <div class="bg-blue-500/10 rounded-lg p-3 border border-blue-500/30">
+                        <p class="text-blue-400 font-bold text-sm">⚡ Speed</p>
+                        <p class="text-[10px] text-gray-500">How fresh is the data?</p>
                     </div>
-                    <div class="absolute top-[30%] left-[35%] flex flex-col items-center">
-                        <div class="w-4 h-4 bg-gray-500 rounded-full"></div>
-                        <span class="text-xs text-gray-400 mt-1">ChatGPT</span>
+                    <div class="bg-purple-500/10 rounded-lg p-3 border border-purple-500/30">
+                        <p class="text-purple-400 font-bold text-sm">📊 Datapoints</p>
+                        <p class="text-[10px] text-gray-500">How many sources/cities?</p>
                     </div>
-                    <div class="absolute bottom-[20%] right-[15%] flex flex-col items-center">
-                        <div class="w-4 h-4 bg-blue-500 rounded-full"></div>
-                        <span class="text-xs text-blue-400 mt-1">McKinsey</span>
+                    <div class="bg-neon-500/10 rounded-lg p-3 border border-neon-500/30">
+                        <p class="text-neon-400 font-bold text-sm">🔍 Context</p>
+                        <p class="text-[10px] text-gray-500">Does it explain "why"?</p>
                     </div>
-                    <div class="absolute top-[12%] right-[12%] flex flex-col items-center">
-                        <div class="w-6 h-6 bg-neon-500 rounded-full glow"></div>
-                        <span class="text-xs text-neon-400 mt-1 font-bold">Our City Health</span>
+                </div>
+                
+                <!-- Competitor Rows -->
+                <div class="space-y-3">
+                    <!-- Our City Health -->
+                    <div class="grid grid-cols-4 gap-4 items-center bg-neon-500/5 border border-neon-500/30 rounded-xl p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-neon-500/20 rounded-full flex items-center justify-center text-lg">🎯</div>
+                            <div>
+                                <p class="font-bold text-neon-400">Our City Health</p>
+                                <p class="text-[10px] text-gray-500">Civic Health Index</p>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="flex justify-center gap-1">
+                                <span class="text-neon-400">●</span><span class="text-neon-400">●</span><span class="text-neon-400">●</span><span class="text-neon-400">●</span><span class="text-neon-400">●</span>
+                            </div>
+                            <p class="text-[10px] text-neon-400 mt-1">Real-time (hourly)</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="flex justify-center gap-1">
+                                <span class="text-neon-400">●</span><span class="text-neon-400">●</span><span class="text-neon-400">●</span><span class="text-neon-400">●</span><span class="text-neon-400">●</span>
+                            </div>
+                            <p class="text-[10px] text-neon-400 mt-1">1,000+ cities, 380K sources</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="flex justify-center gap-1">
+                                <span class="text-neon-400">●</span><span class="text-neon-400">●</span><span class="text-neon-400">●</span><span class="text-neon-400">●</span><span class="text-neon-400">●</span>
+                            </div>
+                            <p class="text-[10px] text-neon-400 mt-1">Full "why" + citations</p>
+                        </div>
                     </div>
+                    
+                    <!-- ChatGPT -->
+                    <div class="grid grid-cols-4 gap-4 items-center bg-dark-800/30 rounded-xl p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-gray-500/20 rounded-full flex items-center justify-center text-lg">🤖</div>
+                            <div>
+                                <p class="font-bold text-gray-400">ChatGPT</p>
+                                <p class="text-[10px] text-gray-500">AI Assistant</p>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="flex justify-center gap-1">
+                                <span class="text-neon-400">●</span><span class="text-neon-400">●</span><span class="text-neon-400">●</span><span class="text-neon-400">●</span><span class="text-neon-400">●</span>
+                            </div>
+                            <p class="text-[10px] text-gray-400 mt-1">Instant response</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="flex justify-center gap-1">
+                                <span class="text-gray-600">●</span><span class="text-gray-600">●</span><span class="text-gray-600">●</span><span class="text-gray-700">○</span><span class="text-gray-700">○</span>
+                            </div>
+                            <p class="text-[10px] text-gray-400 mt-1">Broad but shallow</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="flex justify-center gap-1">
+                                <span class="text-red-400">●</span><span class="text-gray-700">○</span><span class="text-gray-700">○</span><span class="text-gray-700">○</span><span class="text-gray-700">○</span>
+                            </div>
+                            <p class="text-[10px] text-red-400 mt-1">Hallucinates, no citations</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Dataminr -->
+                    <div class="grid grid-cols-4 gap-4 items-center bg-dark-800/30 rounded-xl p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-yellow-500/20 rounded-full flex items-center justify-center text-lg">⚡</div>
+                            <div>
+                                <p class="font-bold text-yellow-400">Dataminr</p>
+                                <p class="text-[10px] text-gray-500">Real-time alerts</p>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="flex justify-center gap-1">
+                                <span class="text-neon-400">●</span><span class="text-neon-400">●</span><span class="text-neon-400">●</span><span class="text-neon-400">●</span><span class="text-neon-400">●</span>
+                            </div>
+                            <p class="text-[10px] text-gray-400 mt-1">Real-time alerts</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="flex justify-center gap-1">
+                                <span class="text-yellow-400">●</span><span class="text-yellow-400">●</span><span class="text-yellow-400">●</span><span class="text-yellow-400">●</span><span class="text-gray-700">○</span>
+                            </div>
+                            <p class="text-[10px] text-gray-400 mt-1">Social + news</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="flex justify-center gap-1">
+                                <span class="text-red-400">●</span><span class="text-red-400">●</span><span class="text-gray-700">○</span><span class="text-gray-700">○</span><span class="text-gray-700">○</span>
+                            </div>
+                            <p class="text-[10px] text-red-400 mt-1">"What" not "why"</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Placer.ai -->
+                    <div class="grid grid-cols-4 gap-4 items-center bg-dark-800/30 rounded-xl p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center text-lg">📍</div>
+                            <div>
+                                <p class="font-bold text-blue-400">Placer.ai</p>
+                                <p class="text-[10px] text-gray-500">Foot traffic data</p>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="flex justify-center gap-1">
+                                <span class="text-neon-400">●</span><span class="text-neon-400">●</span><span class="text-neon-400">●</span><span class="text-neon-400">●</span><span class="text-gray-700">○</span>
+                            </div>
+                            <p class="text-[10px] text-gray-400 mt-1">Near real-time</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="flex justify-center gap-1">
+                                <span class="text-blue-400">●</span><span class="text-blue-400">●</span><span class="text-blue-400">●</span><span class="text-blue-400">●</span><span class="text-blue-400">●</span>
+                            </div>
+                            <p class="text-[10px] text-gray-400 mt-1">GPS-level granularity</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="flex justify-center gap-1">
+                                <span class="text-red-400">●</span><span class="text-gray-700">○</span><span class="text-gray-700">○</span><span class="text-gray-700">○</span><span class="text-gray-700">○</span>
+                            </div>
+                            <p class="text-[10px] text-red-400 mt-1">"Where" not "why"</p>
+                        </div>
+                    </div>
+                    
+                    <!-- McKinsey -->
+                    <div class="grid grid-cols-4 gap-4 items-center bg-dark-800/30 rounded-xl p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-purple-500/20 rounded-full flex items-center justify-center text-lg">📊</div>
+                            <div>
+                                <p class="font-bold text-purple-400">McKinsey</p>
+                                <p class="text-[10px] text-gray-500">Consultancy</p>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="flex justify-center gap-1">
+                                <span class="text-red-400">●</span><span class="text-red-400">●</span><span class="text-gray-700">○</span><span class="text-gray-700">○</span><span class="text-gray-700">○</span>
+                            </div>
+                            <p class="text-[10px] text-red-400 mt-1">6-12 month lag</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="flex justify-center gap-1">
+                                <span class="text-purple-400">●</span><span class="text-purple-400">●</span><span class="text-purple-400">●</span><span class="text-gray-700">○</span><span class="text-gray-700">○</span>
+                            </div>
+                            <p class="text-[10px] text-gray-400 mt-1">Deep but narrow</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="flex justify-center gap-1">
+                                <span class="text-neon-400">●</span><span class="text-neon-400">●</span><span class="text-neon-400">●</span><span class="text-neon-400">●</span><span class="text-neon-400">●</span>
+                            </div>
+                            <p class="text-[10px] text-gray-400 mt-1">Full analysis</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Summary -->
+                <div class="mt-8 text-center">
+                    <p class="text-gray-400 text-sm">
+                        <span class="text-neon-400 font-bold">We're the only tool with 5/5 on all three dimensions.</span>
+                        Others sacrifice speed for context (McKinsey) or context for speed (Dataminr, ChatGPT).
+                    </p>
                 </div>
             </div>
 
