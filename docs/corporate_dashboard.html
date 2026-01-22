@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our City Health — Corporate Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0f14;
+            --bg-card: #161f29;
+            --bg-input: #1e293b;
+            --primary: #22c55e;
+            --primary-hover: #16a34a;
+            --secondary: #3b82f6;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --accent: #3b82f6;
+            --glass-bg: rgba(10, 15, 20, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background-image: radial-gradient(circle at 50% 0%, #111827 0%, #000000 100%);
+        }
+
+        .container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 380px;
+            background: rgba(10, 15, 20, 0.75);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-header h1 {
+            font-size: 24px;
+            font-weight: 800;
+            margin: 0;
+            background: linear-gradient(to bottom right, #ffffff, #9ca3af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sidebar-header p {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-top: 8px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            opacity: 0.7;
+            font-weight: 500;
+        }
+
+        .sidebar-content {
+            padding: 32px;
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .form-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .select-button {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 14px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+            backdrop-filter: blur(4px);
+        }
+
+        .select-button:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .select-button span {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .select-button .placeholder {
+            color: #9ca3af;
+        }
+
+        .select-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            margin-top: 8px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            max-height: 320px;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            display: none;
+        }
+
+        .select-dropdown.open {
+            display: block;
+        }
+
+        .select-search {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .select-search input {
+            width: 100%;
+            background: rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 10px 12px 10px 36px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .select-search input:focus {
+            border-color: var(--primary);
+        }
+
+        .select-option {
+            padding: 10px 12px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.1s;
+            font-size: 14px;
+        }
+
+        .select-option:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .select-option.selected {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--primary);
+        }
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .tag {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tag-remove {
+            cursor: pointer;
+            opacity: 0.6;
+        }
+
+        .tag-remove:hover {
+            opacity: 1;
+        }
+
+        .depth-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .depth-btn {
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 12px;
+            border: 1px solid transparent;
+            background: rgba(255, 255, 255, 0.03);
+            color: #9ca3af;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .depth-btn.active {
+            border-color: var(--primary);
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--primary);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: var(--primary);
+            color: #000;
+            font-weight: 700;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 0 20px rgba(34,197,94,0.3);
+            transition: all 0.3s;
+            margin-top: auto;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-hover);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .sidebar-footer {
+            padding: 32px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.2);
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        header {
+            height: 80px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            background: rgba(0,0,0,0.2);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 30;
+        }
+
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 40px;
+        }
+
+        .chat-container {
+            max-width: 1024px;
+            margin: 0 auto;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(10, 15, 20, 0.75);
+            backdrop-filter: blur(12px);
+        }
+
+        .chat-header {
+            padding: 16px 32px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .message {
+            display: flex;
+            gap: 20px;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 20px;
+        }
+
+        .message-avatar.ai {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .message-avatar.user {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .message-content {
+            padding: 20px;
+            border-radius: 16px;
+            max-width: 85%;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .message.ai .message-content {
+            background: rgba(10, 15, 20, 0.6);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #e5e7eb;
+        }
+
+        .message.user .message-content {
+            background: rgba(59, 130, 246, 0.8);
+            color: white;
+            font-weight: 500;
+        }
+
+        .chat-input-area {
+            padding: 32px;
+            padding-top: 16px;
+        }
+
+        .chat-input-wrapper {
+            position: relative;
+        }
+
+        .chat-input {
+            width: 100%;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 16px;
+            padding: 20px 60px 20px 24px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+            backdrop-filter: blur(12px);
+        }
+
+        .chat-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.1);
+        }
+
+        .chat-send {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .chat-send:hover {
+            background: rgba(34, 197, 94, 0.1);
+        }
+
+        .results-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding-bottom: 80px;
+        }
+
+        .results-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 24px;
+            margin-bottom: 32px;
+        }
+
+        .results-header h2 {
+            font-size: 30px;
+            font-weight: 700;
+            color: white;
+            letter-spacing: -0.02em;
+            margin: 0;
+        }
+
+        .city-card {
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 40px;
+            background: rgba(10, 15, 20, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .city-header {
+            padding: 32px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            background: linear-gradient(90deg, rgba(34,197,94,0.05), transparent);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .city-name {
+            font-size: 36px;
+            font-weight: 800;
+            color: white;
+        }
+
+        .health-score {
+            background: rgba(0,0,0,0.3);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .health-score-value {
+            font-size: 48px;
+            font-weight: 900;
+            font-family: monospace;
+            letter-spacing: -0.05em;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            padding: 32px;
+        }
+
+        .metric-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .metric-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #d1d5db;
+            text-transform: capitalize;
+        }
+
+        .metric-value {
+            font-size: 14px;
+            font-weight: 700;
+            font-family: monospace;
+        }
+
+        .metric-bar {
+            height: 6px;
+            background: rgba(0,0,0,0.4);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 8px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .metric-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 1s ease-out;
+        }
+
+        .metric-rationale {
+            font-size: 11px;
+            color: #9ca3af;
+            line-height: 1.5;
+        }
+
+        .job-progress {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 16px;
+        }
+
+        .job-progress-header {
+            padding: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .job-progress-bar {
+            height: 6px;
+            background: rgba(0,0,0,0.4);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 16px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .job-progress-fill {
+            height: 100%;
+            background: var(--primary);
+            box-shadow: 0 0 15px rgba(34,197,94,0.6);
+            transition: width 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .loading {
+            display: flex;
+            gap: 20px;
+        }
+
+        .loading-dots {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .loading-dots span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--primary);
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .relative {
+            position: relative;
+        }
+
+        .fixed-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 20;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>Our City Health</h1>
+                <p>Corporate Intelligence Unit</p>
+            </div>
+
+            <div class="sidebar-content">
+                <div class="form-group">
+                    <label class="form-label">Target Portfolio</label>
+                    <div class="relative">
+                        <div class="select-button" id="city-select-btn">
+                            <span class="placeholder" id="city-select-text">Select markets...</span>
+                            <span style="color: #9ca3af; font-size: 10px;">▼</span>
+                        </div>
+                        <div class="select-dropdown" id="city-dropdown">
+                            <div class="select-search">
+                                <input type="text" id="city-search" placeholder="Search cities...">
+                            </div>
+                            <div id="city-options"></div>
+                        </div>
+                    </div>
+                    <div class="tags-container" id="city-tags"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Focus Dimensions</label>
+                    <div class="relative">
+                        <div class="select-button" id="dim-select-btn">
+                            <span class="placeholder" id="dim-select-text">Select dimensions...</span>
+                            <span style="color: #9ca3af; font-size: 10px;">▼</span>
+                        </div>
+                        <div class="select-dropdown" id="dim-dropdown">
+                            <div id="dim-options"></div>
+                        </div>
+                    </div>
+                    <div class="tags-container" id="dim-tags"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Analysis Depth</label>
+                    <div class="depth-buttons">
+                        <button class="depth-btn active" data-depth="standard">Standard</button>
+                        <button class="depth-btn" data-depth="deep">Deep Scrape</button>
+                    </div>
+                    <p style="font-size: 11px; color: #6b7280; margin: 0; line-height: 1.5; margin-top: 8px;" id="depth-desc">
+                        Rapid analysis of top 20 trusted sources.
+                    </p>
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <button class="btn-primary" id="start-btn">
+                    <span>⚡</span>
+                    <span>Initialize Analysis</span>
+                </button>
+                <div id="job-progress-container"></div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header>
+                <div style="display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 500; color: #9ca3af;">
+                    <span>🌍</span>
+                    <span style="opacity: 0.3;">/</span>
+                    <span style="color: #e5e7eb;">Global Dashboard</span>
+                </div>
+                <button id="reset-btn" style="display: none; padding: 8px 16px; background: rgba(255,255,255,0.05); border-radius: 8px; font-size: 12px; font-weight: 500; color: #9ca3af; border: none; cursor: pointer;">
+                    📊 Reset View
+                </button>
+            </header>
+
+            <div class="content-area" id="content-area">
+                <div class="chat-container" id="chat-container">
+                    <div class="chat-header">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span style="color: var(--primary);">✨</span>
+                            <span style="font-size: 10px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.1em;" id="context-status">
+                                General Assistant Mode
+                            </span>
+                        </div>
+                        <span id="job-id-badge" style="display: none; font-size: 10px; background: rgba(34,197,94,0.1); color: var(--primary); padding: 4px 12px; border-radius: 100px; border: 1px solid rgba(34,197,94,0.2); font-family: monospace;">
+                        </span>
+                    </div>
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="message ai">
+                            <div class="message-avatar ai">🤖</div>
+                            <div class="message-content">
+                                <p><strong>Welcome to Our City Health Corporate Intelligence.</strong></p>
+                                <p style="margin-top: 8px;">I'm your corporate intelligence assistant. Configure your analysis on the left, or ask me to help you define the scope.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input-area">
+                        <div class="chat-input-wrapper">
+                            <input type="text" class="chat-input" id="chat-input" placeholder="E.g., 'Analyze the housing crisis in New York'">
+                            <button class="chat-send" id="chat-send">📤</button>
+                        </div>
+                        <div style="text-align: center; margin-top: 16px;">
+                            <span style="font-size: 10px; color: #6b7280; font-weight: 500;">
+                                ⚠️ AI-GENERATED INTELLIGENCE. VERIFY CRITICAL SOURCES.
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Constants
+        const CITIES = [
+            "New York City", "Los Angeles", "San Francisco", "Chicago", "Seattle", "Boston",
+            "London", "Paris", "Berlin", "Toronto", "Vancouver", "Sydney", "Melbourne",
+            "Singapore", "Hong Kong", "Tokyo", "Seoul", "Mumbai", "Delhi", "Dubai",
+            "Johannesburg", "Nairobi", "Mexico City", "Sao Paulo", "Rio de Janeiro",
+            "Buenos Aires", "Madrid", "Barcelona", "Rome", "Amsterdam"
+        ];
+
+        const DIMENSIONS = [
+            "Affordability", "Services", "Safety", "Opportunity", "Culture", "Environment",
+            "Transportation", "Governance", "Housing", "Economy", "Education", "Health"
+        ];
+
+        // State
+        const state = {
+            selectedCities: [],
+            selectedDimensions: [],
+            depth: 'standard',
+            jobId: null,
+            results: [],
+            isScraping: false,
+            messages: [
+                { role: 'assistant', content: "I'm your corporate intelligence assistant. Configure your analysis on the left, or ask me to help you define the scope." }
+            ]
+        };
+
+        // DOM Elements
+        const citySelectBtn = document.getElementById('city-select-btn');
+        const cityDropdown = document.getElementById('city-dropdown');
+        const citySearch = document.getElementById('city-search');
+        const cityOptions = document.getElementById('city-options');
+        const cityTags = document.getElementById('city-tags');
+        const citySelectText = document.getElementById('city-select-text');
+
+        const dimSelectBtn = document.getElementById('dim-select-btn');
+        const dimDropdown = document.getElementById('dim-dropdown');
+        const dimOptions = document.getElementById('dim-options');
+        const dimTags = document.getElementById('dim-tags');
+        const dimSelectText = document.getElementById('dim-select-text');
+
+        const depthButtons = document.querySelectorAll('.depth-btn');
+        const depthDesc = document.getElementById('depth-desc');
+        const startBtn = document.getElementById('start-btn');
+        const jobProgressContainer = document.getElementById('job-progress-container');
+
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const chatSend = document.getElementById('chat-send');
+        const chatContainer = document.getElementById('chat-container');
+        const contentArea = document.getElementById('content-area');
+        const resetBtn = document.getElementById('reset-btn');
+        const contextStatus = document.getElementById('context-status');
+        const jobIdBadge = document.getElementById('job-id-badge');
+
+        // Initialize
+        function init() {
+            renderCityOptions();
+            renderDimensionOptions();
+            setupEventListeners();
+        }
+
+        // Render Functions
+        function renderCityOptions(filter = '') {
+            cityOptions.innerHTML = '';
+            const filtered = CITIES.filter(c => c.toLowerCase().includes(filter.toLowerCase()));
+            filtered.forEach(city => {
+                const option = document.createElement('div');
+                option.className = `select-option ${state.selectedCities.includes(city) ? 'selected' : ''}`;
+                option.innerHTML = `
+                    <span>${city}</span>
+                    ${state.selectedCities.includes(city) ? '<span>✓</span>' : ''}
+                `;
+                option.onclick = (e) => {
+                    e.stopPropagation();
+                    toggleCity(city);
+                };
+                cityOptions.appendChild(option);
+            });
+        }
+
+        function renderDimensionOptions() {
+            dimOptions.innerHTML = '';
+            DIMENSIONS.forEach(dim => {
+                const option = document.createElement('div');
+                option.className = `select-option ${state.selectedDimensions.includes(dim) ? 'selected' : ''}`;
+                option.innerHTML = `
+                    <span>${dim}</span>
+                    ${state.selectedDimensions.includes(dim) ? '<span>✓</span>' : ''}
+                `;
+                option.onclick = (e) => {
+                    e.stopPropagation();
+                    toggleDimension(dim);
+                };
+                dimOptions.appendChild(option);
+            });
+        }
+
+        function renderTags() {
+            // Cities
+            cityTags.innerHTML = '';
+            state.selectedCities.forEach(city => {
+                const tag = document.createElement('div');
+                tag.className = 'tag';
+                tag.innerHTML = `
+                    ${city}
+                    <span class="tag-remove" onclick="toggleCity('${city}')">×</span>
+                `;
+                cityTags.appendChild(tag);
+            });
+            citySelectText.textContent = state.selectedCities.length > 0 
+                ? `${state.selectedCities.length} Selected` 
+                : 'Select markets...';
+            citySelectText.className = state.selectedCities.length > 0 ? '' : 'placeholder';
+
+            // Dimensions
+            dimTags.innerHTML = '';
+            state.selectedDimensions.forEach(dim => {
+                const tag = document.createElement('div');
+                tag.className = 'tag';
+                tag.innerHTML = `
+                    ${dim}
+                    <span class="tag-remove" onclick="toggleDimension('${dim}')">×</span>
+                `;
+                dimTags.appendChild(tag);
+            });
+            dimSelectText.textContent = state.selectedDimensions.length > 0 
+                ? `${state.selectedDimensions.length} Selected` 
+                : 'Select dimensions...';
+            dimSelectText.className = state.selectedDimensions.length > 0 ? '' : 'placeholder';
+        }
+
+        // Toggle Functions
+        function toggleCity(city) {
+            const index = state.selectedCities.indexOf(city);
+            if (index > -1) {
+                state.selectedCities.splice(index, 1);
+            } else {
+                state.selectedCities.push(city);
+            }
+            renderCityOptions(citySearch.value);
+            renderTags();
+        }
+
+        function toggleDimension(dim) {
+            const index = state.selectedDimensions.indexOf(dim);
+            if (index > -1) {
+                state.selectedDimensions.splice(index, 1);
+            } else {
+                state.selectedDimensions.push(dim);
+            }
+            renderDimensionOptions();
+            renderTags();
+        }
+
+        // Event Listeners
+        function setupEventListeners() {
+            // City Select
+            citySelectBtn.onclick = (e) => {
+                e.stopPropagation();
+                cityDropdown.classList.toggle('open');
+                dimDropdown.classList.remove('open');
+            };
+
+            citySearch.oninput = (e) => {
+                renderCityOptions(e.target.value);
+            };
+
+            // Dimension Select
+            dimSelectBtn.onclick = (e) => {
+                e.stopPropagation();
+                dimDropdown.classList.toggle('open');
+                cityDropdown.classList.remove('open');
+            };
+
+            // Close dropdowns
+            document.addEventListener('click', (e) => {
+                if (!citySelectBtn.contains(e.target) && !cityDropdown.contains(e.target)) {
+                    cityDropdown.classList.remove('open');
+                }
+                if (!dimSelectBtn.contains(e.target) && !dimDropdown.contains(e.target)) {
+                    dimDropdown.classList.remove('open');
+                }
+            });
+
+            // Depth buttons
+            depthButtons.forEach(btn => {
+                btn.onclick = () => {
+                    depthButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    state.depth = btn.dataset.depth;
+                    depthDesc.textContent = state.depth === 'standard' 
+                        ? 'Rapid analysis of top 20 trusted sources.' 
+                        : 'Comprehensive deep-dive (~3 mins/city).';
+                };
+            });
+
+            // Start button
+            startBtn.onclick = () => {
+                if (state.selectedCities.length === 0) {
+                    alert('Please select at least one city.');
+                    return;
+                }
+                handleStartJob();
+            };
+
+            // Chat
+            chatSend.onclick = handleSendMessage;
+            chatInput.onkeypress = (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendMessage();
+                }
+            };
+
+            // Reset button
+            resetBtn.onclick = () => {
+                state.results = [];
+                renderContent();
+            };
+        }
+
+        // Job Functions
+        async function handleStartJob() {
+            state.isScraping = true;
+            state.results = [];
+            startBtn.disabled = true;
+            startBtn.innerHTML = '<span>Processing...</span>';
+
+            try {
+                const response = await fetch('/api/jobs', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        cities: state.selectedCities,
+                        dimensions: state.selectedDimensions,
+                        depth: state.depth
+                    })
+                });
+
+                if (!response.ok) throw new Error('Failed to start job');
+
+                const data = await response.json();
+                state.jobId = data.job_id;
+                updateContextStatus();
+                showJobProgress();
+                pollJobStatus();
+            } catch (error) {
+                alert('Failed to start job: ' + error.message);
+                state.isScraping = false;
+                startBtn.disabled = false;
+                startBtn.innerHTML = '<span>⚡</span><span>Initialize Analysis</span>';
+            }
+        }
+
+        function showJobProgress() {
+            jobProgressContainer.innerHTML = `
+                <div class="job-progress">
+                    <div class="job-progress-header">
+                        <span style="font-size: 12px; font-weight: 700; color: white; text-transform: uppercase;">Running</span>
+                        <span style="font-size: 12px; font-weight: 700; font-family: monospace; color: var(--primary);">0%</span>
+                    </div>
+                    <div class="job-progress-bar">
+                        <div class="job-progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function pollJobStatus() {
+            if (!state.jobId) return;
+
+            try {
+                const response = await fetch(`/api/jobs/${state.jobId}/status`);
+                const status = await response.json();
+
+                const progressBar = document.querySelector('.job-progress-fill');
+                const progressText = document.querySelector('.job-progress-header span:last-child');
+                if (progressBar) progressBar.style.width = status.progress + '%';
+                if (progressText) progressText.textContent = status.progress + '%';
+
+                if (status.status === 'completed') {
+                    await loadResults();
+                } else if (status.status === 'failed') {
+                    alert('Job failed: ' + status.message);
+                    state.isScraping = false;
+                    startBtn.disabled = false;
+                    startBtn.innerHTML = '<span>⚡</span><span>Initialize Analysis</span>';
+                    jobProgressContainer.innerHTML = '';
+                } else {
+                    setTimeout(pollJobStatus, 2000);
+                }
+            } catch (error) {
+                console.error('Polling error:', error);
+                setTimeout(pollJobStatus, 2000);
+            }
+        }
+
+        async function loadResults() {
+            try {
+                const response = await fetch(`/api/jobs/${state.jobId}/results`);
+                const data = await response.json();
+                state.results = data.cities || [];
+                state.isScraping = false;
+                startBtn.disabled = false;
+                startBtn.innerHTML = '<span>⚡</span><span>Initialize Analysis</span>';
+                jobProgressContainer.innerHTML = '';
+                renderContent();
+            } catch (error) {
+                console.error('Failed to load results:', error);
+            }
+        }
+
+        // Chat Functions
+        async function handleSendMessage() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+
+            addMessage(text, 'user');
+            chatInput.value = '';
+            showLoading();
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        messages: [...state.messages, { role: 'user', content: text }],
+                        job_id: state.jobId
+                    })
+                });
+
+                const data = await response.json();
+                addMessage(data.message.content, 'assistant');
+                state.messages.push({ role: 'user', content: text });
+                state.messages.push(data.message);
+
+                if (data.job_request) {
+                    state.selectedCities = data.job_request.cities;
+                    state.selectedDimensions = data.job_request.dimensions || [];
+                    state.depth = data.job_request.depth || 'standard';
+                    renderCityOptions();
+                    renderDimensionOptions();
+                    renderTags();
+                    handleStartJob();
+                }
+            } catch (error) {
+                addMessage('Sorry, I had trouble connecting to the intelligence engine.', 'assistant');
+            }
+        }
+
+        function addMessage(content, role) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            messageDiv.innerHTML = `
+                <div class="message-avatar ${role}">${role === 'ai' ? '🤖' : '👤'}</div>
+                <div class="message-content">${formatMessage(content)}</div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function showLoading() {
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'message ai loading';
+            loadingDiv.id = 'loading-message';
+            loadingDiv.innerHTML = `
+                <div class="message-avatar ai">🤖</div>
+                <div class="message-content">
+                    <div class="loading-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <span style="font-size: 10px; color: #9ca3af; margin-left: 12px; text-transform: uppercase; letter-spacing: 0.1em;">Analyzing Intelligence...</span>
+                </div>
+            `;
+            chatMessages.appendChild(loadingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function formatMessage(text) {
+            return text.split('\n').map(p => `<p style="margin-bottom: 12px;">${p}</p>`).join('');
+        }
+
+        // Render Content
+        function renderContent() {
+            if (state.results.length > 0) {
+                chatContainer.style.display = 'none';
+                resetBtn.style.display = 'block';
+                contentArea.innerHTML = `
+                    <div class="results-container">
+                        <div class="results-header">
+                            <div>
+                                <h2>Intelligence Report</h2>
+                                <p style="color: #9ca3af; margin-top: 8px; font-size: 14px; margin: 0;">
+                                    Generated for <span style="color: var(--primary); font-family: monospace;">${state.selectedCities.length}</span> markets
+                                </p>
+                            </div>
+                        </div>
+                        ${state.results.map(city => renderCityCard(city)).join('')}
+                    </div>
+                `;
+            } else {
+                chatContainer.style.display = 'flex';
+                resetBtn.style.display = 'none';
+            }
+        }
+
+        function renderCityCard(city) {
+            const healthColor = city.overall_health >= 70 ? '#34d399' : city.overall_health >= 50 ? '#facc15' : '#fb7185';
+            return `
+                <div class="city-card">
+                    <div class="city-header">
+                        <div>
+                            <h2 class="city-name">${city.city_name}</h2>
+                            <div style="display: flex; align-items: center; gap: 16px; margin-top: 8px; font-size: 12px; color: #9ca3af;">
+                                <span>${city.citations?.length || 0} Sources Processed</span>
+                            </div>
+                        </div>
+                        <div class="health-score">
+                            <div style="text-align: right; font-size: 10px; color: #9ca3af;">
+                                <div style="font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">Health Index</div>
+                                <div style="font-size: 10px;">AI Weighted Score</div>
+                            </div>
+                            <div class="health-score-value" style="color: ${healthColor};">
+                                ${city.overall_health}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metrics-grid">
+                        ${Object.entries(city.category_scores || {}).map(([dim, data]) => `
+                            <div class="metric-item">
+                                <div class="metric-header">
+                                    <span class="metric-name">${dim.replace('_', ' ')}</span>
+                                    <span class="metric-value" style="color: ${data.score >= 50 ? '#34d399' : '#fb923c'};">${data.score}</span>
+                                </div>
+                                <div class="metric-bar">
+                                    <div class="metric-bar-fill" style="width: ${data.score}%; background: ${data.score >= 50 ? '#34d399' : '#fb923c'};"></div>
+                                </div>
+                                <div class="metric-rationale">${data.rationale || ''}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateContextStatus() {
+            if (state.jobId) {
+                contextStatus.textContent = 'Grounded Context Active';
+                contextStatus.style.color = 'var(--primary)';
+                jobIdBadge.style.display = 'block';
+                jobIdBadge.textContent = `JOB: ${state.jobId.slice(0, 6)}`;
+            } else {
+                contextStatus.textContent = 'General Assistant Mode';
+                contextStatus.style.color = '#9ca3af';
+                jobIdBadge.style.display = 'none';
+            }
+        }
+
+        // Initialize
+        init();
+    </script>
+</body>
+</html>

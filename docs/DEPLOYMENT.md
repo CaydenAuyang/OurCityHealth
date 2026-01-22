@@ -26,8 +26,14 @@ Your project showcase is now ready to deploy! Follow these steps:
 ## Files Included
 
 - `index.html` - Main project showcase page
+- `corporate_dashboard.html` - Corporate Intelligence Dashboard
 - All required images (PNG files)
 - `.nojekyll` - Ensures GitHub Pages serves files correctly
+
+## Available Pages
+
+- **Project Showcase**: https://caydenauyang.github.io/Our-City-Health---Sentiment-Project/
+- **Corporate Dashboard**: https://caydenauyang.github.io/Our-City-Health---Sentiment-Project/corporate_dashboard.html
 
 ## Updating the Site
 
