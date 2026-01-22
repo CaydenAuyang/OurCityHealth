@@ -1518,43 +1518,101 @@
             <h2 class="text-4xl md:text-5xl font-bold mb-4">Business Model & Milestones</h2>
             <p class="text-xl text-gray-400 mb-16 max-w-3xl">A Scalable DaaS (Data-as-a-Service) Engine.</p>
 
-            <!-- Revenue Tiers -->
-            <div class="grid md:grid-cols-3 gap-6 mb-16">
-                <div class="bg-dark-800/50 rounded-2xl p-8 border border-dark-600/30 hover:border-neon-500/30 transition-colors">
-                    <div class="text-4xl font-bold text-neon-400 mb-2">$25k<span class="text-lg text-gray-500">/yr</span></div>
-                    <h3 class="text-xl font-bold mb-4">Tier 1: Enterprise Dashboard</h3>
-                    <p class="text-gray-400 text-sm mb-4">For Strategy, Risk & Investment Teams</p>
-                    <div class="text-sm text-gray-500 border-t border-dark-600/50 pt-4">
-                        <ul class="space-y-1">
-                            <li>• Full dashboard with unlimited cities</li>
-                            <li>• Custom watchlists & alerts</li>
-                            <li>• Exportable reports with citations</li>
+            <!-- Revenue Tiers - 5 Tier Model -->
+            <div class="grid md:grid-cols-5 gap-4 mb-16">
+                <!-- Free Tier -->
+                <div class="bg-dark-800/50 rounded-2xl p-6 border border-dark-600/30 hover:border-gray-500/30 transition-colors">
+                    <div class="text-3xl font-bold text-gray-400 mb-2">Free</div>
+                    <h3 class="text-lg font-bold mb-3">Explorer</h3>
+                    <p class="text-gray-500 text-xs mb-4">Try before you buy</p>
+                    <div class="text-xs text-gray-500 border-t border-dark-600/50 pt-4">
+                        <ul class="space-y-1.5">
+                            <li>• 5 cities maximum</li>
+                            <li>• Current scores only</li>
+                            <li>• Basic dashboard view</li>
+                            <li>• Watermarked exports</li>
+                            <li>• Community support</li>
                         </ul>
                     </div>
-                </div>
-                <div class="bg-gradient-to-br from-neon-500/10 to-dark-800/50 rounded-2xl p-8 border border-neon-500/30 relative">
-                    <div class="absolute top-4 right-4 bg-neon-500 text-dark-900 text-xs font-bold px-2 py-1 rounded">POPULAR</div>
-                    <div class="text-4xl font-bold text-neon-400 mb-2">$50k<span class="text-lg text-gray-500">+</span></div>
-                    <h3 class="text-xl font-bold mb-4">Tier 2: Bespoke Intelligence</h3>
-                    <p class="text-gray-400 text-sm mb-4">For Governments, NGOs & Custom Use Cases</p>
-                    <div class="text-sm text-gray-500 border-t border-dark-600/50 pt-4">
-                        <ul class="space-y-1">
-                            <li>• Custom dimension weighting</li>
-                            <li>• White-label deployment</li>
-                            <li>• Dedicated analyst support</li>
-                        </ul>
+                    <div class="mt-4 pt-3 border-t border-dark-600/30">
+                        <p class="text-[10px] text-gray-600">Lead generation & validation</p>
                     </div>
                 </div>
-                <div class="bg-dark-800/50 rounded-2xl p-8 border border-dark-600/30 hover:border-neon-500/30 transition-colors">
-                    <div class="text-4xl font-bold text-neon-400 mb-2">$100k<span class="text-lg text-gray-500">/yr</span></div>
-                    <h3 class="text-xl font-bold mb-4">Tier 3: API Firehose</h3>
-                    <p class="text-gray-400 text-sm mb-4">For Hedge Funds, Quant Teams & Data Providers</p>
-                    <div class="text-sm text-gray-500 border-t border-dark-600/50 pt-4">
-                        <ul class="space-y-1">
-                            <li>• Real-time JSON feed (all 1000+ cities)</li>
-                            <li>• Historical data access (5 years)</li>
+                
+                <!-- Starter Tier -->
+                <div class="bg-dark-800/50 rounded-2xl p-6 border border-dark-600/30 hover:border-blue-500/30 transition-colors">
+                    <div class="text-3xl font-bold text-blue-400 mb-2">$1k<span class="text-sm text-gray-500">/mo</span></div>
+                    <h3 class="text-lg font-bold mb-3">Starter</h3>
+                    <p class="text-gray-500 text-xs mb-4">For SMEs & small teams</p>
+                    <div class="text-xs text-gray-500 border-t border-dark-600/50 pt-4">
+                        <ul class="space-y-1.5">
+                            <li>• <span class="text-white">25 cities</span></li>
+                            <li>• 1 year historical data</li>
+                            <li>• Email alerts</li>
+                            <li>• PDF exports</li>
+                            <li>• Email support</li>
+                        </ul>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-dark-600/30">
+                        <p class="text-[10px] text-gray-600">$12K/yr billed annually</p>
+                    </div>
+                </div>
+                
+                <!-- Professional Tier -->
+                <div class="bg-gradient-to-br from-neon-500/10 to-dark-800/50 rounded-2xl p-6 border border-neon-500/30 relative">
+                    <div class="absolute top-3 right-3 bg-neon-500 text-dark-900 text-[10px] font-bold px-2 py-0.5 rounded">POPULAR</div>
+                    <div class="text-3xl font-bold text-neon-400 mb-2">$2k<span class="text-sm text-gray-500">/mo</span></div>
+                    <h3 class="text-lg font-bold mb-3">Professional</h3>
+                    <p class="text-gray-500 text-xs mb-4">For growing teams</p>
+                    <div class="text-xs text-gray-500 border-t border-dark-600/50 pt-4">
+                        <ul class="space-y-1.5">
+                            <li>• <span class="text-white">100 cities</span></li>
+                            <li>• 3 years historical</li>
+                            <li>• Full alerts & watchlists</li>
+                            <li>• API access (5K calls/mo)</li>
+                            <li>• Priority support</li>
+                        </ul>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-dark-600/30">
+                        <p class="text-[10px] text-gray-600">$24K/yr billed annually</p>
+                    </div>
+                </div>
+                
+                <!-- Enterprise Tier -->
+                <div class="bg-dark-800/50 rounded-2xl p-6 border border-dark-600/30 hover:border-purple-500/30 transition-colors">
+                    <div class="text-3xl font-bold text-purple-400 mb-2">$50k<span class="text-sm text-gray-500">+/yr</span></div>
+                    <h3 class="text-lg font-bold mb-3">Enterprise</h3>
+                    <p class="text-gray-500 text-xs mb-4">Custom deployments</p>
+                    <div class="text-xs text-gray-500 border-t border-dark-600/50 pt-4">
+                        <ul class="space-y-1.5">
+                            <li>• <span class="text-white">Unlimited cities</span></li>
+                            <li>• 5 years historical</li>
+                            <li>• Custom reports included</li>
+                            <li>• White-label option</li>
+                            <li>• Dedicated CSM</li>
+                        </ul>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-dark-600/30">
+                        <p class="text-[10px] text-gray-600">Custom pricing & SLA</p>
+                    </div>
+                </div>
+                
+                <!-- Data License Tier -->
+                <div class="bg-dark-800/50 rounded-2xl p-6 border border-dark-600/30 hover:border-orange-500/30 transition-colors">
+                    <div class="text-3xl font-bold text-orange-400 mb-2">$100k<span class="text-sm text-gray-500">/yr</span></div>
+                    <h3 class="text-lg font-bold mb-3">Data License</h3>
+                    <p class="text-gray-500 text-xs mb-4">For quants & data providers</p>
+                    <div class="text-xs text-gray-500 border-t border-dark-600/50 pt-4">
+                        <ul class="space-y-1.5">
+                            <li>• <span class="text-white">Full API firehose</span></li>
+                            <li>• All 1,000+ cities</li>
+                            <li>• Real-time JSON feed</li>
                             <li>• Unlimited API calls</li>
+                            <li>• SLA guarantees</li>
                         </ul>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-dark-600/30">
+                        <p class="text-[10px] text-gray-600">Hedge funds, quant teams</p>
                     </div>
                 </div>
             </div>
