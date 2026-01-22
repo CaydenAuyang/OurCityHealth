@@ -903,13 +903,22 @@
         if (c.lat && c.lng) register(c.name, Number(c.lat), Number(c.lng), 'dataset');
       });
 
-      // 3. Match
+      // 3. Match - use existing coordinates if available, otherwise resolve from index
       const resolved = [];
       cities.forEach(c => {
-        const norm = normalizeName(c.name);
-        const hit = geoIndex.get(norm);
-        if (hit) {
-          resolved.push({ ...c, lat: hit.lat, lng: hit.lng });
+        // If city already has coordinates, use them directly
+        if (c.lat != null && c.lng != null && !isNaN(c.lat) && !isNaN(c.lng)) {
+          resolved.push({ ...c, lat: Number(c.lat), lng: Number(c.lng) });
+        } else {
+          // Otherwise try to resolve from geoIndex
+          const norm = normalizeName(c.name);
+          const hit = geoIndex.get(norm);
+          if (hit) {
+            resolved.push({ ...c, lat: hit.lat, lng: hit.lng });
+          } else {
+            // If still not found, try to find in catalog by name match
+            console.warn(`Could not resolve coordinates for: ${c.name}`);
+          }
         }
       });
 
