@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our City Health - Investor Pitch (20 Pages)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: { 900: '#0a0f14', 800: '#111827', 700: '#1e293b', 600: '#334155' },
+                        neon: { 400: '#4ade80', 500: '#22c55e' }
+                    },
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body { background: #0a0f14; }
+        
+        @media print {
+            body { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+            section { page-break-inside: avoid; page-break-after: auto; }
+            .page-break { page-break-after: always; }
+            h2 { page-break-after: avoid; }
+        }
+    </style>
+</head>
+<body class="text-white font-sans antialiased">
+
+    <!-- Title & Cover -->
+    <section class="min-h-screen flex flex-col items-center justify-center text-center px-8 page-break">
+        <h1 class="text-7xl font-black mb-4">Our City Health</h1>
+        <p class="text-2xl text-gray-400 mb-6">Geo-Centric Location Intelligence for Capital Allocation Decisions</p>
+        <p class="text-neon-400 text-lg">1,000+ cities. 380,000+ sources. 12 dimensions. One platform.</p>
+    </section>
+
+    <!-- Key Summary -->
+    <section class="py-16 px-8 page-break">
+        <div class="max-w-5xl mx-auto">
+            <p class="text-neon-400 font-semibold uppercase text-sm mb-2">Key Summary</p>
+            <h2 class="text-4xl font-bold mb-6">The Missing Context Layer</h2>
+            <div class="space-y-4 text-gray-300">
+                <p class="text-lg">Real estate developers and retail site selection teams have mastered the <span class="text-white font-medium">Financial Stack</span> and the <span class="text-white font-medium">Physical Stack</span>. But the <span class="text-red-400 font-medium">Social Stack</span> remains largely unmeasured.</p>
+                <p>They assess community sentiment by <span class="text-yellow-400">manual scouting of the district</span>, like attending town hall meetings — a "1990s workflow" for billion-dollar decisions.</p>
+                <p><span class="text-neon-400 font-semibold">Pitch Line:</span> "Dataminr tells you when the riot starts. We tell you which neighborhood is ready to reach a tipping point 3 months in advance."</p>
+                <p class="text-gray-400 text-sm">Great tools exist for Marketing (Brandwatch) and Government (Zencity). But their architecture doesn't fit private sector location risk. Brandwatch is Entity-Centric (tracks keywords). We are Geo-Centric (track locations).</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem -->
+    <section class="py-16 px-8 bg-dark-800/30 page-break">
+        <div class="max-w-5xl mx-auto">
+            <p class="text-neon-400 font-semibold uppercase text-sm mb-2">Problem</p>
+            <h2 class="text-4xl font-bold mb-6">The Entitlement Cliff</h2>
+            <p class="text-gray-400 mb-8">Developers spend millions on physical due diligence but miss community sentiment. This blind spot costs <span class="text-red-400 font-semibold">HK$6-8M per year of project delay</span>.</p>
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="bg-dark-900/50 rounded-xl p-4 border border-red-500/30">
+                    <h4 class="font-bold text-red-400 mb-2">The Hard Stat</h4>
+                    <p class="text-sm text-gray-400">70% of housing projects face community opposition delays costing <span class="text-white">$6-8M/year</span></p>
+                </div>
+                <div class="bg-dark-900/50 rounded-xl p-4 border border-yellow-500/30">
+                    <h4 class="font-bold text-yellow-400 mb-2">Current Solution</h4>
+                    <p class="text-sm text-gray-400">CoStar/Esri provide demographics but miss sentiment. Brandwatch tracks brands, not locations. Teams rely on manual walks and town halls.</p>
+                </div>
+                <div class="bg-dark-900/50 rounded-xl p-4 border border-neon-500/30">
+                    <h4 class="font-bold text-neon-400 mb-2">Our Solution</h4>
+                    <p class="text-sm text-gray-400">Run a "Civic Health Check" across 12 dimensions for specific cities/districts. Quantify Entitlement Risk before bidding.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solution Overview -->
+    <section class="py-16 px-8 page-break">
+        <div class="max-w-5xl mx-auto">
+            <p class="text-neon-400 font-semibold uppercase text-sm mb-2">Solution</p>
+            <h2 class="text-4xl font-bold mb-6">Standardized Civic Intelligence</h2>
+            <p class="text-gray-400 mb-8">We transform unstructured global noise into a precise 'Civic Health Index' across 12 dimensions at city and district levels.</p>
+            
+            <h3 class="text-2xl font-bold mb-4">12-Dimension Taxonomy</h3>
+            <div class="grid md:grid-cols-3 gap-3 text-sm mb-8">
+                <div class="bg-dark-800/50 rounded p-3"><span class="text-neon-400">Safety</span> - Crime, violence, policing</div>
+                <div class="bg-dark-800/50 rounded p-3"><span class="text-neon-400">Housing</span> - Affordability, availability</div>
+                <div class="bg-dark-800/50 rounded p-3"><span class="text-neon-400">Economy</span> - Jobs, business climate</div>
+                <div class="bg-dark-800/50 rounded p-3"><span class="text-neon-400">Governance</span> - Trust, corruption</div>
+                <div class="bg-dark-800/50 rounded p-3"><span class="text-neon-400">Transport</span> - Infrastructure, congestion</div>
+                <div class="bg-dark-800/50 rounded p-3"><span class="text-neon-400">Environment</span> - Air quality, climate</div>
+                <div class="bg-dark-800/50 rounded p-3"><span class="text-neon-400">Healthcare</span> - Access, quality</div>
+                <div class="bg-dark-800/50 rounded p-3"><span class="text-neon-400">Culture</span> - Arts, vibrancy, events</div>
+                <div class="bg-dark-800/50 rounded p-3"><span class="text-neon-400">Education</span> - Schools, universities</div>
+                <div class="bg-dark-800/50 rounded p-3"><span class="text-neon-400">Technology</span> - Digital infrastructure</div>
+                <div class="bg-dark-800/50 rounded p-3"><span class="text-neon-400">Community</span> - Cohesion, trust</div>
+                <div class="bg-dark-800/50 rounded p-3"><span class="text-neon-400">Cost of Living</span> - Affordability index</div>
+            </div>
+
+            <h3 class="text-2xl font-bold mb-4">Products</h3>
+            <div class="space-y-4">
+                <div class="bg-blue-500/10 rounded-xl p-4 border border-blue-500/30">
+                    <h4 class="font-bold text-blue-400 mb-2">Corporate Dashboard</h4>
+                    <p class="text-sm text-gray-400">Real-time scores, predictive analytics, multi-location comparison, intelligent alerts. Track unlimited cities and districts.</p>
+                </div>
+                <div class="bg-purple-500/10 rounded-xl p-4 border border-purple-500/30">
+                    <h4 class="font-bold text-purple-400 mb-2">Custom Intelligence Reports</h4>
+                    <p class="text-sm text-gray-400">Two types: Predictive (market entry, trajectory) and Analytical (event analysis, recovery timelines). 20+ pages, full citations, 5-7 day turnaround.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Market Opportunity -->
+    <section class="py-16 px-8 bg-dark-800/30 page-break">
+        <div class="max-w-5xl mx-auto">
+            <p class="text-neon-400 font-semibold uppercase text-sm mb-2">Market Opportunity</p>
+            <h2 class="text-4xl font-bold mb-6">Commercial Risk Intelligence</h2>
+            
+            <div class="grid md:grid-cols-3 gap-4 mb-8">
+                <div class="bg-dark-900/50 rounded-xl p-4 border border-blue-400/30 text-center">
+                    <div class="text-3xl font-black text-blue-400 mb-2">$34B</div>
+                    <h4 class="font-bold text-white mb-2">TAM</h4>
+                    <p class="text-xs text-gray-400">Global Real Estate & Retail Analytics Market</p>
+                </div>
+                <div class="bg-dark-900/50 rounded-xl p-4 border border-purple-400/30 text-center">
+                    <div class="text-3xl font-black text-purple-400 mb-2">$8.2B</div>
+                    <h4 class="font-bold text-white mb-2">SAM</h4>
+                    <p class="text-xs text-gray-400">APAC & North America Site Selection Tools</p>
+                </div>
+                <div class="bg-dark-900/50 rounded-xl p-4 border border-neon-400/30 text-center">
+                    <div class="text-3xl font-black text-neon-400 mb-2">$120M</div>
+                    <h4 class="font-bold text-white mb-2">SOM</h4>
+                    <p class="text-xs text-gray-400">Year 3 Target (Real Estate + Retail)</p>
+                </div>
+            </div>
+
+            <h3 class="text-xl font-bold mb-4">Target Customers</h3>
+            <div class="grid md:grid-cols-2 gap-4 text-sm">
+                <div class="bg-neon-500/10 rounded-xl p-4 border border-neon-500/30">
+                    <h4 class="font-bold text-neon-400 mb-2">PRIMARY: Commercial Real Estate</h4>
+                    <p class="text-gray-400 mb-2">Land Acquisition Teams quantifying Entitlement Risk before $50M+ bids.</p>
+                    <p class="text-xs text-gray-500">Target: Mid-size developers, overseas expansion teams</p>
+                </div>
+                <div class="bg-blue-500/10 rounded-xl p-4 border border-blue-500/30">
+                    <h4 class="font-bold text-blue-400 mb-2">GROWTH: Retail & QSR Site Selection</h4>
+                    <p class="text-gray-400 mb-2">Explain "why" foot traffic trends change, predict performance.</p>
+                    <p class="text-xs text-gray-500">Target: Regional F&B chains, CPG international expansion</p>
+                </div>
+                <div class="bg-orange-500/10 rounded-xl p-4 border border-orange-500/30">
+                    <h4 class="font-bold text-orange-400 mb-2">SCALE: P&C Insurance</h4>
+                    <p class="text-gray-400 mb-2">Parametric risk modeling for property insurance.</p>
+                    <p class="text-xs text-gray-500">Target: Domestic mid-sized insurers</p>
+                </div>
+                <div class="bg-cyan-500/10 rounded-xl p-4 border border-cyan-500/30">
+                    <h4 class="font-bold text-cyan-400 mb-2">SCALE: Government & Smart City</h4>
+                    <p class="text-gray-400 mb-2">Policy impact measurement, benchmark against peer cities/districts.</p>
+                    <p class="text-xs text-gray-500">Validates product legitimacy</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Competitive Analysis -->
+    <section class="py-16 px-8 page-break">
+        <div class="max-w-5xl mx-auto">
+            <p class="text-neon-400 font-semibold uppercase text-sm mb-2">Competitive Analysis</p>
+            <h2 class="text-4xl font-bold mb-6">We Don't Replace — We Complete</h2>
+            <p class="text-gray-400 mb-8 text-sm">Great civic intelligence tools exist, but their architecture doesn't fit private sector location risk.</p>
+            
+            <div class="overflow-x-auto mb-8">
+                <table class="w-full text-xs border-collapse">
+                    <thead>
+                        <tr class="border-b border-dark-600">
+                            <th class="text-left py-2 px-2 text-gray-400">Feature</th>
+                            <th class="text-center py-2 px-2 text-neon-400 bg-neon-500/10">Our City Health</th>
+                            <th class="text-center py-2 px-2 text-gray-400">Alert Platforms</th>
+                            <th class="text-center py-2 px-2 text-gray-400">Civic/Marketing</th>
+                            <th class="text-center py-2 px-2 text-gray-400">GenAI</th>
+                            <th class="text-center py-2 px-2 text-gray-400">Consultancies</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b border-dark-700/50">
+                            <td class="py-2 px-2">Output Type</td>
+                            <td class="py-2 px-2 text-center bg-neon-500/5 text-neon-400">DB + Alerts + Reports</td>
+                            <td class="py-2 px-2 text-center text-gray-400">Alerts/Traffic</td>
+                            <td class="py-2 px-2 text-center text-gray-400">Dashboards</td>
+                            <td class="py-2 px-2 text-center text-gray-400">Text</td>
+                            <td class="py-2 px-2 text-center text-gray-400">PDF Reports</td>
+                        </tr>
+                        <tr class="border-b border-dark-700/50">
+                            <td class="py-2 px-2">Time Horizon</td>
+                            <td class="py-2 px-2 text-center bg-neon-500/5 text-neon-400">Real-time + 5yr history</td>
+                            <td class="py-2 px-2 text-center text-gray-400">Real-time only</td>
+                            <td class="py-2 px-2 text-center text-gray-400">Real-time + some</td>
+                            <td class="py-2 px-2 text-center text-gray-400">No memory</td>
+                            <td class="py-2 px-2 text-center text-gray-400">6-12mo lag</td>
+                        </tr>
+                        <tr class="border-b border-dark-700/50">
+                            <td class="py-2 px-2">Granularity</td>
+                            <td class="py-2 px-2 text-center bg-neon-500/5 text-neon-400">City + District</td>
+                            <td class="py-2 px-2 text-center text-gray-400">Incident/Store</td>
+                            <td class="py-2 px-2 text-center text-gray-400">Entity-centric</td>
+                            <td class="py-2 px-2 text-center text-gray-400">Variable</td>
+                            <td class="py-2 px-2 text-center text-gray-400">City/Country</td>
+                        </tr>
+                        <tr>
+                            <td class="py-2 px-2">Insight Level</td>
+                            <td class="py-2 px-2 text-center bg-neon-500/5 text-neon-400">"Why" + predictions</td>
+                            <td class="py-2 px-2 text-center text-gray-400">"What/Where"</td>
+                            <td class="py-2 px-2 text-center text-gray-400">"What" sentiment</td>
+                            <td class="py-2 px-2 text-center text-gray-400">Creative</td>
+                            <td class="py-2 px-2 text-center text-gray-400">"Why" (lagging)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="bg-blue-500/10 rounded-xl p-4 border border-blue-500/30">
+                <h4 class="font-bold text-blue-400 mb-2">Why Their Architecture Doesn't Fit</h4>
+                <div class="grid md:grid-cols-2 gap-4 text-xs text-gray-400">
+                    <div>
+                        <p class="text-white font-medium mb-1">Entity-Centric vs. Geo-Centric</p>
+                        <p>Brandwatch tracks keywords ("Starbucks"). We track locations (select coordinates → capture ALL sentiment about that place).</p>
+                    </div>
+                    <div>
+                        <p class="text-white font-medium mb-1">Government Tool ≠ Developer Tool</p>
+                        <p>Zencity measures policy sentiment for governments. We quantify Entitlement Risk for private developers.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Business Model -->
+    <section class="py-16 px-8 bg-dark-800/30 page-break">
+        <div class="max-w-5xl mx-auto">
+            <p class="text-neon-400 font-semibold uppercase text-sm mb-2">Business Model</p>
+            <h2 class="text-4xl font-bold mb-6">Scalable DaaS Engine</h2>
+            <p class="text-center text-gray-400 text-sm mb-6">All prices in <span class="text-neon-400 font-semibold">Hong Kong Dollars (HKD)</span></p>
+            
+            <div class="grid md:grid-cols-4 gap-4 text-xs">
+                <div class="bg-dark-800/50 rounded-xl p-4 border border-dark-600/30">
+                    <div class="text-2xl font-bold text-gray-400 mb-1">Free</div>
+                    <h4 class="font-bold mb-2">Explorer</h4>
+                    <ul class="space-y-1 text-gray-500">
+                        <li>• 100 cities (city-level only)</li>
+                        <li>• Basic portfolios</li>
+                        <li>• Basic comparison</li>
+                        <li>• No reports/alerts</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-blue-500/10 rounded-xl p-4 border border-blue-500/30">
+                    <div class="text-2xl font-bold text-blue-400 mb-1">HK$1,500<span class="text-xs text-gray-500">/mo</span></div>
+                    <h4 class="font-bold mb-2">Professional</h4>
+                    <ul class="space-y-1 text-gray-400">
+                        <li>• Unlimited cities</li>
+                        <li>• 5 cities district-level</li>
+                        <li>• Email alerts</li>
+                        <li>• Basic predictions</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-neon-500/10 rounded-xl p-4 border border-neon-500/30">
+                    <div class="text-2xl font-bold text-neon-400 mb-1">HK$50,000<span class="text-xs text-gray-500">/yr</span></div>
+                    <h4 class="font-bold mb-2">Enterprise</h4>
+                    <ul class="space-y-1 text-gray-400">
+                        <li>• Unlimited district-level</li>
+                        <li>• Custom reports (20+ pages)</li>
+                        <li>• Limited API</li>
+                        <li>• Dedicated CSM</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-purple-500/10 rounded-xl p-4 border border-purple-500/30">
+                    <div class="text-2xl font-bold text-purple-400 mb-1">HK$100,000<span class="text-xs text-gray-500">/yr</span></div>
+                    <h4 class="font-bold mb-2">Data License</h4>
+                    <ul class="space-y-1 text-gray-400">
+                        <li>• Full API firehose</li>
+                        <li>• Unlimited calls</li>
+                        <li>• All cities/districts</li>
+                        <li>• White-label option</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <h3 class="text-xl font-bold mb-4">12-Month Roadmap</h3>
+                <div class="grid md:grid-cols-4 gap-3 text-xs">
+                    <div class="bg-dark-900/50 rounded-lg p-3 border border-blue-500/30">
+                        <h4 class="font-bold text-blue-400 mb-1">Q1: Scale</h4>
+                        <p class="text-gray-400">1,000 cities, 380K+ sources, predictive model development</p>
+                    </div>
+                    <div class="bg-dark-900/50 rounded-lg p-3 border border-purple-500/30">
+                        <h4 class="font-bold text-purple-400 mb-1">Q2: Product</h4>
+                        <p class="text-gray-400">Dashboard v1.0, custom reports, solidify predictive analytics</p>
+                    </div>
+                    <div class="bg-dark-900/50 rounded-lg p-3 border border-neon-500/30">
+                        <h4 class="font-bold text-neon-400 mb-1">Q3: Beta</h4>
+                        <p class="text-gray-400">API + Dashboard beta, outreach to 20 organizations</p>
+                    </div>
+                    <div class="bg-dark-900/50 rounded-lg p-3 border border-orange-500/30">
+                        <h4 class="font-bold text-orange-400 mb-1">Q4: Commercial</h4>
+                        <p class="text-gray-400">Full availability, sign 5+ pilot contracts, revenue generation</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team -->
+    <section class="py-16 px-8 page-break">
+        <div class="max-w-5xl mx-auto">
+            <p class="text-neon-400 font-semibold uppercase text-sm mb-2">Core Team</p>
+            <h2 class="text-4xl font-bold mb-6">AI-Native Founder with High Technical Velocity</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8 mb-12">
+                <div class="bg-dark-800/50 rounded-xl p-6 border border-neon-500/30">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-neon-500/30">
+                            <img src="docs/cayden_auyang.jpg" alt="Cayden Auyang" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold">Cayden Auyang</h3>
+                            <p class="text-neon-400 font-semibold text-sm">Architect & Founder</p>
+                        </div>
+                    </div>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li>• Expert in Agentic AI (Cursor + Google Antigravity) — 5x development speed</li>
+                        <li>• Dedicated Gap Year (2026-2027) — 100% full-time commitment</li>
+                        <li>• Developed 12-dimension taxonomy at Civic AI Group</li>
+                    </ul>
+                </div>
+
+                <div class="bg-dark-800/50 rounded-xl p-6 border border-yellow-500/30">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-yellow-500/30">
+                            <img src="docs/alvin_mok.jpeg" alt="Alvin Mok" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold">Alvin Mok</h3>
+                            <p class="text-yellow-400 font-semibold text-sm">Key Advisor</p>
+                        </div>
+                    </div>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li>• Chief Information and Data Officer, Select Equity Group</li>
+                        <li>• Former: Head of Global Platform & Insights, Orbis ($25B+ AUM)</li>
+                        <li>• McKinsey Engagement Manager | Harvard MBA (Baker Scholar - Top 5%)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why HKSTP -->
+    <section class="py-16 px-8 bg-dark-800/30 page-break">
+        <div class="max-w-5xl mx-auto">
+            <p class="text-neon-400 font-semibold uppercase text-sm mb-2">Why HKSTP</p>
+            <h2 class="text-4xl font-bold mb-6">Strategic Alignment & Landing Plan</h2>
+            
+            <div class="grid md:grid-cols-2 gap-6 mb-8 text-sm">
+                <div class="bg-dark-800/50 rounded-xl p-4 border border-neon-500/30">
+                    <h4 class="font-bold text-neon-400 mb-2">🖥️ Compute Infrastructure</h4>
+                    <p class="text-gray-400">Scoring 1,000+ cities daily at city/district level requires massive GPU inference. We need HKSTP's supercomputing support.</p>
+                </div>
+                <div class="bg-dark-800/50 rounded-xl p-4 border border-blue-500/30">
+                    <h4 class="font-bold text-blue-400 mb-2">🏢 Ecosystem Sandbox</h4>
+                    <p class="text-gray-400">HKSTP hosts our exact target clients (Real Estate, Retail, Logistics). Ideal environment for B2B pilots.</p>
+                </div>
+                <div class="bg-dark-800/50 rounded-xl p-4 border border-purple-500/30">
+                    <h4 class="font-bold text-purple-400 mb-2">⚖️ Compliance Guidance</h4>
+                    <p class="text-gray-400">Mentorship on PIPL/GDPR as we expand to GBA and globally.</p>
+                </div>
+                <div class="bg-dark-800/50 rounded-xl p-4 border border-cyan-500/30">
+                    <h4 class="font-bold text-cyan-400 mb-2">🤝 Data Partnerships</h4>
+                    <p class="text-gray-400">Licensed API access (GDELT, NewsAPI, Reddit API) — we need capital to scale data infrastructure to 380,000+ sources.</p>
+                </div>
+            </div>
+
+            <div class="bg-neon-500/10 rounded-xl p-6 border border-neon-500/30">
+                <h3 class="text-xl font-bold mb-4">Hong Kong & GBA as Launch Market</h3>
+                <p class="text-gray-400 mb-4">HK/GBA SMEs expanding globally are already in HKSTP's ecosystem — providing immediate, warm access to first customers.</p>
+                <div class="grid md:grid-cols-2 gap-4 text-xs">
+                    <div>
+                        <p class="text-white font-medium mb-1">Landing Plan</p>
+                        <ul class="space-y-1 text-gray-400">
+                            <li>• Immediate: Incorporate HK entity upon acceptance</li>
+                            <li>• 6 months: Hire 1 Business Development Lead + 1 Data Engineer</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <p class="text-white font-medium mb-1">Traction Plan</p>
+                        <ul class="space-y-1 text-gray-400">
+                            <li>• Q1-Q2: Product development + data scaling</li>
+                            <li>• Q3: Beta pilots with HKSTP ecosystem companies</li>
+                            <li>• Q4: First revenue (5+ pilot contracts)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Closing -->
+    <section class="py-24 px-8 text-center">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-5xl font-bold mb-6">Ready to Build the Global Standard.</h2>
+            <p class="text-gray-400 mb-4 text-xl">Geo-centric location intelligence for capital allocation decisions.</p>
+            <p class="text-neon-400 mb-8 text-lg">1,000+ cities. 380,000+ sources. 12 dimensions. One platform.</p>
+            <div class="inline-flex items-center gap-2 bg-neon-500 text-dark-900 font-bold px-8 py-4 rounded-full text-lg">
+                <span>Contact: caydenauyang@gmail.com</span>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>
