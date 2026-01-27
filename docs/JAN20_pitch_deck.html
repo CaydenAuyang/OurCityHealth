@@ -1099,11 +1099,36 @@
                 
                 <!-- Screenshots Section -->
                 <div class="space-y-8">
-                    <!-- Screenshot 1: 3D Globe -->
+                    <!-- Screenshot 1: Universal Scraping Engine -->
                     <div class="bg-dark-900/50 rounded-xl overflow-hidden border border-dark-600/30">
                         <div class="p-4 border-b border-dark-600/30">
                             <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 bg-neon-500/20 rounded-lg flex items-center justify-center text-neon-400 text-sm font-bold">1</div>
+                                <div class="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center text-purple-400 text-sm font-bold">1</div>
+                                <div>
+                                    <h4 class="font-bold text-white">Universal Scraping Engine</h4>
+                                    <p class="text-xs text-gray-500">Backend data pipeline in action</p>
+                                </div>
+                            </div>
+                        </div>
+                        <img src="terminal_2.png" alt="Terminal Backend" class="w-full" onerror="this.style.display='none'">
+                        <div class="p-4 bg-dark-800/30">
+                            <p class="text-sm text-gray-400 mb-2">
+                                <span class="text-purple-400 font-medium">What you're seeing:</span> The FastAPI backend running live scraping jobs. The engine ingests from multiple news sources (NYTimes, BBC, Reuters, The Guardian, Bloomberg) and Reddit communities simultaneously, processing data for the selected city (Hong Kong). This pipeline also handles AI-based scoring for each dimension through the proprietary scoring engine, which is currently under active development. <span class="text-white font-medium">Goal:</span> Scale to 380,000+ sources via licensed APIs and data partnerships.
+                            </p>
+                            <div class="flex flex-wrap gap-2 text-xs">
+                                <span class="bg-purple-500/10 text-purple-400 px-2 py-1 rounded">FastAPI + Uvicorn</span>
+                                <span class="bg-purple-500/10 text-purple-400 px-2 py-1 rounded">Multi-source ingestion</span>
+                                <span class="bg-purple-500/10 text-purple-400 px-2 py-1 rounded">Real-time job tracking</span>
+                                <span class="bg-purple-500/10 text-purple-400 px-2 py-1 rounded">Reddit API integration</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Screenshot 2: 3D Globe -->
+                    <div class="bg-dark-900/50 rounded-xl overflow-hidden border border-dark-600/30">
+                        <div class="p-4 border-b border-dark-600/30">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-neon-500/20 rounded-lg flex items-center justify-center text-neon-400 text-sm font-bold">2</div>
                                 <div>
                                     <h4 class="font-bold text-white">Interactive 3D Globe Interface</h4>
                                     <p class="text-xs text-gray-500">Public-facing visualization layer</p>
@@ -1124,11 +1149,11 @@
                         </div>
                     </div>
                     
-                    <!-- Screenshot 2: Corporate Dashboard -->
+                    <!-- Screenshot 3: Corporate Dashboard -->
                     <div class="bg-dark-900/50 rounded-xl overflow-hidden border border-dark-600/30">
                         <div class="p-4 border-b border-dark-600/30">
                             <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center text-blue-400 text-sm font-bold">2</div>
+                                <div class="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center text-blue-400 text-sm font-bold">3</div>
                                 <div>
                                     <h4 class="font-bold text-white">Corporate Intelligence Dashboard</h4>
                                     <p class="text-xs text-gray-500">Enterprise B2B interface (early prototype)</p>
@@ -1139,38 +1164,13 @@
                         <img src="sample_data.png" alt="12-Dimension Scoring Demo" class="w-full mt-4" onerror="this.style.display='none'">
                         <div class="p-4 bg-dark-800/30">
                             <p class="text-sm text-gray-400 mb-2">
-                                <span class="text-blue-400 font-medium">What you're seeing:</span> Early prototype of the Corporate Intelligence Unit. Portfolio selection (Hong Kong), dimension filtering (affordability + safety), and a "Grounded Context" AI chat that answers questions using only scraped data — no hallucinations. The second image demonstrates a simple, broad analysis of a city (as a demo) of the 12 dimensions through the proprietary scoring engine that I have been developing for the 12 dimensions, which is currently simple and still a work in progress. <span class="text-white font-medium">Goal:</span> Custom portfolios, intelligent alerts, multi-location comparison, predictive analytics, full Custom Intelligence Report integration, and solidify the 12-dimension proprietary scoring engine (research is currently in progress for determining the makeup of the overall score).
+                                <span class="text-blue-400 font-medium">What you're seeing:</span> Early prototype of the Corporate Intelligence Unit. Portfolio selection (Hong Kong), dimension filtering (affordability + safety), and a "Grounded Context" AI chat that answers questions using only scraped data — no hallucinations. The second image showcases an initial demonstration of city-level analysis across the 12 dimensions, powered by the foundational scoring engine currently in development. <span class="text-white font-medium">Goal:</span> Custom portfolios, intelligent alerts, multi-location comparison, predictive analytics, full Custom Intelligence Report integration, and refinement of the 12-dimension proprietary scoring methodology (ongoing research into weighting algorithms and dimension interdependencies).
                             </p>
                             <div class="flex flex-wrap gap-2 text-xs">
                                 <span class="bg-blue-500/10 text-blue-400 px-2 py-1 rounded">Portfolio management</span>
                                 <span class="bg-blue-500/10 text-blue-400 px-2 py-1 rounded">Dimension filtering</span>
                                 <span class="bg-blue-500/10 text-blue-400 px-2 py-1 rounded">Grounded AI chat</span>
                                 <span class="bg-blue-500/10 text-blue-400 px-2 py-1 rounded">Deep scrape on demand</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Screenshot 3: Terminal/Backend -->
-                    <div class="bg-dark-900/50 rounded-xl overflow-hidden border border-dark-600/30">
-                        <div class="p-4 border-b border-dark-600/30">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center text-purple-400 text-sm font-bold">3</div>
-                                <div>
-                                    <h4 class="font-bold text-white">Universal Scraping Engine</h4>
-                                    <p class="text-xs text-gray-500">Backend data pipeline in action</p>
-                                </div>
-                            </div>
-                        </div>
-                        <img src="terminal_2.png" alt="Terminal Backend" class="w-full" onerror="this.style.display='none'">
-                        <div class="p-4 bg-dark-800/30">
-                            <p class="text-sm text-gray-400 mb-2">
-                                <span class="text-purple-400 font-medium">What you're seeing:</span> The FastAPI backend running live scraping jobs. The engine ingests from multiple news sources (NYTimes, BBC, Reuters, The Guardian, Bloomberg) and Reddit communities simultaneously, processing data for the selected city (Hong Kong). This is also where each of the dimensions are scored with AI through the proprietary scoring engine (that is still being developed). <span class="text-white font-medium">Goal:</span> Scale to 380,000+ sources via licensed APIs and data partnerships.
-                            </p>
-                            <div class="flex flex-wrap gap-2 text-xs">
-                                <span class="bg-purple-500/10 text-purple-400 px-2 py-1 rounded">FastAPI + Uvicorn</span>
-                                <span class="bg-purple-500/10 text-purple-400 px-2 py-1 rounded">Multi-source ingestion</span>
-                                <span class="bg-purple-500/10 text-purple-400 px-2 py-1 rounded">Real-time job tracking</span>
-                                <span class="bg-purple-500/10 text-purple-400 px-2 py-1 rounded">Reddit API integration</span>
                             </div>
                         </div>
                     </div>
