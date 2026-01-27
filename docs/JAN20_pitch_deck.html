@@ -1136,9 +1136,10 @@
                             </div>
                         </div>
                         <img src="terminal_1.png" alt="Corporate Dashboard" class="w-full" onerror="this.style.display='none'">
+                        <img src="sample_data.png" alt="12-Dimension Scoring Demo" class="w-full mt-4" onerror="this.style.display='none'">
                         <div class="p-4 bg-dark-800/30">
                             <p class="text-sm text-gray-400 mb-2">
-                                <span class="text-blue-400 font-medium">What you're seeing:</span> Early prototype of the Corporate Intelligence Unit. Portfolio selection (Hong Kong), dimension filtering (affordability + safety), and a "Grounded Context" AI chat that answers questions using only scraped data — no hallucinations. <span class="text-white font-medium">Goal:</span> Custom portfolios, intelligent alerts, multi-location comparison, predictive analytics, and full Custom Intelligence Report integration.
+                                <span class="text-blue-400 font-medium">What you're seeing:</span> Early prototype of the Corporate Intelligence Unit. Portfolio selection (Hong Kong), dimension filtering (affordability + safety), and a "Grounded Context" AI chat that answers questions using only scraped data — no hallucinations. The second image demonstrates a simple, broad analysis of a city (as a demo) of the 12 dimensions through the proprietary scoring engine that I have been developing for the 12 dimensions, which is currently simple and still a work in progress. <span class="text-white font-medium">Goal:</span> Custom portfolios, intelligent alerts, multi-location comparison, predictive analytics, full Custom Intelligence Report integration, and solidify the 12-dimension proprietary scoring engine (research is currently in progress for determining the makeup of the overall score).
                             </p>
                             <div class="flex flex-wrap gap-2 text-xs">
                                 <span class="bg-blue-500/10 text-blue-400 px-2 py-1 rounded">Portfolio management</span>
@@ -1163,7 +1164,7 @@
                         <img src="terminal_2.png" alt="Terminal Backend" class="w-full" onerror="this.style.display='none'">
                         <div class="p-4 bg-dark-800/30">
                             <p class="text-sm text-gray-400 mb-2">
-                                <span class="text-purple-400 font-medium">What you're seeing:</span> The FastAPI backend running live scraping jobs. The engine ingests from multiple news sources (NYTimes, BBC, Reuters, The Guardian, Bloomberg) and Reddit communities simultaneously, processing data for the selected city (Hong Kong). <span class="text-white font-medium">Goal:</span> Scale to 380,000+ sources via licensed APIs and data partnerships.
+                                <span class="text-purple-400 font-medium">What you're seeing:</span> The FastAPI backend running live scraping jobs. The engine ingests from multiple news sources (NYTimes, BBC, Reuters, The Guardian, Bloomberg) and Reddit communities simultaneously, processing data for the selected city (Hong Kong). This is also where each of the dimensions are scored with AI through the proprietary scoring engine (that is still being developed). <span class="text-white font-medium">Goal:</span> Scale to 380,000+ sources via licensed APIs and data partnerships.
                             </p>
                             <div class="flex flex-wrap gap-2 text-xs">
                                 <span class="bg-purple-500/10 text-purple-400 px-2 py-1 rounded">FastAPI + Uvicorn</span>
@@ -1296,7 +1297,7 @@
                     <div class="bg-dark-900/50 rounded-xl p-6">
                         <p class="text-gray-500 text-xs uppercase tracking-wider mb-3">Our Value Proposition</p>
                         <p class="text-gray-300 mb-3">
-                            Before bidding on land, run a <span class="text-neon-400 font-semibold">"Civic Health Check"</span> across the 12 dimensions for the <span class="text-white font-medium">specific city or district</span> to quantify <span class="text-white font-medium">Entitlement Risk</span> using real-time sentiment data. Identify if the neighborhood has:
+                            Before bidding on land, run a <span class="text-neon-400 font-semibold">"Civic Health Check"</span> across the 12 dimensions for the <span class="text-white font-medium">specific city or district</span> to quantify <span class="text-white font-medium">Entitlement Risk</span> using real-time sentiment data. <span class="text-white font-medium">Set intelligent alerts</span> to monitor sentiment shifts, conduct <span class="text-white font-medium">daily progress tracking</span> during due diligence, run <span class="text-white font-medium">multi-region comparisons</span> to identify lower-risk opportunities, and request <span class="text-neon-400 font-medium">Custom Intelligence Reports</span> (20+ pages) analyzing historical resistance patterns, predictive timelines, and peer city benchmarks. Identify if the neighborhood has:
                         </p>
                         <div class="grid md:grid-cols-3 gap-4 text-sm">
                             <div class="bg-red-500/10 border border-red-500/30 rounded-lg p-3">
@@ -1357,7 +1358,7 @@
                     <div class="bg-dark-900/50 rounded-xl p-6">
                         <p class="text-gray-500 text-xs uppercase tracking-wider mb-3">Our Value Proposition</p>
                         <p class="text-gray-300 mb-3">
-                            Run a <span class="text-blue-400 font-semibold">"Civic Health Check"</span> across the 12 dimensions for the <span class="text-white font-medium">specific city or district</span>. Overlay our "Safety Sentiment & Cultural Vibrancy" scores on top of Placer.ai traffic data to <span class="text-white font-medium">explain trends and predict future performance</span>:
+                            Run a <span class="text-blue-400 font-semibold">"Civic Health Check"</span> across the 12 dimensions for the <span class="text-white font-medium">specific city or district</span>. Overlay our "Safety Sentiment & Cultural Vibrancy" scores on top of Placer.ai traffic data to <span class="text-white font-medium">explain trends and predict future performance</span>. <span class="text-white font-medium">Compare multiple locations</span> side-by-side across all dimensions, <span class="text-white font-medium">set alerts</span> for sentiment threshold breaches, track <span class="text-white font-medium">daily score changes</span> for shortlisted sites, and order <span class="text-blue-400 font-medium">Custom Intelligence Reports</span> with market entry forecasts, trajectory benchmarking against peer locations, and 30/60/90-day sentiment projections:
                         </p>
                         <div class="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 text-center">
                             <p class="text-sm text-gray-300 mb-2">
@@ -1395,7 +1396,7 @@
                                 <p class="text-xs text-gray-500">Parametric Risk Modeling</p>
                             </div>
                         </div>
-                        <p class="text-gray-400 text-sm mb-3"><span class="text-white font-medium">Use Case:</span> If "Governance Trust" collapses in a zip code, riot risk goes up. Mid-sized domestic insurers need predictive civic signals but can't afford to build proprietary platforms.</p>
+                        <p class="text-gray-400 text-sm mb-3"><span class="text-white font-medium">Use Case:</span> If "Governance Trust" collapses in a region, riot risk goes up. Mid-sized domestic insurers need predictive civic signals but can't afford to build proprietary platforms.</p>
                         <p class="text-gray-400 text-sm mb-3"><span class="text-white font-medium">Value:</span> Parametric triggers based on real-time sentiment scores to adjust reserves and pricing.</p>
                         <p class="text-xs text-gray-500">Longer sales cycle, but validates deep tech credibility.</p>
                     </div>
@@ -1414,7 +1415,7 @@
                             </div>
                         </div>
                         <p class="text-gray-400 text-sm mb-3"><span class="text-white font-medium">Use Case:</span> Real-time civic sentiment to understand policy effectiveness, identify emerging issues before escalation, and benchmark against peer cities or districts.</p>
-                        <p class="text-gray-400 text-sm mb-3"><span class="text-white font-medium">Value:</span> Continuous pulse checks vs. expensive annual surveys. Track trust and satisfaction scores in real-time.</p>
+                        <p class="text-gray-400 text-sm mb-3"><span class="text-white font-medium">Value:</span> Track trust and satisfaction scores across many dimensions in real-time. Continuous pulse checks vs. expensive annual surveys.</p>
                         <p class="text-xs text-gray-500">Validates product legitimacy and creates public case studies.</p>
                     </div>
                     
@@ -1431,7 +1432,7 @@
                                 <p class="text-xs text-gray-500">Supply Chain & Duty of Care</p>
                             </div>
                         </div>
-                        <p class="text-gray-400 text-sm mb-3"><span class="text-white font-medium">Use Case:</span> Static risk reports miss real-time labor unrest or anti-foreign sentiment that disrupt port operations and executive travel overnight.</p>
+                        <p class="text-gray-400 text-sm mb-3"><span class="text-white font-medium">Use Case:</span> Static risk reports miss real-time labor unrest or anti-foreign sentiment that disrupt port operations and executive travel overnight. Existing government-backed tools only send emergency high-risk alerts, not the soft signals that predict escalation.</p>
                         <p class="text-gray-400 text-sm mb-3"><span class="text-white font-medium">Value:</span> Live alerts for shipping hubs and travel destinations. Detect "soft signals" before hard disruptions.</p>
                         <p class="text-xs text-gray-500">Operations teams need daily intelligence, not quarterly reports.</p>
                     </div>
@@ -1520,7 +1521,7 @@
                     <tbody>
                         <tr class="border-b border-dark-700/50">
                             <td class="py-4 px-4 text-gray-300">Output Type</td>
-                            <td class="py-4 px-4 text-center text-neon-400 bg-neon-500/5 font-medium">Structured Database + Alerts + PDF Reports</td>
+                            <td class="py-4 px-4 text-center text-neon-400 bg-neon-500/5 font-medium">Structured Database + Alerts + Custom PDF Reports</td>
                             <td class="py-4 px-4 text-center text-gray-400">Real-time alerts & traffic analytics</td>
                             <td class="py-4 px-4 text-center text-gray-400">Sentiment dashboards & reports</td>
                             <td class="py-4 px-4 text-center text-gray-400">Conversational text summaries</td>
@@ -1882,7 +1883,7 @@
                             <ul class="text-xs text-gray-400 space-y-1.5">
                                 <li class="flex items-start gap-1.5"><span class="text-neon-400 mt-0.5">▸</span> Expand to <span class="text-white font-medium">1,000+ cities</span></li>
                                 <li class="flex items-start gap-1.5"><span class="text-neon-400 mt-0.5">▸</span> Scale to <span class="text-white font-medium">380,000+ sources</span></li>
-                                <li class="flex items-start gap-1.5"><span class="text-neon-400 mt-0.5">▸</span> Develop <span class="text-white font-medium">Predictive Engine V1</span></li>
+                                <li class="flex items-start gap-1.5"><span class="text-neon-400 mt-0.5">▸</span> Develop <span class="text-white font-medium">Predictive Engine v1</span>, solidify 12-dimensional proprietary scoring engine</li>
                                 <li class="flex items-start gap-1.5"><span class="text-neon-400 mt-0.5">▸</span> Hire BD Lead + Data Engineer</li>
                             </ul>
                             <div class="mt-3 pt-2 border-t border-neon-500/20 text-[10px] text-gray-500">
