@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Node
+frontend_v2/node_modules/
+frontend_v2/dist/
+
+# Environment / secrets
+.env
+gcp_credentials.json
+*.json.bak
+
+# Data / cache (large files, not source code)
+cache/
+data/historical/
+logs/
+
+# OS
+.DS_Store
+Thumbs.db

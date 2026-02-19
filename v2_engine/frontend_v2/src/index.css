@@ -1,0 +1,119 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------ */
+/* Base resets                                                          */
+/* ------------------------------------------------------------------ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: #000;
+  color: #e2e8f0;
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+/* ------------------------------------------------------------------ */
+/* Cesium overrides — hide default chrome, darken atmosphere           */
+/* ------------------------------------------------------------------ */
+.cesium-widget-credits {
+  display: none !important;
+}
+.cesium-viewer-toolbar {
+  display: none !important;
+}
+.cesium-viewer-bottom {
+  display: none !important;
+}
+
+/* ------------------------------------------------------------------ */
+/* HUD glassmorphism panel base                                        */
+/* ------------------------------------------------------------------ */
+.glass-panel {
+  background: rgba(5, 10, 25, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 200, 255, 0.18);
+  border-radius: 0.75rem;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.5),
+    0 4px 32px rgba(0, 0, 0, 0.6),
+    0 0 40px rgba(0, 150, 255, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* ------------------------------------------------------------------ */
+/* Dim-glow accent line at top of panels                              */
+/* ------------------------------------------------------------------ */
+.glass-panel-accent::before {
+  content: "";
+  display: block;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(0, 212, 255, 0.6) 40%,
+    rgba(0, 212, 255, 0.6) 60%,
+    transparent 100%
+  );
+  border-radius: 0.75rem 0.75rem 0 0;
+}
+
+/* ------------------------------------------------------------------ */
+/* Custom range slider for time scrubber                              */
+/* ------------------------------------------------------------------ */
+input[type="range"].hud-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 3px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    to right,
+    #00d4ff var(--progress, 0%),
+    rgba(255, 255, 255, 0.12) var(--progress, 0%)
+  );
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"].hud-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #00d4ff;
+  cursor: pointer;
+  border: 2px solid rgba(0, 212, 255, 0.4);
+  box-shadow: 0 0 8px rgba(0, 212, 255, 0.6);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+input[type="range"].hud-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.25);
+  box-shadow: 0 0 14px rgba(0, 212, 255, 0.9);
+}
+
+/* ------------------------------------------------------------------ */
+/* Scrollbar styling for panels                                        */
+/* ------------------------------------------------------------------ */
+::-webkit-scrollbar {
+  width: 2px;
+  height: 2px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 212, 255, 0.25);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 212, 255, 0.5);
+}

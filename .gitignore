@@ -45,3 +45,5 @@ Thumbs.db
 # API keys (never commit)
 *_key.txt
 *_secret.txt
+gcp_credentials.json
+*.json.bak

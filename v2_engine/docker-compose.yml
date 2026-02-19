@@ -1,0 +1,39 @@
+services:
+  postgres_v2:
+    image: timescale/timescaledb-ha:pg16
+    container_name: v2_postgres
+    environment:
+      POSTGRES_USER: ochv2
+      POSTGRES_PASSWORD: ochv2_secure_password
+      POSTGRES_DB: ochv2_geo
+    ports:
+      - "5433:5432"
+    volumes:
+      - v2_postgres_data:/home/postgres/pgdata/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ochv2 -d ochv2_geo"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  redis_v2:
+    image: redis:7-alpine
+    container_name: v2_redis
+    ports:
+      - "6380:6379"
+    volumes:
+      - v2_redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  v2_postgres_data:
+    driver: local
+  v2_redis_data:
+    driver: local
