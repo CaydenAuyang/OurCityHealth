@@ -10,14 +10,27 @@ Start with:
 
 from __future__ import annotations
 
+import json
 import logging
 import os
+import tempfile
 
 from dotenv import load_dotenv
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()  # loads v2_engine/.env
+
+# Railway: materialise GCP credentials from env var (no file mount on PaaS)
+_creds_json = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS_JSON")
+if _creds_json and not os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"):
+    _creds_file = tempfile.NamedTemporaryFile(
+        mode="w", suffix=".json", delete=False,
+    )
+    _creds_file.write(_creds_json)
+    _creds_file.close()
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = _creds_file.name
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from backend_v2.db.session import init_db
 from backend_v2.api.routes.scoring import router as scoring_router
@@ -47,7 +60,13 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "https://caydenauyang.github.io",
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:5175",
+    ],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )

@@ -20,11 +20,14 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-# Database URL from environment
+# Database URL from environment.
+# Railway Postgres provides "postgresql://…" — convert to asyncpg driver scheme.
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql+asyncpg://ochv2:ochv2_secure_password@localhost:5433/ochv2_geo"
+    "postgresql+asyncpg://ochv2:ochv2_secure_password@localhost:5433/ochv2_geo",
 )
+if DATABASE_URL.startswith("postgresql://"):
+    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
 
 # Create async engine with connection pooling
 engine: AsyncEngine = create_async_engine(
