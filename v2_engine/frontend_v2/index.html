@@ -37,6 +37,17 @@
     </script>
   </head>
   <body>
+    <!-- Diagnostic: visible before JS runs. React will hide this on mount. -->
+    <div id="pre-js-indicator" style="
+      position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+      color:#00d4ff; font-family:monospace; font-size:1rem;
+      text-align:center; pointer-events:none; z-index:9999;
+    ">
+      <div>⏳ Loading app…</div>
+      <div style="font-size:0.7rem;color:#666;margin-top:0.5rem;">
+        If this never disappears, open DevTools (F12) → Console
+      </div>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
