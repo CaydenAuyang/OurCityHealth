@@ -2,23 +2,22 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import cesium from "vite-plugin-cesium";
 
-const GITHUB_PAGES_BASE = "/Our-City-Health---Sentiment-Project/";
+const REPO = "Our-City-Health---Sentiment-Project";
 
 export default defineConfig(({ mode }) => {
-  const base = mode === "production" ? GITHUB_PAGES_BASE : "/";
+  const base = mode === "production" ? `/${REPO}/` : "/";
 
   return {
     base,
     plugins: [
       react(),
-      // Pass the resolved base so vite-plugin-cesium sets CESIUM_BASE_URL
-      // to the correct sub-path (critical for GitHub Pages).
-      cesium({ rebuildCesium: false }),
+      // Default options — lets the plugin copy Cesium static assets to dist/cesium/
+      cesium(),
     ],
+    // Override vite-plugin-cesium's hardcoded CESIUM_BASE_URL="/cesium/" so
+    // Cesium workers resolve under the GitHub Pages sub-path.
     define: {
-      // Ensure CESIUM_BASE_URL is always rooted at the Vite base path so
-      // Cesium workers / imagery assets resolve correctly on GitHub Pages.
-      "window.CESIUM_BASE_URL": JSON.stringify(`${base}cesium/`),
+      CESIUM_BASE_URL: JSON.stringify(`${base}cesium/`),
     },
     server: {
       port: 5173,
