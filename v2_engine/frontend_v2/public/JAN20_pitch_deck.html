@@ -1,0 +1,2237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our City Health - Pitch Deck</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: { 900: '#0a0f14', 800: '#111827', 700: '#1e293b', 600: '#334155' },
+                        neon: { 400: '#4ade80', 500: '#22c55e', 600: '#16a34a' }
+                    },
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body { background: #0a0f14; }
+        
+        /* Globe Animation */
+        .globe { animation: rotate 20s linear infinite; transform-style: preserve-3d; }
+        @keyframes rotate { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
+        
+        /* Pulse Animation */
+        .pulse { animation: pulse 2s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+        
+        /* Stagger Animations */
+        .fade-up { opacity: 0; transform: translateY(30px); animation: fadeUp 0.8s ease forwards; }
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+        .delay-5 { animation-delay: 0.5s; }
+        
+        /* Timeline Animation */
+        .timeline-line { stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: drawLine 3s ease forwards; }
+        @keyframes drawLine { to { stroke-dashoffset: 0; } }
+        
+        /* Gear Animation */
+        .gear { animation: spin 4s linear infinite; }
+        .gear-reverse { animation: spinReverse 4s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes spinReverse { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+        
+        /* Glow Effect */
+        .glow { box-shadow: 0 0 30px rgba(74, 222, 128, 0.3); }
+        .text-glow { text-shadow: 0 0 20px rgba(74, 222, 128, 0.5); }
+        
+        /* Section Styling */
+        section { min-height: 100vh; padding: 80px 0; }
+        
+        /* Radar Chart */
+        .radar-point { transition: all 0.3s ease; }
+        .radar-point:hover { r: 8; fill: #4ade80; }
+    </style>
+</head>
+<body class="font-sans text-gray-100 antialiased">
+
+    <!-- SECTION: Title & Cover -->
+    <section class="relative flex items-center justify-center overflow-hidden">
+        <!-- Animated Globe Background -->
+        <div class="absolute inset-0 flex items-center justify-center opacity-30">
+            <svg class="globe w-[800px] h-[800px]" viewBox="0 0 400 400">
+                <!-- Globe circles -->
+                <circle cx="200" cy="200" r="150" fill="none" stroke="#334155" stroke-width="1"/>
+                <ellipse cx="200" cy="200" rx="150" ry="60" fill="none" stroke="#334155" stroke-width="0.5"/>
+                <ellipse cx="200" cy="200" rx="150" ry="100" fill="none" stroke="#334155" stroke-width="0.5"/>
+                <ellipse cx="200" cy="200" rx="60" ry="150" fill="none" stroke="#334155" stroke-width="0.5"/>
+                <ellipse cx="200" cy="200" rx="100" ry="150" fill="none" stroke="#334155" stroke-width="0.5"/>
+                <!-- Data Points - More points representing 1000+ cities -->
+                <circle cx="120" cy="150" r="3" fill="#4ade80" class="pulse"/>
+                <circle cx="280" cy="180" r="3" fill="#4ade80" class="pulse" style="animation-delay: 0.2s"/>
+                <circle cx="200" cy="80" r="3" fill="#4ade80" class="pulse" style="animation-delay: 0.4s"/>
+                <circle cx="150" cy="250" r="3" fill="#4ade80" class="pulse" style="animation-delay: 0.6s"/>
+                <circle cx="300" cy="220" r="3" fill="#4ade80" class="pulse" style="animation-delay: 0.8s"/>
+                <circle cx="100" cy="200" r="3" fill="#4ade80" class="pulse" style="animation-delay: 1.0s"/>
+                <circle cx="250" cy="120" r="3" fill="#4ade80" class="pulse" style="animation-delay: 1.2s"/>
+                <circle cx="180" cy="300" r="3" fill="#4ade80" class="pulse" style="animation-delay: 1.4s"/>
+                <circle cx="320" cy="150" r="3" fill="#4ade80" class="pulse" style="animation-delay: 1.6s"/>
+                <circle cx="80" cy="170" r="3" fill="#4ade80" class="pulse" style="animation-delay: 1.8s"/>
+                <circle cx="220" cy="280" r="3" fill="#4ade80" class="pulse" style="animation-delay: 2.0s"/>
+                <circle cx="170" cy="100" r="3" fill="#4ade80" class="pulse" style="animation-delay: 2.2s"/>
+                <circle cx="260" cy="260" r="3" fill="#4ade80" class="pulse" style="animation-delay: 2.4s"/>
+                <circle cx="140" cy="180" r="3" fill="#4ade80" class="pulse" style="animation-delay: 2.6s"/>
+                <circle cx="290" cy="130" r="3" fill="#4ade80" class="pulse" style="animation-delay: 2.8s"/>
+                <circle cx="110" cy="240" r="3" fill="#4ade80" class="pulse" style="animation-delay: 3.0s"/>
+                <!-- Connection Lines -->
+                <line x1="120" y1="150" x2="200" y2="80" stroke="#4ade80" stroke-width="0.5" opacity="0.3"/>
+                <line x1="200" y1="80" x2="280" y2="180" stroke="#4ade80" stroke-width="0.5" opacity="0.3"/>
+                <line x1="280" y1="180" x2="300" y2="220" stroke="#4ade80" stroke-width="0.5" opacity="0.3"/>
+                <line x1="150" y1="250" x2="180" y2="300" stroke="#4ade80" stroke-width="0.5" opacity="0.3"/>
+                <line x1="100" y1="200" x2="120" y2="150" stroke="#4ade80" stroke-width="0.5" opacity="0.3"/>
+                <line x1="250" y1="120" x2="280" y2="180" stroke="#4ade80" stroke-width="0.5" opacity="0.3"/>
+                <line x1="320" y1="150" x2="290" y2="130" stroke="#4ade80" stroke-width="0.5" opacity="0.3"/>
+                <line x1="170" y1="100" x2="200" y2="80" stroke="#4ade80" stroke-width="0.5" opacity="0.3"/>
+                <line x1="220" y1="280" x2="260" y2="260" stroke="#4ade80" stroke-width="0.5" opacity="0.3"/>
+                <line x1="140" y1="180" x2="100" y2="200" stroke="#4ade80" stroke-width="0.5" opacity="0.3"/>
+            </svg>
+        </div>
+        
+        <div class="relative z-10 max-w-4xl mx-auto px-8 text-center">
+            <p class="fade-up delay-1 text-neon-400 font-semibold tracking-widest uppercase text-sm mb-6">HKSTP Ideation Programme</p>
+            <h1 class="fade-up delay-2 text-7xl md:text-8xl font-black mb-6 tracking-tight">
+                Our City <span class="text-neon-400 text-glow">Health</span>
+            </h1>
+            <p class="fade-up delay-3 text-2xl md:text-3xl text-gray-300 font-medium mb-8">
+                The Operating System for Civic Intelligence.
+            </p>
+            <p class="fade-up delay-4 text-lg text-gray-400 max-w-2xl mx-auto border-l-2 border-neon-500 pl-6 italic">
+                "Turning the noise of the city into a precise, real-time credit score."
+            </p>
+            <div class="fade-up delay-5 mt-16">
+                <a href="#summary" class="inline-flex items-center gap-2 text-neon-400 hover:text-neon-500 transition-colors">
+                    <span>Scroll to explore</span>
+                    <svg class="w-5 h-5 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION A: Key Summary -->
+    <section id="summary" class="flex items-center bg-dark-800/50">
+        <div class="max-w-7xl mx-auto px-8 w-full">
+            <p class="text-neon-400 font-semibold tracking-widest uppercase text-sm mb-4">Section A</p>
+            <h2 class="text-4xl md:text-5xl font-bold mb-12">Key Summary</h2>
+            
+            <div class="relative bg-gradient-to-br from-dark-700/80 to-dark-800/80 rounded-3xl p-12 md:p-16 border border-dark-600/50 glow">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-neon-500 to-transparent rounded-t-3xl"></div>
+                
+                <!-- Mission Statement -->
+                <div class="bg-gradient-to-r from-neon-500/20 via-blue-500/20 to-purple-500/20 border border-neon-500/40 rounded-2xl p-8 mb-12 text-center">
+                    <p class="text-sm uppercase tracking-widest text-neon-400 font-bold mb-3">Our Mission</p>
+                    <p class="text-2xl md:text-3xl font-light text-white leading-relaxed">
+                        Every million-dollar decision deserves <span class="font-semibold text-neon-400">real-time civic intelligence</span>.
+                    </p>
+                    <p class="text-lg text-gray-400 mt-4 max-w-3xl mx-auto">
+                        We're building the first <span class="text-white font-medium">geo-centric social layer</span> for capital allocation — where developers, retailers, and enterprises can quantify the invisible risks that delay projects, close stores, and waste millions.
+                    </p>
+                </div>
+                
+                <!-- Main Hook -->
+                <p class="text-2xl md:text-3xl lg:text-4xl leading-relaxed font-extralight tracking-wide max-w-5xl mb-6" style="font-family: 'Inter', sans-serif; letter-spacing: -0.02em;">
+                    <span class="text-neon-400 font-medium">Our City Health</span> provides <span class="text-white font-medium">real-time civic intelligence</span> for location-based decision-making — turning neighborhood sentiment into actionable risk metrics. Starting with <span class="text-neon-400 font-medium">Physical Asset Owners</span> (Real Estate, Retail) and expanding to <span class="text-neon-400 font-medium">Scale Markets</span> (Insurance, Government, Logistics, Corporate Security).
+                </p>
+                
+                <!-- Hard Numbers Callout -->
+                <div class="grid md:grid-cols-3 gap-4 mb-8">
+                    <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-4 text-center">
+                        <p class="text-3xl font-black text-red-400">70%</p>
+                        <p class="text-xs text-gray-400">of housing projects delayed by community opposition (NIMBYism)¹</p>
+                    </div>
+                    <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-4 text-center">
+                        <p class="text-3xl font-black text-red-400">15-25%</p>
+                        <p class="text-xs text-gray-400">of project value lost annually to delays in major cities²</p>
+                    </div>
+                    <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-4 text-center">
+                        <p class="text-3xl font-black text-red-400">30-50%</p>
+                        <p class="text-xs text-gray-400">of retail locations fail within 3 years globally³</p>
+                    </div>
+                </div>
+                
+                <!-- Mission & Motivation -->
+                <div class="bg-gradient-to-br from-purple-500/10 to-blue-500/10 border-l-4 border-neon-500 rounded-xl p-6 mb-8">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 bg-neon-500/20 rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg class="w-6 h-6 text-neon-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white mb-2">Why This Matters</h3>
+                            <p class="text-gray-300 leading-relaxed mb-3">
+                                Billions of dollars flow into location-based decisions every year — <span class="text-white font-medium">property development, store openings, supply chain routes, insurance underwriting</span> — all based on <span class="text-white font-medium">incomplete data</span>. Organizations have perfected measuring the <em>physical</em> and <em>financial</em> — but they're flying blind on the <em>social</em>.
+                            </p>
+                            <p class="text-gray-400 leading-relaxed">
+                                We believe location intelligence should be <span class="text-neon-400 font-medium">predictive, not reactive</span>. It should tell you which neighborhood is ready to resist change <span class="text-neon-400 font-medium">3 months in advance</span> — not when it's already too late. That's the future we're building.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Expanded Detail -->
+                <div class="border-l-2 border-neon-500/50 pl-6 mb-8">
+                    <p class="text-lg text-gray-300 leading-relaxed mb-4">
+                        Developers and retailers have mastered the <span class="text-white font-semibold">Financial Stack</span> (Argus, Excel) and the <span class="text-white font-semibold">Physical Stack</span> (CoStar, Placer.ai). But the <span class="text-red-400 font-semibold">Social Stack</span> remains unmeasured and unquantified.
+                    </p>
+                    <p class="text-gray-400 leading-relaxed mb-4">
+                        Existing tools measure <span class="text-white font-medium">Activity</span> (foot traffic) or <span class="text-white font-medium">Amenities</span> (cafe count). But no digital tool reliably captures <span class="text-red-400 font-medium">Adversarial Sentiment</span> or <span class="text-red-400 font-medium">Entitlement Risk</span>.
+                    </p>
+                    <p class="text-gray-400 leading-relaxed mb-4">
+                        This gap forces teams to rely on <span class="text-yellow-400 font-medium">manual scouting of the district, like attending town hall meetings</span>, and gut feelings to predict if a community will block their project—a "1990s workflow" for million-dollar decisions.
+                    </p>
+                    <p class="text-gray-400 leading-relaxed">
+                        Great tools exist for <span class="text-white font-medium">brand monitoring</span> (Brandwatch) and <span class="text-white font-medium">government policy</span> (Zencity). But their architecture doesn't fit private sector location risk. <span class="text-white font-medium">Brandwatch is Entity-Centric</span> — you search "Starbucks" and track brand mentions. <span class="text-white font-medium">Zencity is built for governments</span> — not private developers. We are <span class="text-neon-400 font-medium">Geo-Centric</span>: select a district or coordinates, and we capture <em>all</em> sentiment about that location — rent control protests, safety complaints, gentrification anger — regardless of what brands are mentioned.
+                    </p>
+                </div>
+                
+                <div class="text-xs text-gray-500 mt-4 italic border-t border-dark-600/30 pt-2">
+                    Sources: McKinsey Global Infrastructure Initiative (15-25% annual project value loss in major cities); JLL Global Retail Report 2024 (30-50% failure rate in first 3 years); Global real estate research across major urban markets (London, Tokyo, Singapore, New York, Hong Kong).
+                </div>
+                
+                <!-- Key Differentiators -->
+                <div class="grid md:grid-cols-4 gap-4 text-center">
+                    <div class="bg-dark-800/50 rounded-xl p-4">
+                        <p class="text-neon-400 font-bold text-xl">Predictive</p>
+                        <p class="text-gray-500 text-xs">Detect opposition before you bid</p>
+                    </div>
+                    <div class="bg-dark-800/50 rounded-xl p-4">
+                        <p class="text-neon-400 font-bold text-xl">Semantic</p>
+                        <p class="text-gray-500 text-xs">AI reads "I feel unsafe" not just "Crime"</p>
+                    </div>
+                    <div class="bg-dark-800/50 rounded-xl p-4">
+                        <p class="text-neon-400 font-bold text-xl">Auditable</p>
+                        <p class="text-gray-500 text-xs">Click any score to see the source</p>
+                    </div>
+                    <div class="bg-dark-800/50 rounded-xl p-4">
+                        <p class="text-neon-400 font-bold text-xl">Standardized</p>
+                        <p class="text-gray-500 text-xs">Compare any city instantly</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION B: Problem & Market Context -->
+    <section class="py-24">
+        <div class="max-w-7xl mx-auto px-8">
+            <p class="text-neon-400 font-semibold tracking-widest uppercase text-sm mb-4">Section B</p>
+            <h2 class="text-4xl md:text-5xl font-bold mb-4">Problem & Market Context</h2>
+            <p class="text-xl text-gray-400 mb-6 max-w-4xl">The Entitlement Cliff — A Multi-Million Dollar Blind Spot.</p>
+            <p class="text-gray-500 mb-16 max-w-4xl">Developers and retailers spend millions on <span class="text-white font-medium">physical due diligence</span> and <span class="text-white font-medium">financial modeling</span>. Existing tools (CoStar, Placer.ai, Esri) provide <span class="text-white font-medium">demographics, traffic, and infrastructure data</span> — but they <span class="text-red-400 font-medium">don't measure community sentiment or opposition risk</span>. Even tools like <span class="text-white font-medium">Brandwatch</span> (entity-centric, tracks brand mentions) and <span class="text-white font-medium">Zencity</span> (built for governments) don't address private sector location risk. Teams still rely on <span class="text-yellow-400 font-medium">manual site walks and town hall meetings</span> to assess whether a neighborhood will fight their project. This blind spot costs <span class="text-red-400 font-semibold">HK$6-8M per year of project delay</span>.</p>
+            
+            <!-- The Entitlement Cliff - Primary Problem -->
+            <div class="bg-gradient-to-br from-red-500/10 to-dark-800 rounded-2xl p-8 border border-red-500/30 mb-8">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-16 h-16 bg-red-500/20 rounded-2xl flex items-center justify-center">
+                        <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-red-400">The Entitlement Cliff</h3>
+                        <p class="text-gray-400">Community opposition is the #1 killer of real estate and retail projects</p>
+                    </div>
+                </div>
+                <div class="grid md:grid-cols-3 gap-6 mb-6">
+                    <div class="bg-dark-900/50 rounded-xl p-4 text-center">
+                        <p class="text-4xl font-black text-red-400">70%</p>
+                        <p class="text-sm text-gray-400">of housing developments delayed by NIMBYism</p>
+                    </div>
+                    <div class="bg-dark-900/50 rounded-xl p-4 text-center">
+                        <p class="text-4xl font-black text-red-400">41%</p>
+                        <p class="text-sm text-gray-400">of retail locations fail within 5 years</p>
+                    </div>
+                    <div class="bg-dark-900/50 rounded-xl p-4 text-center">
+                        <p class="text-4xl font-black text-red-400">15-25%</p>
+                        <p class="text-sm text-gray-400">of project value lost annually to delays</p>
+                    </div>
+                </div>
+                <p class="text-gray-300">
+                    A developer buys land in a major city. They plan to build apartments. The local community hates it. They protest. They sue. The project gets delayed 3 years. <span class="text-red-400 font-semibold">The developer loses 15-25% of the project value annually in carry costs.</span> Yet their only tool for predicting this? Sending someone to a town hall meeting.
+                </p>
+                <div class="text-xs text-gray-500 mt-4 italic border-t border-dark-600/30 pt-2 text-center">
+                    Sources: McKinsey Global Infrastructure Initiative (15-25% annual project value loss in major cities); JLL Global Retail Report 2024 (30-50% failure rate in first 3 years); Global real estate research across major urban markets (London, Tokyo, Singapore, New York, Hong Kong).
+                </div>
+            </div>
+            
+            <!-- Problem Cards - Expanded to Include Operations -->
+            <div class="grid md:grid-cols-4 gap-6 mb-16">
+                <div class="bg-dark-800/50 rounded-2xl p-8 border border-dark-600/30 hover:border-neon-500/30 transition-colors">
+                    <div class="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-blue-400">The "Ghost Mall" Problem</h3>
+                    <p class="text-gray-400">Placer.ai shows traffic is down 15%. But <span class="text-white font-semibold">why</span>? Is it safety? Parking? Gentrification anger? A boycott? GPS data can't tell you. <span class="text-blue-400 font-semibold">We explain the "why."</span></p>
+                </div>
+                <div class="bg-dark-800/50 rounded-2xl p-8 border border-dark-600/30 hover:border-neon-500/30 transition-colors">
+                    <div class="w-12 h-12 bg-orange-500/20 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-orange-400">The "Boiling Frog" Problem</h3>
+                    <p class="text-gray-400">Dataminr alerts you when the riot starts. But by then, <span class="text-white font-semibold">the glass is already broken</span>. Real estate is illiquid — you can't move your building. <span class="text-orange-400 font-semibold">We detect the gas leak 6 months before the explosion.</span></p>
+                </div>
+                <div class="bg-dark-800/50 rounded-2xl p-8 border border-dark-600/30 hover:border-neon-500/30 transition-colors">
+                    <div class="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-purple-400">The "Black Box" Problem</h3>
+                    <p class="text-gray-400">Competitors like Dataminr are famous for sending alerts with <span class="text-white font-semibold">no source citations</span>. An Investment Committee won't approve a multi-million dollar deal on faith. <span class="text-purple-400 font-semibold">We let them click the link and read the Reddit thread.</span></p>
+                </div>
+                <div class="bg-dark-800/50 rounded-2xl p-8 border border-dark-600/30 hover:border-neon-500/30 transition-colors">
+                    <div class="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-green-400">The "Operational Blind Spot"</h3>
+                    <p class="text-gray-400">Supply chains and corporate travel teams rely on <span class="text-white font-semibold">static risk reports</span>. They miss the real-time sentiment shifts—like <span class="text-red-400">labor unrest or anti-foreign sentiment</span>—that disrupt operations overnight. <span class="text-green-400 font-semibold">We detect "soft signals" before hard disruptions.</span></p>
+                </div>
+            </div>
+
+            <!-- The Tech Stack Gap - What's Solved vs. Broken -->
+            <div class="bg-dark-900/50 rounded-2xl p-8 border border-dark-600/30">
+                <h3 class="text-2xl font-bold mb-2 text-center">The Developer/Retailer Tech Stack — And What's Broken</h3>
+                <p class="text-gray-400 text-sm text-center mb-10 max-w-3xl mx-auto">Great civic intelligence tools exist — but their <span class="text-white font-medium">architecture</span> doesn't fit private sector location risk. <span class="text-white font-medium">Brandwatch</span> is Entity-Centric (tracks keywords, not locations). <span class="text-white font-medium">Zencity</span> is built for governments (not private due diligence). We are <span class="text-neon-400 font-medium">Geo-Centric</span>: monitor a district, capture all environmental sentiment.</p>
+                
+                <!-- Tech Stack Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="border-b border-dark-600">
+                                <th class="text-left py-4 px-4 font-semibold text-gray-400">Due Diligence Layer</th>
+                                <th class="text-left py-4 px-4 font-semibold text-gray-400">What They Measure</th>
+                                <th class="text-left py-4 px-4 font-semibold text-gray-400">Tools Used</th>
+                                <th class="text-center py-4 px-4 font-semibold text-gray-400">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-dark-700/50">
+                                <td class="py-4 px-4 font-medium text-blue-400">Physical Layer</td>
+                                <td class="py-4 px-4 text-gray-300">Traffic, Buildings, Footfall, Zoning</td>
+                                <td class="py-4 px-4 text-gray-400">Placer.ai, CoStar, SafeGraph</td>
+                                <td class="py-4 px-4 text-center"><span class="bg-neon-500/20 text-neon-400 px-3 py-1 rounded-full text-xs font-bold">SOLVED</span></td>
+                            </tr>
+                            <tr class="border-b border-dark-700/50">
+                                <td class="py-4 px-4 font-medium text-green-400">Financial Layer</td>
+                                <td class="py-4 px-4 text-gray-300">Rents, Yields, Cap Rates, Tax</td>
+                                <td class="py-4 px-4 text-gray-400">Argus, Excel, CoStar Comps</td>
+                                <td class="py-4 px-4 text-center"><span class="bg-neon-500/20 text-neon-400 px-3 py-1 rounded-full text-xs font-bold">SOLVED</span></td>
+                            </tr>
+                            <tr class="border-b border-dark-700/50">
+                                <td class="py-4 px-4 font-medium text-yellow-400">Demographic Layer</td>
+                                <td class="py-4 px-4 text-gray-300">Income, Age, Education, Census</td>
+                                <td class="py-4 px-4 text-gray-400">Esri/ArcGIS, Census Data</td>
+                                <td class="py-4 px-4 text-center"><span class="bg-neon-500/20 text-neon-400 px-3 py-1 rounded-full text-xs font-bold">SOLVED</span></td>
+                            </tr>
+                            <tr class="bg-red-500/5">
+                                <td class="py-4 px-4 font-medium text-red-400">Social Layer</td>
+                                <td class="py-4 px-4 text-gray-300">Community Sentiment, Trust, Opposition, "Vibe"</td>
+                                <td class="py-4 px-4 text-gray-400">Site Walks, Town Halls, Brandwatch (limited), Zencity (limited)</td>
+                                <td class="py-4 px-4 text-center"><span class="bg-red-500/20 text-red-400 px-3 py-1 rounded-full text-xs font-bold">BROKEN</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="mt-8 bg-neon-500/10 border border-neon-500/30 rounded-xl p-6">
+                    <p class="text-center text-neon-400 font-medium text-lg">
+                        <span class="text-gray-400">We don't replace these tools.</span><br>
+                        We are the <span class="font-bold">"Social Layer"</span> that completes their stack — digitizing the site walk and automating the town hall.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION C: Proposed Solution -->
+    <section class="py-24 bg-dark-800/30">
+        <div class="max-w-7xl mx-auto px-8">
+            <p class="text-neon-400 font-semibold tracking-widest uppercase text-sm mb-4">Section C</p>
+            <h2 class="text-4xl md:text-5xl font-bold mb-4">Proposed Solution</h2>
+            <p class="text-xl text-gray-400 mb-6 max-w-3xl">A Predictive Engine for Civic Intelligence.</p>
+            <p class="text-gray-500 mb-16 max-w-4xl">We don't just show you what happened — we explain <span class="text-neon-400 font-medium">why</span> it happened and predict <span class="text-neon-400 font-medium">what's coming next</span>. Real-time scores + 5 years of historical data + AI-powered causal analysis.</p>
+
+            <!-- Architecture Diagram -->
+            <div class="bg-dark-900/50 rounded-2xl p-8 border border-dark-600/30 mb-16">
+                <h3 class="text-xl font-semibold mb-2 text-center">The Architecture — Global Data Factory</h3>
+                <p class="text-gray-500 text-sm text-center mb-8">Scalable infrastructure designed to ingest from 380,000+ sources across every major city</p>
+                <div class="grid md:grid-cols-[1.2fr_auto_1.5fr_auto_1fr] gap-4 items-center">
+                    <!-- Ingestion -->
+                    <div class="bg-dark-700/50 rounded-xl p-6 border border-dark-600/30">
+                        <h4 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-2">Ingestion Layer</h4>
+                        <p class="text-neon-400 text-2xl font-bold mb-4">380,000+ Sources</p>
+                        <div class="space-y-2 text-xs">
+                            <div class="flex items-center gap-2"><span class="w-2 h-2 bg-blue-400 rounded-full"></span> Global News (Reuters, AP, AFP, local papers)</div>
+                            <div class="flex items-center gap-2"><span class="w-2 h-2 bg-red-400 rounded-full"></span> Social Platforms (Reddit, X, Weibo, VK)</div>
+                            <div class="flex items-center gap-2"><span class="w-2 h-2 bg-orange-400 rounded-full"></span> Regional Forums (HKGolden, PTT, 2ch)</div>
+                            <div class="flex items-center gap-2"><span class="w-2 h-2 bg-purple-400 rounded-full"></span> Government Portals & Municipal Data</div>
+                            <div class="flex items-center gap-2"><span class="w-2 h-2 bg-yellow-400 rounded-full"></span> Review Sites (Google, Yelp, TripAdvisor)</div>
+                            <div class="flex items-center gap-2"><span class="w-2 h-2 bg-pink-400 rounded-full"></span> Blogs, Newsletters, Telegram Channels</div>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-dark-600/50 text-[10px] text-gray-500">
+                            Expanding to thousands of hyper-local sources per city
+                        </div>
+                    </div>
+                    <!-- Arrow -->
+                    <div class="hidden md:flex text-neon-400 text-2xl">→</div>
+                    <!-- Engine -->
+                    <div class="bg-gradient-to-br from-neon-500/10 to-dark-700/50 rounded-xl p-6 border border-neon-500/30 relative overflow-hidden">
+                        <div class="absolute top-2 right-2">
+                            <svg class="w-8 h-8 text-neon-500/30 gear" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/>
+                                <path fill-rule="evenodd" d="M9.344 2.965a1 1 0 00-.972.764l-.383 1.534a7.028 7.028 0 00-1.566.9L4.95 5.636a1 1 0 00-1.137.224l-1.414 1.414a1 1 0 00-.224 1.137l.527 1.473a7.028 7.028 0 00-.9 1.566l-1.534.383a1 1 0 00-.764.972v2a1 1 0 00.764.972l1.534.383c.223.572.52 1.1.9 1.566l-.527 1.473a1 1 0 00.224 1.137l1.414 1.414a1 1 0 001.137.224l1.473-.527a7.028 7.028 0 001.566.9l.383 1.534a1 1 0 00.972.764h2a1 1 0 00.972-.764l.383-1.534a7.028 7.028 0 001.566-.9l1.473.527a1 1 0 001.137-.224l1.414-1.414a1 1 0 00.224-1.137l-.527-1.473a7.028 7.028 0 00.9-1.566l1.534-.383a1 1 0 00.764-.972v-2a1 1 0 00-.764-.972l-1.534-.383a7.028 7.028 0 00-.9-1.566l.527-1.473a1 1 0 00-.224-1.137l-1.414-1.414a1 1 0 00-1.137-.224l-1.473.527a7.028 7.028 0 00-1.566-.9l-.383-1.534a1 1 0 00-.972-.764h-2z"/>
+                            </svg>
+                        </div>
+                        <h4 class="text-sm font-semibold text-neon-400 uppercase tracking-wider mb-4">Predictive Intelligence Engine</h4>
+                        <div class="space-y-3 text-sm">
+                            <div class="bg-dark-800/50 rounded-lg px-4 py-2">12-Dimension Scoring</div>
+                            <div class="bg-dark-800/50 rounded-lg px-4 py-2">Causal "Why" Analysis</div>
+                            <div class="bg-dark-800/50 rounded-lg px-4 py-2">Trend Prediction Models</div>
+                            <div class="bg-dark-800/50 rounded-lg px-4 py-2">5-Year Historical Archive</div>
+                        </div>
+                    </div>
+                    <!-- Arrow -->
+                    <div class="hidden md:flex text-neon-400 text-2xl">→</div>
+                    <!-- Output -->
+                    <div class="bg-dark-700/50 rounded-xl p-6 border border-dark-600/30">
+                        <h4 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Output</h4>
+                        <div class="space-y-3">
+                            <div class="bg-neon-500/10 border border-neon-500/30 rounded-lg px-4 py-2 text-sm text-neon-400">API: Scores + Predictions</div>
+                            <div class="bg-blue-500/10 border border-blue-500/30 rounded-lg px-4 py-2 text-sm text-blue-400">Dashboard: Why + What's Next</div>
+                            <div class="bg-purple-500/10 border border-purple-500/30 rounded-lg px-4 py-2 text-sm text-purple-400">Reports: Deep Forecasts</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- The Semantic Edge - Key Technical Differentiator -->
+            <div class="bg-gradient-to-br from-purple-500/10 to-dark-800 rounded-2xl p-8 border border-purple-500/30 mb-16">
+                <h3 class="text-2xl font-bold mb-2 text-center text-purple-400">The Semantic Edge</h3>
+                <p class="text-gray-400 text-sm text-center mb-8 max-w-3xl mx-auto">Legacy tools search for <span class="text-white">words</span>. We search for <span class="text-purple-400 font-semibold">meaning</span>. This is why we catch risks that keyword filters miss.</p>
+                
+                <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    <!-- Old Way -->
+                    <div class="bg-red-500/5 border border-red-500/20 rounded-xl p-6">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center">
+                                <span class="text-red-400 font-bold">✗</span>
+                            </div>
+                            <h4 class="text-lg font-bold text-red-400">Legacy Approach: Keywords</h4>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-4">Traditional tools use Boolean keyword matching:</p>
+                        <div class="bg-dark-900/50 rounded-lg p-4 font-mono text-sm mb-4">
+                            <span class="text-gray-500">Search:</span> <span class="text-red-400">"crime" OR "unsafe" OR "dangerous"</span>
+                        </div>
+                        <p class="text-gray-500 text-xs">
+                            <span class="text-red-400 font-semibold">Problem:</span> Misses posts like "I won't let my kids play outside anymore" or "The streetlights have been broken for months" — clear safety concerns without the keyword "crime."
+                        </p>
+                    </div>
+                    
+                    <!-- Our Way -->
+                    <div class="bg-neon-500/5 border border-neon-500/20 rounded-xl p-6">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-neon-500/20 rounded-lg flex items-center justify-center">
+                                <span class="text-neon-400 font-bold">✓</span>
+                            </div>
+                            <h4 class="text-lg font-bold text-neon-400">Our Approach: Semantic AI</h4>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-4">Our LLM understands context and intent:</p>
+                        <div class="bg-dark-900/50 rounded-lg p-4 text-sm mb-4">
+                            <span class="text-gray-500">Input:</span> <span class="text-gray-300">"I'm scared to walk home because the lights are out"</span><br>
+                            <span class="text-gray-500">Output:</span> <span class="text-neon-400">Safety Score -2 | Dimension: Public Safety | Root Cause: Infrastructure</span>
+                        </div>
+                        <p class="text-gray-500 text-xs">
+                            <span class="text-neon-400 font-semibold">Advantage:</span> Catches implicit sentiment, sarcasm, local slang, and complaints that don't use obvious keywords. Our <span class="text-white">geo-centric architecture</span> captures all sentiment about a specific location — not just brand mentions — enabling true location-based risk assessment.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Multi-Lingual Capability -->
+                <div class="bg-gradient-to-br from-blue-500/10 to-dark-800 rounded-xl p-6 border border-blue-500/30 mb-8">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-bold text-blue-400">Universal Multi-Lingual NLP</h4>
+                    </div>
+                    <p class="text-gray-300 text-sm mb-4">
+                        Our semantic AI works across <span class="text-white font-semibold">major global languages and regional dialects</span> — including <span class="text-blue-400 font-semibold">Cantonese, Mandarin, English, and many more</span>. This isn't just translation; it's <span class="text-white font-medium">cultural context understanding</span>.
+                    </p>
+                    <div class="grid md:grid-cols-3 gap-4 text-xs">
+                        <div class="bg-dark-900/50 rounded-lg p-3">
+                            <p class="text-blue-400 font-semibold mb-1">Hong Kong Example</p>
+                            <p class="text-gray-500 mb-2">Detects HK slang and colloquial Cantonese that formal tools miss.</p>
+                        </div>
+                        <div class="bg-dark-900/50 rounded-lg p-3">
+                            <p class="text-blue-400 font-semibold mb-1">Global Reach</p>
+                            <p class="text-gray-500 mb-2">Simultaneously analyzes English Reddit, Mandarin Weibo, Cantonese LIHKG, Japanese 2ch, and local forums — no keyword translation needed.</p>
+                        </div>
+                        <div class="bg-dark-900/50 rounded-lg p-3">
+                            <p class="text-blue-400 font-semibold mb-1">Why It Matters</p>
+                            <p class="text-gray-500 mb-2">Real community sentiment lives in local languages. Legacy tools miss 80%+ of relevant data by only processing English.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Auditability Section -->
+                <div class="bg-dark-900/50 rounded-xl p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-bold text-purple-400">Full Auditability — Not a Black Box</h4>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-4">
+                        Competitors like Dataminr send alerts with no source citations — they protect their "IP." But an Investment Committee won't approve a multi-million dollar deal on faith.
+                    </p>
+                    <div class="bg-purple-500/10 border border-purple-500/30 rounded-lg p-4">
+                        <p class="text-sm text-gray-300 mb-2">
+                            <span class="text-purple-400 font-medium">Our Promise:</span> Every score links back to the original source.
+                        </p>
+                        <p class="text-xs text-gray-500">
+                            Example: "Safety Score dropped to 42 because of <span class="text-purple-400 underline cursor-pointer">[15 Reddit threads about broken streetlights on 5th Ave]</span>."<br>
+                            Your analyst can <span class="text-white font-medium">click the link</span> and read the threads themselves.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Infrastructure: Scalable & Compliant -->
+            <div class="bg-dark-900/50 rounded-2xl p-8 border border-dark-600/30 mb-16">
+                <h3 class="text-xl font-semibold mb-2 text-center">Data Infrastructure: Scalable & Compliant</h3>
+                <p class="text-gray-400 text-sm text-center mb-8 max-w-3xl mx-auto">Our data acquisition strategy prioritizes <span class="text-neon-400 font-medium">legal, licensed sources</span> that scale to hundreds of thousands of feeds while maintaining full compliance.</p>
+                
+                <!-- Data Pyramid -->
+                <div class="max-w-4xl mx-auto">
+                    <!-- Tier 1 - Foundation -->
+                    <div class="bg-neon-500/10 border border-neon-500/30 rounded-xl p-6 mb-4">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-neon-500/20 rounded-lg flex items-center justify-center text-neon-400 font-bold">1</div>
+                                <div>
+                                    <h4 class="text-lg font-bold text-neon-400">Tier 1: News Intelligence</h4>
+                                    <p class="text-xs text-gray-500">Foundation Layer — Free to Low Cost</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-2xl font-bold text-neon-400">380,000+</p>
+                                <p class="text-xs text-gray-500">sources</p>
+                            </div>
+                        </div>
+                        <div class="grid md:grid-cols-3 gap-4 text-sm">
+                            <div class="bg-dark-800/50 rounded-lg p-4">
+                                <p class="font-semibold text-white mb-1">GDELT Project</p>
+                                <p class="text-gray-400 text-xs mb-2">300,000+ global news sources, 100+ languages</p>
+                                <p class="text-neon-400 font-bold">Free</p>
+                            </div>
+                            <div class="bg-dark-800/50 rounded-lg p-4">
+                                <p class="font-semibold text-white mb-1">NewsAPI</p>
+                                <p class="text-gray-400 text-xs mb-2">80,000+ sources with structured metadata</p>
+                                <p class="text-neon-400 font-bold">~HK$3,500/mo</p>
+                            </div>
+                            <div class="bg-dark-800/50 rounded-lg p-4">
+                                <p class="font-semibold text-white mb-1">Government Open Data</p>
+                                <p class="text-gray-400 text-xs mb-2">Municipal portals, World Bank, UN Data</p>
+                                <p class="text-neon-400 font-bold">Free</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tier 2 - Social -->
+                    <div class="bg-blue-500/10 border border-blue-500/30 rounded-xl p-6 mb-4 ml-8">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center text-blue-400 font-bold">2</div>
+                                <div>
+                                    <h4 class="text-lg font-bold text-blue-400">Tier 2: Social Intelligence</h4>
+                                    <p class="text-xs text-gray-500">Licensed APIs — Moderate Cost</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xl font-bold text-blue-400">HK$7.8-39K/mo</p>
+                                <p class="text-xs text-gray-500">estimated</p>
+                            </div>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-4 text-sm">
+                            <div class="bg-dark-800/50 rounded-lg p-4">
+                                <p class="font-semibold text-white mb-1">Reddit Data API</p>
+                                <p class="text-gray-400 text-xs mb-2">Enterprise licensing for commercial use</p>
+                                <p class="text-blue-400 font-bold">~HK$1.87/1K calls</p>
+                                <p class="text-gray-500 text-[10px] mt-1">~HK$7,800/mo at scale</p>
+                            </div>
+                            <div class="bg-dark-800/50 rounded-lg p-4">
+                                <p class="font-semibold text-white mb-1">X/Twitter API</p>
+                                <p class="text-gray-400 text-xs mb-2">Basic to Pro tier access</p>
+                                <p class="text-blue-400 font-bold">HK$780-3,900/mo</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tier 3 - Regional -->
+                    <div class="bg-purple-500/10 border border-purple-500/30 rounded-xl p-6 ml-16">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center text-purple-400 font-bold">3</div>
+                                <div>
+                                    <h4 class="text-lg font-bold text-purple-400">Tier 3: Regional Expansion</h4>
+                                    <p class="text-xs text-gray-500">Partnership Development — Phase 2</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-lg font-bold text-purple-400">Partnerships</p>
+                                <p class="text-xs text-gray-500">potentially</p>
+                            </div>
+                        </div>
+                        <div class="text-sm text-gray-400">
+                            <p class="mb-2">Regional forums (HKGolden, PTT, 2ch) and emerging market platforms require direct partnerships:</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="bg-dark-800/50 rounded px-2 py-1 text-xs">Weibo (China entity required)</span>
+                                <span class="bg-dark-800/50 rounded px-2 py-1 text-xs">VK (Russia/CIS)</span>
+                                <span class="bg-dark-800/50 rounded px-2 py-1 text-xs">Telegram Channels</span>
+                                <span class="bg-dark-800/50 rounded px-2 py-1 text-xs">Regional Forums</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-8 text-center">
+                    <p class="text-xs text-gray-500 bg-dark-800/50 inline-block px-4 py-2 rounded-full">
+                        Total infrastructure cost: <span class="text-neon-400 font-bold">HK$3,900-15,600/mo</span> for 380,000+ legally licensed sources
+                    </p>
+                </div>
+            </div>
+
+            <!-- 12-Dimension Radar Chart -->
+            <div class="bg-dark-900/50 rounded-2xl p-8 border border-dark-600/30 mb-16">
+                <h3 class="text-2xl font-semibold mb-2 text-center">The 12-Dimension Taxonomy</h3>
+                <p class="text-gray-400 text-center mb-2 max-w-3xl mx-auto">A comprehensive framework measuring the holistic health of any city <span class="text-neon-400 font-medium">down to the district level</span> — not just crime stats or GDP</p>
+                <p class="text-neon-400 text-sm text-center mb-8 font-medium">Each dimension is individually selectable for deep-dive analysis across any city and its districts in the database</p>
+                
+                <div class="grid lg:grid-cols-2 gap-8 items-center">
+                    <!-- Radar Chart - Fixed 12 evenly distributed points -->
+                    <div class="flex justify-center">
+                        <svg viewBox="0 0 400 400" class="w-full max-w-sm">
+                            <!-- Grid circles -->
+                            <circle cx="200" cy="200" r="130" fill="none" stroke="#334155" stroke-width="1"/>
+                            <circle cx="200" cy="200" r="97" fill="none" stroke="#334155" stroke-width="0.5"/>
+                            <circle cx="200" cy="200" r="65" fill="none" stroke="#334155" stroke-width="0.5"/>
+                            <circle cx="200" cy="200" r="32" fill="none" stroke="#334155" stroke-width="0.5"/>
+                            <!-- 12 Axis lines (30° apart) -->
+                            <line x1="200" y1="70" x2="200" y2="330" stroke="#334155" stroke-width="0.5"/>
+                            <line x1="265" y1="87" x2="135" y2="313" stroke="#334155" stroke-width="0.5"/>
+                            <line x1="313" y1="135" x2="87" y2="265" stroke="#334155" stroke-width="0.5"/>
+                            <line x1="330" y1="200" x2="70" y2="200" stroke="#334155" stroke-width="0.5"/>
+                            <line x1="313" y1="265" x2="87" y2="135" stroke="#334155" stroke-width="0.5"/>
+                            <line x1="265" y1="313" x2="135" y2="87" stroke="#334155" stroke-width="0.5"/>
+                            <!-- Data polygon - 12 points at 30° intervals, properly calculated -->
+                            <!-- Scores: Safety:80, Housing:40, Economy:60, Governance:50, Transport:90, Environment:70, Health:75, Culture:85, Education:65, Tech:95, Community:55, Cost:30 -->
+                            <polygon points="200,96 226,155 268,161 265,200 301,259 246,279 200,298 145,296 126,243 76,200 138,164 181,166" 
+                                fill="rgba(74, 222, 128, 0.15)" stroke="#4ade80" stroke-width="2"/>
+                            <!-- Data points - 12 evenly spaced around circle at 30° intervals -->
+                            <circle cx="200" cy="96" r="6" fill="#4ade80" class="radar-point cursor-pointer"/><!-- Safety 80% @ 0° -->
+                            <circle cx="226" cy="155" r="6" fill="#f87171" class="radar-point cursor-pointer"/><!-- Housing 40% @ 30° -->
+                            <circle cx="268" cy="161" r="6" fill="#fbbf24" class="radar-point cursor-pointer"/><!-- Economy 60% @ 60° -->
+                            <circle cx="265" cy="200" r="6" fill="#fbbf24" class="radar-point cursor-pointer"/><!-- Governance 50% @ 90° -->
+                            <circle cx="301" cy="259" r="6" fill="#4ade80" class="radar-point cursor-pointer"/><!-- Transport 90% @ 120° -->
+                            <circle cx="246" cy="279" r="6" fill="#4ade80" class="radar-point cursor-pointer"/><!-- Environment 70% @ 150° -->
+                            <circle cx="200" cy="298" r="6" fill="#4ade80" class="radar-point cursor-pointer"/><!-- Health 75% @ 180° -->
+                            <circle cx="145" cy="296" r="6" fill="#4ade80" class="radar-point cursor-pointer"/><!-- Culture 85% @ 210° -->
+                            <circle cx="126" cy="243" r="6" fill="#fbbf24" class="radar-point cursor-pointer"/><!-- Education 65% @ 240° -->
+                            <circle cx="76" cy="200" r="6" fill="#4ade80" class="radar-point cursor-pointer"/><!-- Tech 95% @ 270° -->
+                            <circle cx="138" cy="164" r="6" fill="#fbbf24" class="radar-point cursor-pointer"/><!-- Community 55% @ 300° -->
+                            <circle cx="181" cy="166" r="6" fill="#f87171" class="radar-point cursor-pointer"/><!-- Cost 30% @ 330° -->
+                            <!-- Dimension labels positioned at the outer edge of each axis -->
+                            <text x="200" y="55" text-anchor="middle" fill="#94a3b8" font-size="9" font-weight="500">Safety</text>
+                            <text x="275" y="78" text-anchor="start" fill="#94a3b8" font-size="9" font-weight="500">Housing</text>
+                            <text x="325" y="128" text-anchor="start" fill="#94a3b8" font-size="9" font-weight="500">Economy</text>
+                            <text x="342" y="205" text-anchor="start" fill="#94a3b8" font-size="9" font-weight="500">Governance</text>
+                            <text x="325" y="278" text-anchor="start" fill="#94a3b8" font-size="9" font-weight="500">Transport</text>
+                            <text x="275" y="330" text-anchor="start" fill="#94a3b8" font-size="9" font-weight="500">Environment</text>
+                            <text x="200" y="358" text-anchor="middle" fill="#94a3b8" font-size="9" font-weight="500">Health</text>
+                            <text x="125" y="330" text-anchor="end" fill="#94a3b8" font-size="9" font-weight="500">Culture</text>
+                            <text x="75" y="278" text-anchor="end" fill="#94a3b8" font-size="9" font-weight="500">Education</text>
+                            <text x="58" y="205" text-anchor="end" fill="#94a3b8" font-size="9" font-weight="500">Tech</text>
+                            <text x="75" y="128" text-anchor="end" fill="#94a3b8" font-size="9" font-weight="500">Community</text>
+                            <text x="125" y="78" text-anchor="end" fill="#94a3b8" font-size="9" font-weight="500">Cost</text>
+                        </svg>
+                    </div>
+                    
+                    <!-- Dimension List -->
+                    <div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-dark-700/50 rounded-lg p-3 border border-dark-600/30 hover:border-neon-500/50 transition-colors cursor-pointer group">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium">Safety</span>
+                                    <span class="text-neon-400 font-bold">80</span>
+                                </div>
+                                <p class="text-[10px] text-gray-500 mt-1 group-hover:text-gray-400">Crime, public order, emergency response</p>
+                            </div>
+                            <div class="bg-dark-700/50 rounded-lg p-3 border border-dark-600/30 hover:border-neon-500/50 transition-colors cursor-pointer group">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium">Housing</span>
+                                    <span class="text-red-400 font-bold">40</span>
+                                </div>
+                                <p class="text-[10px] text-gray-500 mt-1 group-hover:text-gray-400">Affordability, availability, quality</p>
+                            </div>
+                            <div class="bg-dark-700/50 rounded-lg p-3 border border-dark-600/30 hover:border-neon-500/50 transition-colors cursor-pointer group">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium">Economy</span>
+                                    <span class="text-yellow-400 font-bold">60</span>
+                                </div>
+                                <p class="text-[10px] text-gray-500 mt-1 group-hover:text-gray-400">Jobs, wages, business climate</p>
+                            </div>
+                            <div class="bg-dark-700/50 rounded-lg p-3 border border-dark-600/30 hover:border-neon-500/50 transition-colors cursor-pointer group">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium">Governance</span>
+                                    <span class="text-yellow-400 font-bold">50</span>
+                                </div>
+                                <p class="text-[10px] text-gray-500 mt-1 group-hover:text-gray-400">Policy trust, transparency, services</p>
+                            </div>
+                            <div class="bg-dark-700/50 rounded-lg p-3 border border-dark-600/30 hover:border-neon-500/50 transition-colors cursor-pointer group">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium">Transport</span>
+                                    <span class="text-neon-400 font-bold">90</span>
+                                </div>
+                                <p class="text-[10px] text-gray-500 mt-1 group-hover:text-gray-400">Infrastructure, accessibility, reliability</p>
+                            </div>
+                            <div class="bg-dark-700/50 rounded-lg p-3 border border-dark-600/30 hover:border-neon-500/50 transition-colors cursor-pointer group">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium">Environment</span>
+                                    <span class="text-neon-400 font-bold">70</span>
+                                </div>
+                                <p class="text-[10px] text-gray-500 mt-1 group-hover:text-gray-400">Air quality, green space, sustainability</p>
+                            </div>
+                            <div class="bg-dark-700/50 rounded-lg p-3 border border-dark-600/30 hover:border-neon-500/50 transition-colors cursor-pointer group">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium">Health</span>
+                                    <span class="text-neon-400 font-bold">75</span>
+                                </div>
+                                <p class="text-[10px] text-gray-500 mt-1 group-hover:text-gray-400">Healthcare access, public health</p>
+                            </div>
+                            <div class="bg-dark-700/50 rounded-lg p-3 border border-dark-600/30 hover:border-neon-500/50 transition-colors cursor-pointer group">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium">Culture</span>
+                                    <span class="text-neon-400 font-bold">85</span>
+                                </div>
+                                <p class="text-[10px] text-gray-500 mt-1 group-hover:text-gray-400">Arts, entertainment, diversity</p>
+                            </div>
+                            <div class="bg-dark-700/50 rounded-lg p-3 border border-dark-600/30 hover:border-neon-500/50 transition-colors cursor-pointer group">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium">Education</span>
+                                    <span class="text-yellow-400 font-bold">65</span>
+                                </div>
+                                <p class="text-[10px] text-gray-500 mt-1 group-hover:text-gray-400">Schools, universities, opportunity</p>
+                            </div>
+                            <div class="bg-dark-700/50 rounded-lg p-3 border border-dark-600/30 hover:border-neon-500/50 transition-colors cursor-pointer group">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium">Tech</span>
+                                    <span class="text-neon-400 font-bold">95</span>
+                                </div>
+                                <p class="text-[10px] text-gray-500 mt-1 group-hover:text-gray-400">Innovation, connectivity, digital services</p>
+                            </div>
+                            <div class="bg-dark-700/50 rounded-lg p-3 border border-dark-600/30 hover:border-neon-500/50 transition-colors cursor-pointer group">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium">Community</span>
+                                    <span class="text-yellow-400 font-bold">55</span>
+                                </div>
+                                <p class="text-[10px] text-gray-500 mt-1 group-hover:text-gray-400">Social cohesion, belonging, trust</p>
+                            </div>
+                            <div class="bg-dark-700/50 rounded-lg p-3 border border-dark-600/30 hover:border-neon-500/50 transition-colors cursor-pointer group">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium">Cost of Living</span>
+                                    <span class="text-red-400 font-bold">30</span>
+                                </div>
+                                <p class="text-[10px] text-gray-500 mt-1 group-hover:text-gray-400">Affordability vs. income levels</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Key Value Props -->
+                <div class="mt-8 pt-6 border-t border-dark-600/30">
+                    <div class="grid md:grid-cols-3 gap-4 text-center">
+                        <div class="bg-dark-700/30 rounded-lg p-4">
+                            <p class="text-neon-400 font-bold text-lg">Selectable</p>
+                            <p class="text-gray-500 text-xs">Click any dimension to drill down with extensive data, trends, and cited sources</p>
+                        </div>
+                        <div class="bg-dark-700/30 rounded-lg p-4">
+                            <p class="text-neon-400 font-bold text-lg">Comparable</p>
+                            <p class="text-gray-500 text-xs">Compare any dimension across unlimited cities worldwide — Tokyo vs. London vs. São Paulo</p>
+                        </div>
+                        <div class="bg-dark-700/30 rounded-lg p-4">
+                            <p class="text-neon-400 font-bold text-lg">Always Current</p>
+                            <p class="text-gray-500 text-xs">Continuous scraping solves the Latency Tax — real-time data, not 2-year-old snapshots</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- PRODUCT DEEP DIVE: CORPORATE DASHBOARD -->
+            <!-- ========================================== -->
+            <div class="mb-20">
+                <div class="text-center mb-12">
+                    <div class="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/30 rounded-full px-4 py-2 mb-4">
+                        <span class="w-2 h-2 bg-blue-400 rounded-full"></span>
+                        <span class="text-blue-400 text-sm font-semibold">Primary Product</span>
+                    </div>
+                    <h3 class="text-3xl md:text-4xl font-bold mb-4">The Corporate Dashboard</h3>
+                    <p class="text-gray-400 text-lg max-w-3xl mx-auto">Not just scores — <span class="text-blue-400 font-medium">explanations of why</span> they changed and <span class="text-blue-400 font-medium">predictions of where they're heading</span>. Historical context meets predictive intelligence.</p>
+                </div>
+
+                <!-- Dashboard Mission Statement -->
+                <div class="bg-gradient-to-br from-blue-500/10 to-dark-800 rounded-2xl p-8 border border-blue-500/30 mb-8">
+                    <h4 class="text-xl font-bold text-blue-400 mb-4">The Mission: Predict, Don't React</h4>
+                    <p class="text-gray-300 text-lg leading-relaxed mb-4">
+                        Imagine opening a single interface and seeing not just the <span class="text-white font-semibold">current health score</span> of every city, but <span class="text-blue-400 font-semibold">why it changed</span> and <span class="text-blue-400 font-semibold">where it's heading</span>. Our AI doesn't just report "Safety dropped 8 points" — it explains: <span class="text-white font-medium italic">"Safety declined due to 340% increase in housing protest coverage, correlated with new rent control policy announced March 3rd."</span>
+                    </p>
+                    <p class="text-gray-300 text-lg leading-relaxed">
+                        With <span class="text-white font-semibold">5 years of historical data</span> per city, you can see patterns that predict future shifts. Which cities recovered fastest after similar governance crises? What leading indicators preceded the last 3 economic sentiment drops in Singapore? The Corporate Dashboard transforms you from <span class="text-blue-400 font-semibold">reactive decision-maker to predictive strategist</span>.
+                    </p>
+                </div>
+
+                <!-- Dashboard Features Grid -->
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <!-- Feature 1: Portfolio Management -->
+                    <div class="bg-dark-800/50 rounded-2xl p-6 border border-dark-600/30">
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h5 class="text-lg font-bold mb-2">Portfolio Management</h5>
+                                <p class="text-gray-400 text-sm mb-3">Organize your cities and districts into logical groupings that mirror your business structure.</p>
+                            </div>
+                        </div>
+                        <div class="bg-dark-900/50 rounded-xl p-4 space-y-2 text-sm">
+                            <div class="flex items-center gap-2"><span class="text-neon-400">→</span> Create unlimited custom portfolios (e.g., "APAC Retail", "European Logistics", "GBA Manufacturing")</div>
+                            <div class="flex items-center gap-2"><span class="text-neon-400">→</span> Drill down to district-level scores within each city for granular analysis</div>
+                            <div class="flex items-center gap-2"><span class="text-neon-400">→</span> Aggregate scores across portfolios — see your regional risk at a glance</div>
+                            <div class="flex items-center gap-2"><span class="text-neon-400">→</span> Share portfolios across team members with role-based permissions</div>
+                        </div>
+                    </div>
+
+                    <!-- Feature 2: Watchlist & Alerts -->
+                    <div class="bg-dark-800/50 rounded-2xl p-6 border border-dark-600/30">
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="w-12 h-12 bg-yellow-500/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h5 class="text-lg font-bold mb-2">Intelligent Watchlists & Alerts</h5>
+                                <p class="text-gray-400 text-sm mb-3">Never miss a signal. Set custom thresholds at city or district level and get notified before problems escalate.</p>
+                            </div>
+                        </div>
+                        <div class="bg-dark-900/50 rounded-xl p-4 space-y-2 text-sm">
+                            <div class="flex items-center gap-2"><span class="text-yellow-400">→</span> Threshold alerts: "Notify me if Safety in Lagos Central District drops below 60"</div>
+                            <div class="flex items-center gap-2"><span class="text-yellow-400">→</span> Velocity alerts: "Notify me if any dimension drops >10 points in 7 days"</div>
+                            <div class="flex items-center gap-2"><span class="text-yellow-400">→</span> Comparative alerts: "Notify me if Kowloon underperforms Central by >15 points"</div>
+                            <div class="flex items-center gap-2"><span class="text-yellow-400">→</span> Multi-channel delivery: Email, Slack, SMS, Webhook integrations</div>
+                        </div>
+                    </div>
+
+                    <!-- Feature 3: Deep Analytics -->
+                    <div class="bg-dark-800/50 rounded-2xl p-6 border border-dark-600/30">
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="w-12 h-12 bg-neon-500/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6 text-neon-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h5 class="text-lg font-bold mb-2">Predictive Analytics Engine</h5>
+                                <p class="text-gray-400 text-sm mb-3">Go beyond the score. Understand <span class="text-neon-400">WHY</span> it changed and <span class="text-neon-400">WHAT'S NEXT</span>.</p>
+                            </div>
+                        </div>
+                        <div class="bg-dark-900/50 rounded-xl p-4 space-y-2 text-sm">
+                            <div class="flex items-center gap-2"><span class="text-neon-400">→</span> <span class="text-white font-medium">Causal Attribution:</span> AI explains which events drove score changes</div>
+                            <div class="flex items-center gap-2"><span class="text-neon-400">→</span> <span class="text-white font-medium">Trend Forecasting:</span> 30/60/90-day projections based on historical patterns</div>
+                            <div class="flex items-center gap-2"><span class="text-neon-400">→</span> <span class="text-white font-medium">Leading Indicators:</span> Early warning signals before major shifts</div>
+                            <div class="flex items-center gap-2"><span class="text-neon-400">→</span> <span class="text-white font-medium">Deep Dive:</span> Request Custom Intelligence Reports for in-depth analysis (20+ pages)</div>
+                        </div>
+                    </div>
+
+                    <!-- Feature 4: Comparison Tools -->
+                    <div class="bg-dark-800/50 rounded-2xl p-6 border border-dark-600/30">
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h5 class="text-lg font-bold mb-2">Multi-Location Comparison</h5>
+                                <p class="text-gray-400 text-sm mb-3">Make apples-to-apples comparisons across cities and districts worldwide.</p>
+                            </div>
+                        </div>
+                        <div class="bg-dark-900/50 rounded-xl p-4 space-y-2 text-sm">
+                            <div class="flex items-center gap-2"><span class="text-purple-400">→</span> Side-by-side radar charts: Compare city or district profiles visually</div>
+                            <div class="flex items-center gap-2"><span class="text-purple-400">→</span> Ranking tables: Sort 1,000+ cities and their districts by any dimension</div>
+                            <div class="flex items-center gap-2"><span class="text-purple-400">→</span> Scatter plots: Plot Housing vs. Safety to find optimal expansion targets</div>
+                            <div class="flex items-center gap-2"><span class="text-purple-400">→</span> Exportable comparison reports for board presentations</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Output Section -->
+                <div class="bg-dark-800/30 rounded-2xl p-8 border border-dark-600/30">
+                    <h4 class="text-xl font-bold mb-6 text-center">Dashboard Outputs & Deliverables</h4>
+                    <div class="grid md:grid-cols-4 gap-4">
+                        <div class="text-center p-4">
+                            <div class="w-16 h-16 bg-dark-700/50 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                            </div>
+                            <p class="font-semibold text-sm">PDF Reports</p>
+                            <p class="text-xs text-gray-500">Audit-ready exports with full citations</p>
+                        </div>
+                        <div class="text-center p-4">
+                            <div class="w-16 h-16 bg-dark-700/50 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-8 h-8 text-neon-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                </svg>
+                            </div>
+                            <p class="font-semibold text-sm">CSV/Excel Export</p>
+                            <p class="text-xs text-gray-500">Raw data for your own analysis</p>
+                        </div>
+                        <div class="text-center p-4">
+                            <div class="w-16 h-16 bg-dark-700/50 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/>
+                                </svg>
+                            </div>
+                            <p class="font-semibold text-sm">Interactive Charts</p>
+                            <p class="text-xs text-gray-500">Embed live widgets in your tools</p>
+                        </div>
+                        <div class="text-center p-4">
+                            <div class="w-16 h-16 bg-dark-700/50 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                            <p class="font-semibold text-sm">Scheduled Reports</p>
+                            <p class="text-xs text-gray-500">Weekly/monthly automated briefings</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- PRODUCT DEEP DIVE: CUSTOM REPORTS -->
+            <!-- ========================================== -->
+            <div class="mb-16">
+                <div class="text-center mb-12">
+                    <div class="inline-flex items-center gap-2 bg-purple-500/10 border border-purple-500/30 rounded-full px-4 py-2 mb-4">
+                        <span class="w-2 h-2 bg-purple-400 rounded-full"></span>
+                        <span class="text-purple-400 text-sm font-semibold">Enterprise Product</span>
+                    </div>
+                    <h3 class="text-3xl md:text-4xl font-bold mb-4">Custom Intelligence Reports</h3>
+                    <p class="text-gray-400 text-lg max-w-3xl mx-auto">Predictive intelligence on demand. Not just "what happened" — <span class="text-purple-400 font-medium">why it happened, what's coming, and what you should do about it</span>.</p>
+                </div>
+
+                <!-- Custom Reports Mission -->
+                <div class="bg-gradient-to-br from-purple-500/10 to-dark-800 rounded-2xl p-8 border border-purple-500/30 mb-8">
+                    <h4 class="text-xl font-bold text-purple-400 mb-4">The Mission: Forecast-First Intelligence</h4>
+                    <p class="text-gray-300 text-lg leading-relaxed mb-4">
+                        Custom Reports answer the questions reactive data can't: <span class="text-white font-semibold italic">"If Housing sentiment continues this trajectory, when will it cross our risk threshold?"</span> or <span class="text-white font-semibold italic">"Based on historical patterns, what's the 6-month outlook for Governance Trust in Jakarta?"</span>
+                    </p>
+                    <p class="text-gray-300 text-lg leading-relaxed">
+                        Our AI synthesizes <span class="text-purple-400 font-semibold">5 years of historical patterns</span> with <span class="text-purple-400 font-semibold">real-time signals</span> to generate forecasts with confidence intervals. Each report explains the <span class="text-white font-semibold">causal chain</span> — not just "sentiment dropped," but exactly which policy changes, news events, and social conversations drove the shift, and what similar patterns have led to historically.
+                    </p>
+                </div>
+
+                <!-- Report Types - Two Categories -->
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <!-- Predictive Reports -->
+                    <div class="bg-dark-800/50 rounded-2xl p-6 border border-neon-500/30 hover:border-neon-500/50 transition-colors">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-12 h-12 bg-neon-500/10 rounded-xl flex items-center justify-center">
+                                <svg class="w-6 h-6 text-neon-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <span class="text-neon-400 text-xs font-semibold uppercase tracking-wider">Forward-Looking</span>
+                                <h5 class="text-lg font-bold text-neon-400">Predictive Reports</h5>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-4">Where is this city or district heading? When should we enter?</p>
+                        <div class="space-y-2 text-xs text-gray-500">
+                            <p>• <span class="text-white">Market Entry Forecast:</span> 12-month trajectory for any city or district with confidence intervals</p>
+                            <p>• <span class="text-white">Trajectory Benchmarking:</span> Compare momentum across cities/districts — who's rising, who's falling?</p>
+                            <p>• <span class="text-white">Go/No-Go Recommendations:</span> Optimal timing and entry strategy</p>
+                            <p>• <span class="text-white">Leading Indicators:</span> Early warning signals to monitor post-entry</p>
+                            <p>• District-level granularity for hyper-local market entry decisions</p>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-dark-600/30">
+                            <p class="text-neon-400 font-semibold">Delivery: 20-30 page report (5-7 day turnaround)</p>
+                        </div>
+                    </div>
+
+                    <!-- Analytical Reports -->
+                    <div class="bg-dark-800/50 rounded-2xl p-6 border border-purple-500/30 hover:border-purple-500/50 transition-colors">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center">
+                                <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <span class="text-purple-400 text-xs font-semibold uppercase tracking-wider">Backward-Looking</span>
+                                <h5 class="text-lg font-bold text-purple-400">Analytical Reports</h5>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-4">What happened, why did it happen, and what can we learn?</p>
+                        <div class="space-y-2 text-xs text-gray-500">
+                            <p>• <span class="text-white">Event/Crisis Analysis:</span> Exact causal chain that triggered the score change</p>
+                            <p>• <span class="text-white">Root Cause Breakdown:</span> Which policies, events, or conversations drove the shift?</p>
+                            <p>• <span class="text-white">Historical Pattern Matching:</span> How long did similar situations last elsewhere?</p>
+                            <p>• <span class="text-white">Recovery Timeline Estimate:</span> Based on comparable case studies</p>
+                            <p>• Full citation trail for audit compliance and board presentations</p>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-dark-600/30">
+                            <p class="text-purple-400 font-semibold">Delivery: 15-20 page report (48-72 hour turnaround)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Report Methodology -->
+                <div class="bg-dark-900/50 rounded-2xl p-8 border border-dark-600/30">
+                    <h4 class="text-xl font-bold mb-6 text-center">Report Methodology</h4>
+                    <div class="grid md:grid-cols-5 gap-4 items-center">
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-2 text-purple-400 font-bold">1</div>
+                            <p class="text-sm font-medium">Scope Definition</p>
+                            <p class="text-[10px] text-gray-500">Converse with AI Chatbot to clarify questions, success criteria & analysis scope</p>
+                        </div>
+                        <div class="hidden md:flex items-center justify-center text-gray-600">→</div>
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-2 text-purple-400 font-bold">2</div>
+                            <p class="text-sm font-medium">Data Extraction</p>
+                            <p class="text-[10px] text-gray-500">Pull relevant signals from our database</p>
+                        </div>
+                        <div class="hidden md:flex items-center justify-center text-gray-600">→</div>
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-2 text-purple-400 font-bold">3</div>
+                            <p class="text-sm font-medium">Analysis</p>
+                            <p class="text-[10px] text-gray-500">Human + AI synthesis of findings</p>
+                        </div>
+                    </div>
+                    <div class="grid md:grid-cols-5 gap-4 items-center mt-6">
+                        <div class="md:col-start-2 text-center">
+                            <div class="w-12 h-12 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-2 text-purple-400 font-bold">4</div>
+                            <p class="text-sm font-medium">Validation</p>
+                            <p class="text-[10px] text-gray-500">Fact-check all claims with citations</p>
+                        </div>
+                        <div class="hidden md:flex items-center justify-center text-gray-600">→</div>
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-2 text-purple-400 font-bold">5</div>
+                            <p class="text-sm font-medium">Delivery</p>
+                            <p class="text-[10px] text-gray-500">Report + presentation + Q&A session</p>
+                        </div>
+                    </div>
+                    <div class="mt-8 pt-6 border-t border-dark-600/30 text-center">
+                        <p class="text-gray-400 text-sm">Every report includes <span class="text-purple-400 font-semibold">full source citations</span>, <span class="text-purple-400 font-semibold">methodology documentation</span>, and <span class="text-purple-400 font-semibold">executive summary</span> for audit compliance.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Current Progress -->
+            <div class="bg-neon-500/10 border border-neon-500/30 rounded-2xl p-8 mt-16 max-w-6xl mx-auto">
+                <h3 class="text-neon-400 font-semibold text-sm uppercase tracking-wider mb-2">Current Progress</h3>
+                <p class="text-gray-400 text-sm mb-6">Working prototype demonstrating proof-of-concept for key pipeline elements. Incomplete but functional.</p>
+                
+                <!-- Progress Stats -->
+                <div class="grid md:grid-cols-4 gap-4 text-sm mb-8">
+                    <div class="bg-dark-800/50 rounded-lg p-4">
+                        <p class="text-white font-medium mb-1">City Coverage</p>
+                        <p class="text-gray-400 text-xs"><span class="text-neon-400 font-bold">100 cities</span> operational — scalable to 1,000+</p>
+                    </div>
+                    <div class="bg-dark-800/50 rounded-lg p-4">
+                        <p class="text-white font-medium mb-1">News Sources</p>
+                        <p class="text-gray-400 text-xs"><span class="text-neon-400 font-bold">Hundreds of outlets</span> including wire services</p>
+                    </div>
+                    <div class="bg-dark-800/50 rounded-lg p-4">
+                        <p class="text-white font-medium mb-1">Social Platforms</p>
+                        <p class="text-gray-400 text-xs"><span class="text-yellow-400 font-bold">Reddit only</span> — X, Weibo in Q1</p>
+                    </div>
+                    <div class="bg-dark-800/50 rounded-lg p-4">
+                        <p class="text-white font-medium mb-1">Interface</p>
+                        <p class="text-gray-400 text-xs"><span class="text-neon-400 font-bold">3D globe + dashboard</span> built</p>
+                    </div>
+                </div>
+                
+                <!-- Screenshots Section -->
+                <div class="space-y-8">
+                    <!-- Screenshot 1: Universal Scraping Engine -->
+                    <div class="bg-dark-900/50 rounded-xl overflow-hidden border border-dark-600/30">
+                        <div class="p-4 border-b border-dark-600/30">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center text-purple-400 text-sm font-bold">1</div>
+                                <div>
+                                    <h4 class="font-bold text-white">Universal Scraping Engine</h4>
+                                    <p class="text-xs text-gray-500">Backend data pipeline in action</p>
+                                </div>
+                            </div>
+                        </div>
+                        <img src="docs/terminal_2.png" alt="Terminal Backend" class="w-full" onerror="this.style.display='none'">
+                        <div class="p-4 bg-dark-800/30">
+                            <p class="text-sm text-gray-400 mb-2">
+                                <span class="text-purple-400 font-medium">What you're seeing:</span> The FastAPI backend running live scraping jobs. The engine ingests from multiple news sources (NYTimes, BBC, Reuters, The Guardian, Bloomberg) and Reddit communities simultaneously, processing data for the selected city (Hong Kong). This pipeline also handles AI-based scoring for each dimension through the proprietary scoring engine, which is currently under active development. <span class="text-white font-medium">Goal:</span> Scale to 380,000+ sources via licensed APIs and data partnerships.
+                            </p>
+                            <div class="flex flex-wrap gap-2 text-xs">
+                                <span class="bg-purple-500/10 text-purple-400 px-2 py-1 rounded">FastAPI + Uvicorn</span>
+                                <span class="bg-purple-500/10 text-purple-400 px-2 py-1 rounded">Multi-source ingestion</span>
+                                <span class="bg-purple-500/10 text-purple-400 px-2 py-1 rounded">Real-time job tracking</span>
+                                <span class="bg-purple-500/10 text-purple-400 px-2 py-1 rounded">Reddit API integration</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Screenshot 2: 3D Globe -->
+                    <div class="bg-dark-900/50 rounded-xl overflow-hidden border border-dark-600/30">
+                        <div class="p-4 border-b border-dark-600/30">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-neon-500/20 rounded-lg flex items-center justify-center text-neon-400 text-sm font-bold">2</div>
+                                <div>
+                                    <h4 class="font-bold text-white">Interactive 3D Globe Interface</h4>
+                                    <p class="text-xs text-gray-500">Public-facing visualization layer</p>
+                                </div>
+                            </div>
+                        </div>
+                        <img src="docs/big_globe.png" alt="3D Globe Interface" class="w-full" onerror="this.style.display='none'">
+                        <div class="p-4 bg-dark-800/30">
+                            <p class="text-sm text-gray-400 mb-2">
+                                <span class="text-neon-400 font-medium">What you're seeing:</span> A WebGL-powered 3D globe displaying real-time Civic Health Index scores for 108 cities. Users can rotate, zoom, and click on any city to see detailed scores across all 12 dimensions. <span class="text-white font-medium">Goal:</span> Enable zooming to district-level with 12-dimension scores at district granularity.
+                            </p>
+                            <div class="flex flex-wrap gap-2 text-xs">
+                                <span class="bg-neon-500/10 text-neon-400 px-2 py-1 rounded">Three.js rendering</span>
+                                <span class="bg-neon-500/10 text-neon-400 px-2 py-1 rounded">Real-time scores</span>
+                                <span class="bg-neon-500/10 text-neon-400 px-2 py-1 rounded">Ranked city leaderboard</span>
+                                <span class="bg-neon-500/10 text-neon-400 px-2 py-1 rounded">Search & filter</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Screenshot 3: Corporate Dashboard -->
+                    <div class="bg-dark-900/50 rounded-xl overflow-hidden border border-dark-600/30">
+                        <div class="p-4 border-b border-dark-600/30">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center text-blue-400 text-sm font-bold">3</div>
+                                <div>
+                                    <h4 class="font-bold text-white">Corporate Intelligence Dashboard</h4>
+                                    <p class="text-xs text-gray-500">Enterprise B2B interface (early prototype)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <img src="docs/terminal_1.png" alt="Corporate Dashboard" class="w-full" onerror="this.style.display='none'">
+                        <img src="docs/sample_data.png" alt="12-Dimension Scoring Demo" class="w-full mt-4" onerror="this.style.display='none'">
+                        <div class="p-4 bg-dark-800/30">
+                            <p class="text-sm text-gray-400 mb-2">
+                                <span class="text-blue-400 font-medium">What you're seeing:</span> Early prototype of the Corporate Intelligence Unit. Portfolio selection (Hong Kong), dimension filtering (affordability + safety), and a "Grounded Context" AI chat that answers questions using only scraped data — no hallucinations. The second image showcases an initial basic sample demonstration of city-level analysis across the 12 dimensions, powered by the foundational scoring engine currently in development. <span class="text-white font-medium">Goal:</span> Custom portfolios, intelligent alerts, multi-location comparison, predictive analytics, full Custom Intelligence Report integration, and refinement of the 12-dimension proprietary scoring methodology (ongoing research into weighting algorithms and dimension interdependencies).
+                            </p>
+                            <div class="flex flex-wrap gap-2 text-xs">
+                                <span class="bg-blue-500/10 text-blue-400 px-2 py-1 rounded">Portfolio management</span>
+                                <span class="bg-blue-500/10 text-blue-400 px-2 py-1 rounded">Dimension filtering</span>
+                                <span class="bg-blue-500/10 text-blue-400 px-2 py-1 rounded">Grounded AI chat</span>
+                                <span class="bg-blue-500/10 text-blue-400 px-2 py-1 rounded">Deep scrape on demand</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <p class="text-xs text-gray-500 mt-6 pt-4 border-t border-dark-600/50 text-center">
+                    <span class="text-neon-400 font-medium">Status:</span> Core infrastructure validated. These POC elements demonstrate the technical feasibility. Ready for Q1 scaling push.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION D: Market Opportunity -->
+    <section class="py-24">
+        <div class="max-w-7xl mx-auto px-8">
+            <p class="text-neon-400 font-semibold tracking-widest uppercase text-sm mb-4">Section D</p>
+            <h2 class="text-4xl md:text-5xl font-bold mb-4">Market Opportunity</h2>
+            <p class="text-xl text-gray-400 mb-8 max-w-3xl">The "Social License" Gap — A Blue Ocean in Site Intelligence.</p>
+            
+            <!-- Market Context - Focused on the Specific Gap -->
+            <div class="bg-dark-900/50 rounded-2xl p-8 border border-dark-600/30 mb-12">
+                <h3 class="text-xl font-bold mb-4 text-center">Why This Specific Market?</h3>
+                <p class="text-gray-400 text-center max-w-4xl mx-auto mb-6">
+                    The "Security" market is saturated (Dataminr). The "Traffic" market is dominated (Placer.ai). But there is <span class="text-neon-400 font-semibold">no dominant player</span> providing <span class="text-white font-medium">Qualitative Civic Health Trends</span> to the private sector. We bring <span class="text-neon-400 font-semibold">standardized civic health metrics</span> to commercial strategy teams — measuring neighborhood sentiment, community cohesion, and social stability that existing tools miss.
+                </p>
+                <div class="grid md:grid-cols-3 gap-4 text-center text-sm">
+                    <div class="bg-red-500/10 border border-red-500/30 rounded-lg p-4">
+                        <p class="text-red-400 font-bold mb-1">Security Market</p>
+                        <p class="text-gray-500 text-xs">Dataminr, Control Risks</p>
+                        <p class="text-red-400 text-xs font-medium">Saturated</p>
+                    </div>
+                    <div class="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
+                        <p class="text-yellow-400 font-bold mb-1">Traffic Market</p>
+                        <p class="text-gray-500 text-xs">Placer.ai, SafeGraph</p>
+                        <p class="text-yellow-400 text-xs font-medium">Dominated</p>
+                    </div>
+                    <div class="bg-neon-500/10 border border-neon-500/30 rounded-lg p-4">
+                        <p class="text-neon-400 font-bold mb-1">Social License Market</p>
+                        <p class="text-gray-500 text-xs">Civic health tools (gov/public sector only)</p>
+                        <p class="text-neon-400 text-xs font-medium">Open for Private Sector</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAM/SAM/SOM Breakdown -->
+            <div class="bg-gradient-to-br from-neon-500/10 to-dark-800 rounded-2xl p-8 border border-neon-500/30 mb-12">
+                <h3 class="text-2xl font-bold mb-2 text-center text-neon-400">Market Sizing: Commercial Risk Intelligence</h3>
+                <p class="text-gray-400 text-sm text-center mb-8 max-w-3xl mx-auto">Focused on the "Social Layer" gap in site selection, operational monitoring, and community risk assessment — a subset of the broader commercial intelligence market.</p>
+                
+                <div class="grid md:grid-cols-3 gap-6 mb-6">
+                    <!-- TAM -->
+                    <div class="bg-dark-900/50 rounded-xl p-6 border border-dark-600/30 text-center">
+                        <div class="text-4xl font-black text-blue-400 mb-2">HK$265B <span class="text-sm text-gray-500">(USD $34B)</span></div>
+                        <h4 class="font-bold text-white mb-2">TAM</h4>
+                        <p class="text-xs text-gray-500 mb-3">Total Addressable Market</p>
+                        <p class="text-xs text-gray-400">
+                            <span class="text-white font-medium">Global Real Estate & Retail Analytics Market</span> — includes all data/analytics tools used for site selection, risk assessment, and market intelligence (Placer.ai, CoStar, Local Logic, Esri, consultancies).
+                        </p>
+                    </div>
+                    
+                    <!-- SAM -->
+                    <div class="bg-dark-900/50 rounded-xl p-6 border border-neon-500/20 text-center">
+                        <div class="text-4xl font-black text-purple-400 mb-2">HK$32.8B <span class="text-sm text-gray-500">(USD $4.2B)</span></div>
+                        <h4 class="font-bold text-white mb-2">SAM</h4>
+                        <p class="text-xs text-gray-500 mb-3">Serviceable Addressable Market</p>
+                        <p class="text-xs text-gray-400">
+                            <span class="text-white font-medium">Alternative Data & Sentiment Analytics</span> — subset of companies actively seeking qualitative insights (social sentiment, community data) beyond traditional demographic/financial data.
+                        </p>
+                    </div>
+                    
+                    <!-- SOM -->
+                    <div class="bg-dark-900/50 rounded-xl p-6 border border-neon-500/30 text-center">
+                        <div class="text-4xl font-black text-neon-400 mb-2">HK$663M <span class="text-sm text-gray-500">(USD $85M)</span></div>
+                        <h4 class="font-bold text-white mb-2">SOM</h4>
+                        <p class="text-xs text-gray-500 mb-3">Serviceable Obtainable Market</p>
+                        <p class="text-xs text-gray-400">
+                            <span class="text-white font-medium">Year 3 Revenue Target</span> — mid-size developers and retailers expanding internationally (APAC, Europe, North America) who lack reliable civic intelligence on unfamiliar markets.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="text-xs text-gray-500 text-center pt-4 border-t border-dark-600/30">
+                    Sources: Grand View Research "Real Estate Analytics Market Report 2024" (USD $34B TAM); MarketsandMarkets "Alternative Data Market 2024" (12.4% CAGR); Internal market analysis for focused SOM estimate.
+                </div>
+            </div>
+
+            <!-- Target Verticals - Focused and Prioritized -->
+            <h3 class="text-2xl font-semibold mb-4 text-center">Our Target Customers — Prioritized</h3>
+            <p class="text-gray-500 text-center mb-8 max-w-3xl mx-auto">We are launching with industries where <span class="text-neon-400 font-medium">"Community Sentiment"</span> is a multi-million dollar blind spot and existing tools have clear gaps. This focused go-to-market strategy allows us to prove product-market fit before expanding to additional verticals.</p>
+            
+            <!-- PRIMARY ANCHOR: Real Estate -->
+            <div class="mb-8">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="bg-neon-500 text-dark-900 text-xs font-bold px-3 py-1 rounded-full">PRIMARY ANCHOR</span>
+                </div>
+                <div class="bg-gradient-to-br from-neon-500/10 to-dark-800 rounded-2xl p-8 border border-neon-500/30">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-14 h-14 bg-neon-500/20 rounded-2xl flex items-center justify-center">
+                            <svg class="w-7 h-7 text-neon-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="text-2xl font-bold text-neon-400">Commercial Real Estate — Land Acquisition Teams</h4>
+                            <p class="text-gray-400">Pre-Bid Community Screening</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-3 gap-6 mb-6">
+                        <div>
+                            <p class="text-gray-500 text-xs uppercase tracking-wider mb-2">The User</p>
+                            <p class="text-white font-medium">VP of Development, Land Acquisition Manager</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-xs uppercase tracking-wider mb-2">The Pain</p>
+                            <p class="text-gray-300">Buy land in major city → community hates it → protests → lawsuits → 3-year delay → <span class="text-red-400 font-semibold">lose 15-25% of project value annually in carry costs</span></p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-xs uppercase tracking-wider mb-2">Current Solution</p>
+                            <p class="text-gray-300">Existing tools (CoStar, Esri) provide <span class="text-white font-medium">demographics and physical infrastructure</span> but miss <span class="text-red-400">community sentiment</span>. Tools like <span class="text-white font-medium">Brandwatch</span> track brand mentions (entity-centric) but not location-based sentiment — they can't tell you if a neighborhood opposes development. Developers still rely on <span class="text-yellow-400">manual site walks and town hall meetings</span> to assess social opposition risk.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-dark-900/50 rounded-xl p-6">
+                        <p class="text-gray-500 text-xs uppercase tracking-wider mb-3">Our Value Proposition</p>
+                        <p class="text-gray-300 mb-3">
+                            Before bidding on land, run a <span class="text-neon-400 font-semibold">"Civic Health Check"</span> across the 12 dimensions for the <span class="text-white font-medium">specific city or district</span> to quantify <span class="text-white font-medium">Entitlement Risk</span> using real-time sentiment data. <span class="text-white font-medium">Set intelligent alerts</span> to monitor sentiment shifts, conduct <span class="text-white font-medium">daily progress tracking</span> during due diligence, run <span class="text-white font-medium">multi-region comparisons</span> to identify lower-risk opportunities, and request <span class="text-neon-400 font-medium">Custom Intelligence Reports</span> (20+ pages) analyzing historical resistance patterns, predictive timelines, and peer city benchmarks. Identify if the neighborhood has:
+                        </p>
+                        <div class="grid md:grid-cols-3 gap-4 text-sm">
+                            <div class="bg-red-500/10 border border-red-500/30 rounded-lg p-3">
+                                <p class="text-red-400 font-medium">Low Community Cohesion</p>
+                                <p class="text-xs text-gray-500">Fragmented — protests likely</p>
+                            </div>
+                            <div class="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3">
+                                <p class="text-yellow-400 font-medium">Low Governance Trust</p>
+                                <p class="text-xs text-gray-500">Anti-development sentiment</p>
+                            </div>
+                            <div class="bg-neon-500/10 border border-neon-500/30 rounded-lg p-3">
+                                <p class="text-neon-400 font-medium">High Housing Stress</p>
+                                <p class="text-xs text-gray-500">Gentrification anger brewing</p>
+                            </div>
+                        </div>
+                        <p class="text-neon-400 font-medium mt-4 text-center">
+                            "Anti-Delay Insurance" — know if a community will fight your project <span class="font-bold">before</span> you buy the land.
+                        </p>
+                    </div>
+                    
+                    <div class="mt-6 pt-4 border-t border-neon-500/20">
+                        <p class="text-gray-600 text-xs mb-1">Target Companies:</p>
+                        <p class="text-xs text-gray-400">Mid-size developers expanding internationally, regional developers entering unfamiliar markets, overseas land acquisition teams</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Retail & QSR Site Selection -->
+            <div class="mb-8">
+                <div class="bg-gradient-to-br from-blue-500/10 to-dark-800 rounded-2xl p-8 border border-blue-500/30">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-14 h-14 bg-blue-500/20 rounded-2xl flex items-center justify-center">
+                            <svg class="w-7 h-7 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="text-2xl font-bold text-blue-400">Retail & QSR Site Selection</h4>
+                            <p class="text-gray-400">The "Vibe Check" for Expansion</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-3 gap-6 mb-6">
+                        <div>
+                            <p class="text-gray-500 text-xs uppercase tracking-wider mb-2">The User</p>
+                            <p class="text-white font-medium">Head of Real Estate, Site Selection Committee</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-xs uppercase tracking-wider mb-2">The Pain</p>
+                            <p class="text-gray-300">Open store in trending-down neighborhood → significant lost sales and operating losses → <span class="text-red-400 font-semibold">joins 30-50% that fail within 3 years</span></p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-xs uppercase tracking-wider mb-2">Current Solution</p>
+                            <p class="text-gray-300">Placer.ai shows <span class="text-white font-medium">foot traffic numbers</span> but not <span class="text-red-400">"why"</span> traffic is trending. Tools like <span class="text-white font-medium">Brandwatch</span> track brand mentions (entity-centric) but not location-based sentiment for specific districts. Site selection teams still rely on <span class="text-yellow-400">manual site walks and anecdotal local interviews</span> to assess neighborhood sentiment.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-dark-900/50 rounded-xl p-6">
+                        <p class="text-gray-500 text-xs uppercase tracking-wider mb-3">Our Value Proposition</p>
+                        <p class="text-gray-300 mb-3">
+                            Run a <span class="text-blue-400 font-semibold">"Civic Health Check"</span> across the 12 dimensions for the <span class="text-white font-medium">specific city or district</span>. Overlay our "Safety Sentiment & Cultural Vibrancy" scores on top of Placer.ai traffic data to <span class="text-white font-medium">explain trends and predict future performance</span>. <span class="text-white font-medium">Compare multiple locations</span> side-by-side across all dimensions, <span class="text-white font-medium">set alerts</span> for sentiment threshold breaches, track <span class="text-white font-medium">daily score changes</span> for shortlisted sites, and order <span class="text-blue-400 font-medium">Custom Intelligence Reports</span> with market entry forecasts, trajectory benchmarking against peer locations, and 30/60/90-day sentiment projections:
+                        </p>
+                        <div class="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 text-center">
+                            <p class="text-sm text-gray-300 mb-2">
+                                <span class="text-gray-500">Placer.ai says:</span> "Traffic is high at this corner."
+                            </p>
+                            <p class="text-sm text-blue-400 font-medium">
+                                <span class="text-gray-500">We add:</span> "But 'Safety Sentiment' has dropped 15% in 6 months due to loitering complaints. Consider the mall 2 miles north instead."
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 pt-4 border-t border-blue-500/20">
+                        <p class="text-gray-600 text-xs mb-1">Target Companies:</p>
+                        <p class="text-xs text-gray-400">Regional QSR franchises expanding overseas, mid-size F&B chains entering new markets, CPG companies expanding international distribution</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- TIER 2 MARKETS -->
+            <div class="mb-8">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="bg-gray-500 text-white text-xs font-bold px-3 py-1 rounded-full">TIER 2 — SCALE MARKETS</span>
+                </div>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <!-- P&C Insurance -->
+                    <div class="bg-dark-800/50 rounded-xl p-6 border border-dark-600/30 hover:border-orange-500/30 transition-colors">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-orange-500/10 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-orange-400">P&C Insurance</h4>
+                                <p class="text-xs text-gray-500">Parametric Risk Modeling</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-3"><span class="text-white font-medium">Use Case:</span> If "Governance Trust" collapses in a region, riot risk goes up. Mid-sized domestic insurers need predictive civic signals but can't afford to build proprietary platforms.</p>
+                        <p class="text-gray-400 text-sm mb-3"><span class="text-white font-medium">Value:</span> Parametric triggers based on real-time sentiment scores to adjust reserves and pricing.</p>
+                        <p class="text-xs text-gray-500">Longer sales cycle, but validates deep tech credibility.</p>
+                    </div>
+                    
+                    <!-- Government -->
+                    <div class="bg-dark-800/50 rounded-xl p-6 border border-dark-600/30 hover:border-cyan-500/30 transition-colors">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-cyan-500/10 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-cyan-400">Government & Smart City</h4>
+                                <p class="text-xs text-gray-500">Policy Impact Measurement</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-3"><span class="text-white font-medium">Use Case:</span> Real-time civic sentiment to understand policy effectiveness, identify emerging issues before escalation, and benchmark against peer cities or districts.</p>
+                        <p class="text-gray-400 text-sm mb-3"><span class="text-white font-medium">Value:</span> Track trust and satisfaction scores across many dimensions in real-time. Continuous pulse checks vs. expensive annual surveys.</p>
+                        <p class="text-xs text-gray-500">Validates product legitimacy and creates public case studies.</p>
+                    </div>
+                    
+                    <!-- Logistics & Corporate Security -->
+                    <div class="bg-dark-800/50 rounded-xl p-6 border border-dark-600/30 hover:border-teal-500/30 transition-colors">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-teal-500/10 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-teal-400">Logistics & Corporate Security</h4>
+                                <p class="text-xs text-gray-500">Supply Chain & Duty of Care</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-3"><span class="text-white font-medium">Use Case:</span> Static risk reports miss real-time labor unrest or anti-foreign sentiment that disrupt port operations and executive travel overnight. Existing government-backed tools only send emergency high-risk alerts, not the soft signals that predict escalation.</p>
+                        <p class="text-gray-400 text-sm mb-3"><span class="text-white font-medium">Value:</span> Live alerts for shipping hubs and travel destinations. Detect "soft signals" before hard disruptions.</p>
+                        <p class="text-xs text-gray-500">Operations teams need daily intelligence, not quarterly reports.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- FUTURE HORIZON - Brief Mention -->
+            <div class="bg-dark-900/30 border border-dark-600/30 rounded-xl p-6">
+                <div class="flex items-center gap-3 mb-3">
+                    <span class="bg-gray-700 text-gray-300 text-xs font-bold px-3 py-1 rounded-full">FUTURE HORIZON</span>
+                </div>
+                <p class="text-gray-500 text-sm">
+                    Once core platform is validated with Physical Asset Owners and Operational Risk Teams, we will expand to: <span class="text-gray-400">Quantitative trading firms</span> (mid-size macro funds, municipal bond specialists). This is a crowded but addressable market once we have proven case studies and audit-ready data.
+                </p>
+            </div>
+            
+            <!-- Hong Kong Angle - Updated for New Verticals -->
+            <div class="mt-8 bg-gradient-to-br from-cyan-500/10 to-dark-800 rounded-2xl p-8 border border-cyan-500/30">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-12 h-12 bg-cyan-500/20 rounded-xl flex items-center justify-center">
+                        <span class="text-2xl">🇭🇰</span>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-bold text-cyan-400">Hong Kong & GBA as Launch Market</h4>
+                        <p class="text-sm text-gray-400">Local SMEs expanding overseas — we provide intelligence on unfamiliar markets</p>
+                    </div>
+                </div>
+                
+                <p class="text-gray-300 mb-4">HK and GBA companies face massive <span class="text-cyan-400 font-semibold">information asymmetry</span> when expanding internationally. While they know their home market intimately, they lack reliable civic intelligence on overseas destinations — especially in <span class="text-white font-medium">emerging markets and niche cities</span> where data is scarce.</p>
+                
+                <p class="text-gray-300 mb-6">We fill that gap by providing <span class="text-cyan-400 font-semibold">standardized, real-time civic health data</span> on smaller markets, second-tier cities, and regions that mainstream data providers don't cover well.</p>
+                
+                <div class="bg-cyan-500/5 border border-cyan-500/20 rounded-xl p-5 mb-6">
+                    <p class="text-sm text-gray-400 mb-2">Our Value to HK/GBA Companies:</p>
+                    <p class="text-cyan-400 font-medium">"You know Hong Kong. We tell you about everywhere else — especially the places where good data doesn't exist yet."</p>
+                </div>
+                
+                <!-- Multi-Lingual Advantage for HK/GBA -->
+                <div class="bg-blue-500/10 border border-blue-500/30 rounded-xl p-5 mb-6">
+                    <div class="flex items-start gap-3 mb-3">
+                        <div class="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h5 class="text-sm font-bold text-blue-400 mb-2">Built for Hong Kong & GBA's Multi-Lingual Reality</h5>
+                            <p class="text-xs text-gray-400 mb-2">
+                                Our AI natively processes <span class="text-white font-medium">Cantonese, Mandarin, and English</span> — including HK slang, colloquial Cantonese (粵語), and regional dialects. This isn't just translation; we understand <span class="text-blue-400 font-medium">cultural nuance and local context</span> that generic tools miss.
+                            </p>
+                            <p class="text-xs text-gray-500">
+                                <span class="text-blue-400 font-semibold">Why it matters:</span> When your HK-based F&B chain expands to Southeast Asia, we analyze sentiment in local languages (Thai, Bahasa, Vietnamese) — not just English summaries that miss 80% of real community conversations.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6 pt-4 border-t border-cyan-500/20 text-center">
+                    <p class="text-sm text-gray-400">HK/GBA SMEs expanding globally are <span class="text-cyan-400 font-semibold">already in HKSTP's ecosystem</span> — providing immediate, warm access to first customers.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION E: Competitive Analysis -->
+    <section class="py-24 bg-dark-800/30">
+        <div class="max-w-7xl mx-auto px-8">
+            <p class="text-neon-400 font-semibold tracking-widest uppercase text-sm mb-4">Section E</p>
+            <h2 class="text-4xl md:text-5xl font-bold mb-4">Competitive Analysis</h2>
+            <p class="text-xl text-gray-400 mb-6 max-w-3xl">We Don't Replace — We Complete.</p>
+            <p class="text-gray-500 mb-16 max-w-4xl">Your customers already invest millions in specialized tools — from <span class="text-white font-medium">alert platforms</span> (Dataminr, Placer.ai) to <span class="text-white font-medium">civic/marketing intelligence</span> (Brandwatch, Zencity, Meltwater) to <span class="text-white font-medium">consultancies</span> (McKinsey, Deloitte). We're not replacing these. We fill the <span class="text-neon-400 font-medium">geo-centric, location-based risk intelligence gap</span> that none of them cover.</p>
+
+            <!-- Competitive Matrix Table -->
+            <div class="overflow-x-auto mb-16">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="border-b border-dark-600">
+                            <th class="text-left py-4 px-4 font-semibold text-gray-400">Feature</th>
+                            <th class="text-center py-4 px-4 font-semibold text-neon-400 bg-neon-500/10">Our City Health</th>
+                            <th class="text-center py-4 px-4 font-semibold text-gray-400">Alert Platforms<br><span class="text-xs font-normal">(Dataminr, Placer.ai)</span></th>
+                            <th class="text-center py-4 px-4 font-semibold text-gray-400">Civic/Marketing Platforms<br><span class="text-xs font-normal">(Zencity, Brandwatch, Meltwater)</span></th>
+                            <th class="text-center py-4 px-4 font-semibold text-gray-400">GenAI Wrappers<br><span class="text-xs font-normal">(Custom GPTs, Claude Projects)</span></th>
+                            <th class="text-center py-4 px-4 font-semibold text-gray-400">Consultancies<br><span class="text-xs font-normal">(McKinsey, Deloitte)</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b border-dark-700/50">
+                            <td class="py-4 px-4 text-gray-300">Output Type</td>
+                            <td class="py-4 px-4 text-center text-neon-400 bg-neon-500/5 font-medium">Structured Database + Alerts + Custom PDF Reports</td>
+                            <td class="py-4 px-4 text-center text-gray-400">Real-time alerts & traffic analytics</td>
+                            <td class="py-4 px-4 text-center text-gray-400">Sentiment dashboards & reports</td>
+                            <td class="py-4 px-4 text-center text-gray-400">Conversational text summaries</td>
+                            <td class="py-4 px-4 text-center text-gray-400">One-time strategic PDF reports</td>
+                        </tr>
+                        <tr class="border-b border-dark-700/50">
+                            <td class="py-4 px-4 text-gray-300">Time Horizon</td>
+                            <td class="py-4 px-4 text-center text-neon-400 bg-neon-500/5 font-medium">Real-time + 5-year historical archive</td>
+                            <td class="py-4 px-4 text-center text-gray-400">Real-time only, limited history</td>
+                            <td class="py-4 px-4 text-center text-gray-400">Real-time with some historical</td>
+                            <td class="py-4 px-4 text-center text-gray-400">No memory between sessions</td>
+                            <td class="py-4 px-4 text-center text-gray-400">Point-in-time (6-12 mo lag)</td>
+                        </tr>
+                        <tr class="border-b border-dark-700/50">
+                            <td class="py-4 px-4 text-gray-300">Granularity</td>
+                            <td class="py-4 px-4 text-center text-neon-400 bg-neon-500/5 font-medium">City + District level</td>
+                            <td class="py-4 px-4 text-center text-gray-400">Incident/Store level</td>
+                            <td class="py-4 px-4 text-center text-gray-400">City/Topic level (entity-centric)</td>
+                            <td class="py-4 px-4 text-center text-gray-400">Variable, depends on prompt</td>
+                            <td class="py-4 px-4 text-center text-gray-400">City/Country level</td>
+                        </tr>
+                        <tr class="border-b border-dark-700/50">
+                            <td class="py-4 px-4 text-gray-300">Audit Ready</td>
+                            <td class="py-4 px-4 text-center bg-neon-500/5"><span class="text-neon-400 font-bold">✓</span> Full source citations</td>
+                            <td class="py-4 px-4 text-center"><span class="text-yellow-400">⚠</span> Some only</td>
+                            <td class="py-4 px-4 text-center"><span class="text-neon-400">✓</span> Yes</td>
+                            <td class="py-4 px-4 text-center"><span class="text-red-400">✗</span> Hallucinates facts</td>
+                            <td class="py-4 px-4 text-center"><span class="text-neon-400">✓</span> Yes</td>
+                        </tr>
+                        <tr>
+                            <td class="py-4 px-4 text-gray-300">Insight Level</td>
+                            <td class="py-4 px-4 text-center text-neon-400 bg-neon-500/5 font-medium">"Why" (causal context & predictions)</td>
+                            <td class="py-4 px-4 text-center text-gray-400">"What/Where" (events & movement)</td>
+                            <td class="py-4 px-4 text-center text-gray-400">"What" (brand/policy sentiment)</td>
+                            <td class="py-4 px-4 text-center text-gray-400">"What" (creative synthesis)</td>
+                            <td class="py-4 px-4 text-center text-gray-400">"Why" (deep but lagging)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- What Each Tool Can Answer - Expanded Comparison -->
+            <div class="bg-dark-900/50 rounded-2xl p-8 border border-dark-600/30 mb-16">
+                <h3 class="text-xl font-semibold mb-2 text-center">What Each Tool Can Answer</h3>
+                <p class="text-gray-400 text-sm text-center mb-8 max-w-3xl mx-auto">Different tools answer different questions. Only one answers all five.</p>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs">
+                        <thead>
+                            <tr class="border-b border-dark-600">
+                                <th class="text-left py-3 px-3 text-gray-400">Question for the Developer</th>
+                                <th class="text-center py-3 px-3 text-gray-400">Placer.ai</th>
+                                <th class="text-center py-3 px-3 text-gray-400">Dataminr</th>
+                                <th class="text-center py-3 px-3 text-gray-400">Brandwatch</th>
+                                <th class="text-center py-3 px-3 text-gray-400">Zencity</th>
+                                <th class="text-center py-3 px-3 text-gray-400">ChatGPT/Claude</th>
+                                <th class="text-center py-3 px-3 text-gray-400">McKinsey</th>
+                                <th class="text-center py-3 px-3 text-neon-400 bg-neon-500/10">Our City Health</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-dark-700/50">
+                                <td class="py-3 px-3 text-gray-300">"How many people are here?"</td>
+                                <td class="py-3 px-3 text-center"><span class="text-neon-400 font-bold">✓</span></td>
+                                <td class="py-3 px-3 text-center"><span class="text-gray-600">✗</span></td>
+                                <td class="py-3 px-3 text-center"><span class="text-gray-600">✗</span></td>
+                                <td class="py-3 px-3 text-center"><span class="text-gray-600">✗</span></td>
+                                <td class="py-3 px-3 text-center"><span class="text-gray-600">✗</span></td>
+                                <td class="py-3 px-3 text-center"><span class="text-gray-600">✗</span></td>
+                                <td class="py-3 px-3 text-center bg-neon-500/5"><span class="text-neon-400 font-bold">✓</span></td>
+                            </tr>
+                            <tr class="border-b border-dark-700/50">
+                                <td class="py-3 px-3 text-gray-300">"Did a disaster just happen?"</td>
+                                <td class="py-3 px-3 text-center"><span class="text-gray-600">✗</span></td>
+                                <td class="py-3 px-3 text-center"><span class="text-neon-400 font-bold">✓</span></td>
+                                <td class="py-3 px-3 text-center"><span class="text-yellow-400">⚠</span></td>
+                                <td class="py-3 px-3 text-center"><span class="text-yellow-400">⚠</span></td>
+                                <td class="py-3 px-3 text-center"><span class="text-gray-600">✗</span></td>
+                                <td class="py-3 px-3 text-center"><span class="text-gray-600">✗</span></td>
+                                <td class="py-3 px-3 text-center bg-neon-500/5"><span class="text-neon-400 font-bold">✓</span></td>
+                            </tr>
+                            <tr class="border-b border-dark-700/50">
+                                <td class="py-3 px-3 text-gray-300">"Is this neighborhood getting better or worse?"</td>
+                                <td class="py-3 px-3 text-center"><span class="text-gray-600">✗</span></td>
+                                <td class="py-3 px-3 text-center"><span class="text-gray-600">✗</span></td>
+                                <td class="py-3 px-3 text-center"><span class="text-gray-600">✗</span></td>
+                                <td class="py-3 px-3 text-center"><span class="text-yellow-400">⚠</span></td>
+                                <td class="py-3 px-3 text-center"><span class="text-gray-600">✗</span></td>
+                                <td class="py-3 px-3 text-center"><span class="text-yellow-400">⚠</span></td>
+                                <td class="py-3 px-3 text-center bg-neon-500/5"><span class="text-neon-400 font-bold">✓</span></td>
+                            </tr>
+                            <tr class="border-b border-dark-700/50">
+                                <td class="py-3 px-3 text-gray-300">"Why are tenants/customers leaving?"</td>
+                                <td class="py-3 px-3 text-center"><span class="text-gray-600">✗</span></td>
+                                <td class="py-3 px-3 text-center"><span class="text-gray-600">✗</span></td>
+                                <td class="py-3 px-3 text-center"><span class="text-yellow-400">⚠</span></td>
+                                <td class="py-3 px-3 text-center"><span class="text-gray-600">✗</span></td>
+                                <td class="py-3 px-3 text-center"><span class="text-red-400">⚠</span></td>
+                                <td class="py-3 px-3 text-center"><span class="text-neon-400">✓</span></td>
+                                <td class="py-3 px-3 text-center bg-neon-500/5"><span class="text-neon-400 font-bold">✓</span></td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 px-3 text-gray-300">"Will the community oppose our project?"</td>
+                                <td class="py-3 px-3 text-center"><span class="text-gray-600">✗</span></td>
+                                <td class="py-3 px-3 text-center"><span class="text-gray-600">✗</span></td>
+                                <td class="py-3 px-3 text-center"><span class="text-gray-600">✗</span></td>
+                                <td class="py-3 px-3 text-center"><span class="text-yellow-400">⚠</span></td>
+                                <td class="py-3 px-3 text-center"><span class="text-gray-600">✗</span></td>
+                                <td class="py-3 px-3 text-center"><span class="text-neon-400">✓</span></td>
+                                <td class="py-3 px-3 text-center bg-neon-500/5"><span class="text-neon-400 font-bold">✓</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-4 text-center text-xs text-gray-500">
+                    <span class="text-neon-400">✓</span> = Yes &nbsp;|&nbsp; <span class="text-yellow-400">⚠</span> = Partial (requires setup or has limitations) &nbsp;|&nbsp; <span class="text-gray-600">✗</span> = No
+                </div>
+                <p class="text-center text-gray-400 text-sm mt-6">
+                    <span class="text-neon-400 font-medium">Key Insight:</span> Each tool excels at its niche, but none combines <span class="text-white font-medium">geo-centric location intelligence</span>, <span class="text-white font-medium">real-time + historical data</span>, and <span class="text-white font-medium">predictive entitlement risk</span> in one pre-built package. That's our gap.
+                </p>
+            </div>
+
+            <!-- Why Entity-Centric and Government Tools Don't Fit Private Sector Location Risk -->
+            <div class="mt-16 bg-gradient-to-br from-blue-500/10 to-dark-800 rounded-2xl p-8 border border-blue-500/30">
+                <h3 class="text-2xl font-bold mb-2 text-center text-blue-400">Why Their Architecture Doesn't Fit Private Sector Location Risk</h3>
+                <p class="text-gray-400 text-center mb-8 max-w-3xl mx-auto">
+                    <span class="text-white font-medium">Brandwatch</span> is Entity-Centric (tracks keywords). <span class="text-white font-medium">Zencity</span> is built for governments. Neither architecture fits <span class="text-neon-400 font-medium">private sector location-based due diligence</span>.
+                </p>
+                
+                <div class="grid md:grid-cols-3 gap-6">
+                    <!-- 1. Entity vs Environment Problem -->
+                    <div class="bg-dark-900/50 rounded-xl p-6 border border-dark-600/30">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center text-lg">🎯</div>
+                            <h4 class="text-lg font-bold text-red-400">Entity-Centric vs. Geo-Centric</h4>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-4">
+                            <span class="text-white font-medium">Brandwatch is Entity-Centric:</span> You search "Starbucks" → it finds all mentions of "Starbucks" across the internet.
+                        </p>
+                        <div class="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-4">
+                            <p class="text-sm text-gray-300 mb-2"><span class="text-red-400 font-medium">The Architectural Limitation:</span></p>
+                            <p class="text-xs text-gray-300">Anti-gentrification protest outside Starbucks. Chants about "Rent Control" and "Capitalism." Nobody mentions "Starbucks."</p>
+                            <p class="text-xs text-red-400 mt-2 font-medium">Brandwatch sees: Nothing. The keyword wasn't used.</p>
+                        </div>
+                        <div class="bg-neon-500/10 border border-neon-500/30 rounded-lg p-4">
+                            <p class="text-sm text-neon-400 font-medium">We are Geo-Centric:</p>
+                            <p class="text-xs text-gray-300">Select a district or coordinates → we capture <em>all</em> sentiment about that location: rent protests, safety complaints, gentrification anger — regardless of what entities are mentioned.</p>
+                        </div>
+                        <p class="text-center text-red-400 font-medium text-sm mt-4">"Brandwatch tracks the Brand. We track the Battlefield."</p>
+                    </div>
+                    
+                    <!-- 2. Setup Tax (Economic Barrier) -->
+                    <div class="bg-dark-900/50 rounded-xl p-6 border border-dark-600/30">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-yellow-500/20 rounded-lg flex items-center justify-center text-lg">💰</div>
+                            <h4 class="text-lg font-bold text-yellow-400">The Setup Tax</h4>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-4">
+                            <span class="text-white font-medium">Brandwatch is an "Empty Box."</span> Powerful, but requires custom setup per city.
+                        </p>
+                        <div class="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 mb-4">
+                            <p class="text-sm text-gray-300 mb-2"><span class="text-yellow-400 font-medium">The Hidden Cost:</span></p>
+                            <p class="text-xs text-gray-300">Track "Civic Stability" across 50 global assets? You need complex boolean queries per city, per language. That's an <span class="text-yellow-400 font-medium">~HK$620K/year analyst</span> just to maintain queries.</p>
+                        </div>
+                        <div class="bg-neon-500/10 border border-neon-500/30 rounded-lg p-4">
+                            <p class="text-sm text-neon-400 font-medium">Our 12-Dimension Taxonomy:</p>
+                            <p class="text-xs text-gray-300">Pre-built. Pre-translated. Works out of the box for 1,000+ cities. No query engineers required.</p>
+                        </div>
+                        <p class="text-center text-yellow-400 font-medium text-sm mt-4">"Brandwatch is a DIY kit. We are the finished product."</p>
+                    </div>
+                    
+                    <!-- 3. Built for Governments ≠ Built for Developers -->
+                    <div class="bg-dark-900/50 rounded-xl p-6 border border-dark-600/30">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center text-lg">🏛️</div>
+                            <h4 class="text-lg font-bold text-purple-400">Government Tool ≠ Developer Tool</h4>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-4">
+                            <span class="text-white font-medium">Zencity is built for governments.</span> Its product is designed for public sector policy feedback, not private sector due diligence.
+                        </p>
+                        <div class="bg-purple-500/10 border border-purple-500/30 rounded-lg p-4 mb-4">
+                            <p class="text-sm text-gray-300 mb-2"><span class="text-purple-400 font-medium">Different Use Cases:</span></p>
+                            <p class="text-xs text-gray-300">Governments need to understand citizen satisfaction and policy sentiment. Developers need to predict if a community will <em>block their project</em>.</p>
+                            <p class="text-xs text-purple-400 mt-2 font-medium">A tool built for governments isn't designed for private developer risk assessment.</p>
+                        </div>
+                        <div class="bg-neon-500/10 border border-neon-500/30 rounded-lg p-4">
+                            <p class="text-sm text-neon-400 font-medium">We are built for private sector location risk:</p>
+                            <p class="text-xs text-gray-300">Is the neighborhood hostile to development? Will residents fight my project? Quantify the "Entitlement Risk" before you bid.</p>
+                        </div>
+                        <p class="text-center text-purple-400 font-medium text-sm mt-4">"Zencity serves governments. We serve developers and operators."</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Regulatory Barriers to Entry -->
+            <div class="mt-16 bg-dark-900/50 rounded-2xl p-8 border border-dark-600/30">
+                <h3 class="text-xl font-semibold mb-6 text-center">Regulatory Barriers to Entry</h3>
+                <p class="text-gray-400 text-sm text-center mb-8 max-w-2xl mx-auto">Unlike consumer data plays, civic intelligence requires navigating complex cross-border compliance — creating significant moats for early entrants.</p>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="bg-dark-700/30 rounded-xl p-5 border border-dark-600/30">
+                        <div class="text-2xl mb-3">🇪🇺</div>
+                        <h4 class="font-semibold text-white mb-2">GDPR (Europe)</h4>
+                        <p class="text-xs text-gray-400">Strict consent and data processing rules. Our aggregation-only model (no PII collection) ensures compliance while competitors struggle with individual-level tracking.</p>
+                    </div>
+                    <div class="bg-dark-700/30 rounded-xl p-5 border border-dark-600/30">
+                        <div class="text-2xl mb-3">🇨🇳</div>
+                        <h4 class="font-semibold text-white mb-2">PIPL (China) & DSL</h4>
+                        <p class="text-xs text-gray-400">Cross-border data transfer restrictions. Our HK-based infrastructure enables GBA analysis while respecting mainland data sovereignty requirements.</p>
+                    </div>
+                    <div class="bg-dark-700/30 rounded-xl p-5 border border-dark-600/30">
+                        <div class="text-2xl mb-3">🌏</div>
+                        <h4 class="font-semibold text-white mb-2">Regional Variations</h4>
+                        <p class="text-xs text-gray-400">PDPA (Singapore), APPI (Japan), LGPD (Brazil) — each market has unique rules. Early compliance investment creates 12-18 month head-start vs. new entrants.</p>
+                    </div>
+                </div>
+                <div class="mt-6 text-center">
+                    <p class="text-xs text-gray-500 bg-dark-700/30 inline-block px-4 py-2 rounded-full">Compliance complexity = competitive moat. We're building this foundation from Day 1.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION F: Business Model & Milestones -->
+    <section class="py-24">
+        <div class="max-w-7xl mx-auto px-8">
+            <p class="text-neon-400 font-semibold tracking-widest uppercase text-sm mb-4">Section F</p>
+            <h2 class="text-4xl md:text-5xl font-bold mb-4">Business Model & Milestones</h2>
+            <p class="text-xl text-gray-400 mb-16 max-w-3xl">A Scalable DaaS (Data-as-a-Service) Engine.</p>
+
+            <!-- Revenue Tiers - 4 Tier Model -->
+            <p class="text-center text-gray-400 text-sm mb-6">All prices in <span class="text-neon-400 font-semibold">Hong Kong Dollars (HKD)</span></p>
+            <div class="grid md:grid-cols-4 gap-6 mb-16">
+                <!-- Free Tier -->
+                <div class="bg-dark-800/50 rounded-2xl p-6 border border-dark-600/30 hover:border-gray-500/30 transition-colors">
+                    <div class="text-3xl font-bold text-gray-400 mb-2">Free</div>
+                    <h3 class="text-lg font-bold mb-3">Explorer</h3>
+                    <p class="text-gray-500 text-xs mb-4">Try the platform</p>
+                    <div class="text-xs text-gray-500 border-t border-dark-600/50 pt-4">
+                        <ul class="space-y-1.5">
+                            <li>• <span class="text-white">100 cities</span> maximum</li>
+                            <li>• <span class="text-white">City-level scores only</span> (no district)</li>
+                            <li>• Basic portfolio management</li>
+                            <li>• Basic multi-city comparison</li>
+                            <li>• No custom intelligence reports</li>
+                            <li>• No alerts</li>
+                            <li>• Community support</li>
+                        </ul>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-dark-600/30">
+                        <p class="text-[10px] text-gray-600">Lead generation & market validation</p>
+                    </div>
+                </div>
+                
+                <!-- Professional Tier -->
+                <div class="bg-gradient-to-br from-blue-500/10 to-dark-800/50 rounded-2xl p-6 border border-blue-500/30 relative">
+                    <div class="absolute top-3 right-3 bg-blue-500 text-dark-900 text-[10px] font-bold px-2 py-0.5 rounded">STARTER</div>
+                    <div class="text-3xl font-bold text-blue-400 mb-2">HK$1,500<span class="text-sm text-gray-500">/mo</span></div>
+                    <h3 class="text-lg font-bold mb-3">Professional</h3>
+                    <p class="text-gray-500 text-xs mb-4">For growing teams</p>
+                    <div class="text-xs text-gray-500 border-t border-dark-600/50 pt-4">
+                        <ul class="space-y-1.5">
+                            <li>• <span class="text-white">Unlimited cities</span></li>
+                            <li>• <span class="text-white">District-level scores</span> for 5 cities</li>
+                            <li>• Full portfolio management</li>
+                            <li>• <span class="text-white">Email alerts</span> for selected cities/districts</li>
+                            <li>• Basic multi-city comparison</li>
+                            <li>• Basic predictive analytics (dashboard)</li>
+                            <li>• No custom intelligence reports (PDF)</li>
+                            <li>• Priority support</li>
+                        </ul>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-dark-600/30">
+                        <p class="text-[10px] text-gray-600">HK$18,000/yr billed annually</p>
+                    </div>
+                </div>
+                
+                <!-- Enterprise Tier -->
+                <div class="bg-gradient-to-br from-neon-500/10 to-dark-800/50 rounded-2xl p-6 border border-neon-500/30 relative">
+                    <div class="absolute top-3 right-3 bg-neon-500 text-dark-900 text-[10px] font-bold px-2 py-0.5 rounded">POPULAR</div>
+                    <div class="text-3xl font-bold text-neon-400 mb-2">HK$50,000<span class="text-sm text-gray-500">/yr</span></div>
+                    <h3 class="text-lg font-bold mb-3">Enterprise</h3>
+                    <p class="text-gray-500 text-xs mb-4">Full-featured intelligence</p>
+                    <div class="text-xs text-gray-500 border-t border-dark-600/50 pt-4">
+                        <ul class="space-y-1.5">
+                            <li>• <span class="text-white">Unlimited cities</span></li>
+                            <li>• <span class="text-white">Unlimited district-level scores</span></li>
+                            <li>• Full portfolio, alerts, comparison</li>
+                            <li>• <span class="text-white">Custom Intelligence Reports</span> (20+ pages)</li>
+                            <li>• Predictive & Analytical reports</li>
+                            <li>• Email + dashboard alerts</li>
+                            <li>• <span class="text-white">Limited API access</span> (usage cap)</li>
+                            <li>• Dedicated CSM</li>
+                        </ul>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-dark-600/30">
+                        <p class="text-[10px] text-gray-600">~HK$4,200/mo — most popular choice</p>
+                    </div>
+                </div>
+                
+                <!-- Data License Tier -->
+                <div class="bg-dark-800/50 rounded-2xl p-6 border border-dark-600/30 hover:border-purple-500/30 transition-colors">
+                    <div class="text-3xl font-bold text-purple-400 mb-2">HK$100,000<span class="text-sm text-gray-500">/yr</span></div>
+                    <h3 class="text-lg font-bold mb-3">Data License</h3>
+                    <p class="text-gray-500 text-xs mb-4">Full API + integrations</p>
+                    <div class="text-xs text-gray-500 border-t border-dark-600/50 pt-4">
+                        <ul class="space-y-1.5">
+                            <li>• <span class="text-white">Everything in Enterprise</span></li>
+                            <li>• <span class="text-white">Full API firehose</span></li>
+                            <li>• Unlimited API calls</li>
+                            <li>• All 1,000+ cities + districts</li>
+                            <li>• Real-time JSON feed</li>
+                            <li>• SLA guarantees</li>
+                            <li>• White-label option</li>
+                            <li>• Dedicated CSM</li>
+                        </ul>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-dark-600/30">
+                        <p class="text-[10px] text-gray-600">Quant teams, data integrations, resellers</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Unit Economics Context -->
+            <div class="bg-gradient-to-r from-neon-500/10 to-transparent rounded-xl p-6 border-l-4 border-neon-500 mb-16">
+                <p class="text-lg text-gray-300 font-medium mb-2">Unit Economics: Why These Margins Work</p>
+                <div class="grid md:grid-cols-3 gap-6 text-sm">
+                    <div>
+                        <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">Data Infrastructure</p>
+                        <p class="text-neon-400 font-bold text-xl">HK$3,900-15,600<span class="text-gray-500 text-sm font-normal">/mo</span></p>
+                        <p class="text-gray-500 text-xs">GDELT (free) + NewsAPI (~HK$3,500) + Reddit API (~HK$7,800)</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">Compute / LLM Costs</p>
+                        <p class="text-blue-400 font-bold text-xl">Variable</p>
+                        <p class="text-gray-500 text-xs">Scales with usage; HKSTP compute support critical</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">Gross Margin Target</p>
+                        <p class="text-purple-400 font-bold text-xl">70-80%</p>
+                        <p class="text-gray-500 text-xs">Typical for SaaS data products at scale</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gantt Chart -->
+            <div class="bg-dark-900/50 rounded-2xl p-8 border border-dark-600/30">
+                <h3 class="text-xl font-semibold mb-2 text-center">12-Month Execution Roadmap</h3>
+                <p class="text-gray-500 text-sm text-center mb-8">From prototype to global platform</p>
+                <div class="grid grid-cols-4 gap-4 mb-6 text-center text-sm font-semibold text-gray-400">
+                    <div class="bg-dark-700/50 rounded-lg py-2">Q1</div>
+                    <div class="bg-dark-700/50 rounded-lg py-2">Q2</div>
+                    <div class="bg-dark-700/50 rounded-lg py-2">Q3</div>
+                    <div class="bg-dark-700/50 rounded-lg py-2">Q4</div>
+                </div>
+                <div class="space-y-4">
+                    <!-- Q1 -->
+                    <div class="grid grid-cols-4 gap-4 items-start">
+                        <div class="bg-neon-500/20 border border-neon-500/30 rounded-lg p-4">
+                            <h4 class="font-bold text-neon-400 mb-2">Scale & Team</h4>
+                            <ul class="text-xs text-gray-400 space-y-1.5">
+                                <li class="flex items-start gap-1.5"><span class="text-neon-400 mt-0.5">▸</span> Expand to <span class="text-white font-medium">1,000+ cities</span></li>
+                                <li class="flex items-start gap-1.5"><span class="text-neon-400 mt-0.5">▸</span> Scale to <span class="text-white font-medium">380,000+ sources</span></li>
+                                <li class="flex items-start gap-1.5"><span class="text-neon-400 mt-0.5">▸</span> Develop <span class="text-white font-medium">Predictive Engine v1</span>, solidify 12-dimensional proprietary scoring engine</li>
+                                <li class="flex items-start gap-1.5"><span class="text-neon-400 mt-0.5">▸</span> Hire BD Lead + Data Engineer</li>
+                                <li class="flex items-start gap-1.5"><span class="text-neon-400 mt-0.5">▸</span> Interviews for quantified insights</li>
+                            </ul>
+                            <div class="mt-3 pt-2 border-t border-neon-500/20 text-[10px] text-gray-500">
+                                Initial testing of predictive risk models
+                            </div>
+                        </div>
+                        <div class="col-span-3 h-2 bg-dark-700/30 rounded-full overflow-hidden mt-8">
+                            <div class="h-full w-1/4 bg-gradient-to-r from-neon-500 to-neon-400 rounded-full"></div>
+                        </div>
+                    </div>
+                    <!-- Q2 -->
+                    <div class="grid grid-cols-4 gap-4 items-start">
+                        <div class="opacity-50"></div>
+                        <div class="bg-blue-500/20 border border-blue-500/30 rounded-lg p-4">
+                            <h4 class="font-bold text-blue-400 mb-2">Product Development</h4>
+                            <ul class="text-xs text-gray-400 space-y-1.5">
+                                <li class="flex items-start gap-1.5"><span class="text-blue-400 mt-0.5">▸</span> <span class="text-white font-medium">Backtesting Validation</span> (5-year historical)</li>
+                                <li class="flex items-start gap-1.5"><span class="text-blue-400 mt-0.5">▸</span> <span class="text-white font-medium">Corporate Dashboard</span> v1.0</li>
+                                <li class="flex items-start gap-1.5"><span class="text-blue-400 mt-0.5">▸</span> Custom Report generation testing</li>
+                                <li class="flex items-start gap-1.5"><span class="text-blue-400 mt-0.5">▸</span> Solidify predictive analytics capabilities</li>
+                                <li class="flex items-start gap-1.5"><span class="text-blue-400 mt-0.5">▸</span> Basic pilot testing (2-3 regions and city cluster) and testing pilot success criteria</li>
+                            </ul>
+                            <div class="mt-3 pt-2 border-t border-blue-500/20 text-[10px] text-gray-500">
+                                Full watchlist, alerts, and comparison features
+                            </div>
+                        </div>
+                        <div class="col-span-2 h-2 bg-dark-700/30 rounded-full overflow-hidden mt-8">
+                            <div class="h-full w-1/3 bg-gradient-to-r from-blue-500 to-blue-400 rounded-full"></div>
+                        </div>
+                    </div>
+                    <!-- Q3 -->
+                    <div class="grid grid-cols-4 gap-4 items-start">
+                        <div class="col-span-2 opacity-50"></div>
+                        <div class="bg-purple-500/20 border border-purple-500/30 rounded-lg p-4">
+                            <h4 class="font-bold text-purple-400 mb-2">Beta Launch</h4>
+                            <ul class="text-xs text-gray-400 space-y-1.5">
+                                <li class="flex items-start gap-1.5"><span class="text-purple-400 mt-0.5">▸</span> Launch <span class="text-white font-medium">API + Dashboard Beta</span></li>
+                                <li class="flex items-start gap-1.5"><span class="text-purple-400 mt-0.5">▸</span> Outreach to small organizations</li>
+                                <li class="flex items-start gap-1.5"><span class="text-purple-400 mt-0.5">▸</span> Early adopter feedback loop</li>
+                                <li class="flex items-start gap-1.5"><span class="text-purple-400 mt-0.5">▸</span> Pricing validation & iteration</li>
+                                <li class="flex items-start gap-1.5"><span class="text-purple-400 mt-0.5">▸</span> Pilot testing for 10 beta users</li>
+                            </ul>
+                            <div class="mt-3 pt-2 border-t border-purple-500/20 text-[10px] text-gray-500">
+                                Target: 10 beta users (startups, SMEs, NGOs)
+                            </div>
+                        </div>
+                        <div class="h-2 bg-dark-700/30 rounded-full overflow-hidden mt-8">
+                            <div class="h-full w-1/2 bg-gradient-to-r from-purple-500 to-purple-400 rounded-full"></div>
+                        </div>
+                    </div>
+                    <!-- Q4 -->
+                    <div class="grid grid-cols-4 gap-4 items-start">
+                        <div class="col-span-3 opacity-50"></div>
+                        <div class="bg-yellow-500/20 border border-yellow-500/30 rounded-lg p-4">
+                            <h4 class="font-bold text-yellow-400 mb-2">Commercial Launch</h4>
+                            <ul class="text-xs text-gray-400 space-y-1.5">
+                                <li class="flex items-start gap-1.5"><span class="text-yellow-400 mt-0.5">▸</span> <span class="text-white font-medium">Full commercial availability</span></li>
+                                <li class="flex items-start gap-1.5"><span class="text-yellow-400 mt-0.5">▸</span> Enterprise sales outreach</li>
+                                <li class="flex items-start gap-1.5"><span class="text-yellow-400 mt-0.5">▸</span> First paid contracts signed</li>
+                            </ul>
+                            <div class="mt-3 pt-2 border-t border-yellow-500/20 text-[10px] text-gray-500">
+                                Target: 10+ enterprise customers, 15+ case studies
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION G: Core Team -->
+    <section class="py-24 bg-dark-800/30">
+        <div class="max-w-7xl mx-auto px-8">
+            <p class="text-neon-400 font-semibold tracking-widest uppercase text-sm mb-4">Section G</p>
+            <h2 class="text-4xl md:text-5xl font-bold mb-4">Core Team</h2>
+            <p class="text-xl text-gray-400 mb-16 max-w-3xl">An AI-Native Founder with High Technical Velocity.</p>
+
+            <!-- Founder Full Profile -->
+            <div class="bg-gradient-to-br from-neon-500/10 to-dark-800 rounded-3xl p-8 md:p-12 border border-neon-500/30 mb-16">
+                <div class="grid md:grid-cols-3 gap-12">
+                    <!-- Profile Column -->
+                    <div class="text-center md:text-left">
+                        <div class="w-40 h-40 rounded-full overflow-hidden mx-auto md:mx-0 mb-6 border-4 border-neon-500/50 shadow-xl shadow-neon-500/20">
+                            <img src="docs/cayden_auyang.jpg" alt="Cayden Auyang" class="w-full h-full object-cover">
+                        </div>
+                        <h3 class="text-3xl font-bold mb-2">Cayden Auyang</h3>
+                        <p class="text-neon-400 font-bold text-lg mb-3">Architect & Founder</p>
+                        
+                        <div class="space-y-2 text-sm text-gray-400 mb-6">
+                            <p><span class="text-white font-medium">Based:</span> Hong Kong / Connecticut, USA</p>
+                            <p><span class="text-white font-medium">Education:</span> Pomfret School</p>
+                            <p class="text-xs text-neon-400">Head of School Scholar</p>
+                        </div>
+
+                        <div class="space-y-1 text-xs text-gray-500">
+                            <p class="flex items-center justify-center md:justify-start gap-2">
+                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+                                </svg>
+                                caydenauyang@gmail.com
+                            </p>
+                            <p class="flex items-center justify-center md:justify-start gap-2">
+                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
+                                </svg>
+                                +1 (646) 889-4501
+                            </p>
+                            <p class="flex items-center justify-center md:justify-start gap-2">
+                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
+                                </svg>
+                                +852 9260 9370
+                            </p>
+                            <p class="flex items-center justify-center md:justify-start gap-2">
+                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                </svg>
+                                github.com/CaydenAuyang
+                            </p>
+                        </div>
+
+                        <div class="mt-6 pt-6 border-t border-dark-600/30">
+                            <p class="text-xs text-gray-400 mb-2"><span class="text-white font-medium">Languages:</span></p>
+                            <div class="flex flex-wrap gap-2 justify-center md:justify-start">
+                                <span class="px-2 py-1 bg-neon-500/20 text-neon-400 rounded text-xs">English (Native)</span>
+                                <span class="px-2 py-1 bg-neon-500/20 text-neon-400 rounded text-xs">Cantonese (Native)</span>
+                                <span class="px-2 py-1 bg-blue-500/20 text-blue-400 rounded text-xs">Mandarin (Fluent)</span>
+                                <span class="px-2 py-1 bg-purple-500/20 text-purple-400 rounded text-xs">Spanish (Conversational)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Key Capabilities & Experience Column (spans 2 columns) -->
+                    <div class="md:col-span-2 space-y-5">
+                        <!-- Super-Dev Advantage -->
+                        <div class="bg-dark-900/50 rounded-2xl p-5 border border-neon-500/30">
+                            <div class="flex items-start gap-4">
+                                <div class="w-10 h-10 bg-neon-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-5 h-5 text-neon-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold mb-1 text-neon-400">The "Super-Dev" Advantage</h4>
+                                    <p class="text-gray-400 text-sm">Expert in <span class="text-white font-medium">Agentic AI Workflows</span> (Cursor + Google Antigravity). Capable of executing engineering tasks at <span class="text-neon-400 font-semibold">5x the speed</span> of a traditional developer, keeping burn rate near zero. Founded a productivity consulting business and automation group, self-developed AI + automation projects like a macOS GUI agent and browser-based games ranging from FPS to educational games.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Civic AI Group -->
+                        <div class="bg-dark-900/50 rounded-2xl p-5 border border-purple-500/30">
+                            <div class="flex items-start gap-4">
+                                <div class="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold mb-1 text-purple-400">Civic AI Group — Founder & President</h4>
+                                    <p class="text-gray-400 text-sm">Founded a school-wide group with <span class="text-white font-medium">20+ students and advisors</span> dedicated to leveraging AI to automate workflows for school faculty and nearby communities. Serving <span class="text-white font-medium">4 diverse departments</span> with 10+ cases.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- AI Simply -->
+                        <div class="bg-dark-900/50 rounded-2xl p-5 border border-blue-500/30">
+                            <div class="flex items-start gap-4">
+                                <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold mb-1 text-blue-400">AI Simply — Founder</h4>
+                                    <p class="text-gray-400 text-sm">Founded productivity consulting business that weaves best-in-class AI tools with custom code pipelines to automate and streamline workflows of SMEs and nonprofits, cutting their tedious tasks and allowing for the reclaiming of hundreds of hours. Working with clients from <span class="text-white font-medium">7 different industries</span>.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Wisers -->
+                        <div class="bg-dark-900/50 rounded-2xl p-5 border border-cyan-500/30">
+                            <div class="flex items-start gap-4">
+                                <div class="w-10 h-10 bg-cyan-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold mb-1 text-cyan-400">Wisers Information Limited — AI Engineering Intern</h4>
+                                    <p class="text-gray-400 text-sm">Self-developed a multi-step program that scrapes for thousands of posts on <span class="text-white font-medium">RedNote</span> and provides an in-depth analysis of the latest fashion trends and market strategies of four major sportswear brands through LLM analysis and API bridging. The analysis is granular, covering aesthetic choices, industry background, financial performance, customer sentiment, and future recommendations.<br><br>Self-developed a macOS-based, window-targeted GUI automation agent that combines computer vision (YOLO + OCR) with LLM reasoning to perform autonomous, goal-driven interactions across arbitrary apps and websites on a UI.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Commitment -->
+                        <div class="bg-dark-900/50 rounded-2xl p-5 border border-orange-500/30">
+                            <div class="flex items-start gap-4">
+                                <div class="w-10 h-10 bg-orange-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold mb-1 text-orange-400">The Commitment</h4>
+                                    <p class="text-gray-400 text-sm">Dedicated <span class="text-orange-400 font-semibold">Gap Year (2027)</span>. Will focus <span class="text-white font-medium">100% full-time</span> on scaling the venture post-graduation, with commitment to achieving product-market fit and first revenue.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Additional Accomplishments -->
+                        <div class="bg-dark-900/50 rounded-2xl p-5 border border-dark-600/30">
+                            <h4 class="font-bold mb-3 text-gray-300 text-sm">Additional Leadership & Accomplishments</h4>
+                            <div class="grid md:grid-cols-2 gap-3 text-xs text-gray-400">
+                                <div>
+                                    <p class="text-white font-medium mb-1">Academic</p>
+                                    <ul class="space-y-1">
+                                        <li>• Head of School Scholar (Highest Academic Award)</li>
+                                        <li>• SAILING Leader (Student AI Literacy Group)</li>
+                                        <li>• Board Member, Advancement Student Board</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <p class="text-white font-medium mb-1">Athletics & Arts</p>
+                                    <ul class="space-y-1">
+                                        <li>• Captain of Varsity Squash Team</li>
+                                        <li>• Tri-Varsity Athlete (Cross Country, Squash, Track)</li>
+                                        <li>• Drummer & Percussionist, Hon Contemporary Music Band</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Key Advisor -->
+            <div class="mt-16 pt-16 border-t border-dark-600/30">
+                <h3 class="text-2xl font-bold mb-8 text-center">Key Advisor</h3>
+                <div class="max-w-3xl mx-auto">
+                    <div class="bg-gradient-to-br from-yellow-500/10 to-dark-800 rounded-2xl p-8 border border-yellow-500/30">
+                        <div class="flex flex-col md:flex-row items-center gap-8">
+                            <div class="text-center md:text-left flex-shrink-0">
+                                <div class="w-24 h-24 rounded-full overflow-hidden mx-auto md:mx-0 mb-4 border-2 border-yellow-500/30">
+                                    <img src="docs/alvin_mok.jpeg" alt="Alvin Mok" class="w-full h-full object-cover">
+                                </div>
+                                <h4 class="text-xl font-bold text-white">Alvin Mok</h4>
+                                <p class="text-yellow-400 font-semibold text-sm">Key Advisor</p>
+                            </div>
+                            <div class="flex-grow space-y-3">
+                                <div>
+                                    <p class="text-white font-medium">Chief Information and Data Officer</p>
+                                    <p class="text-gray-400 text-sm">Select Equity Group, L.P. (New York)</p>
+                                </div>
+                                <div class="text-sm text-gray-400">
+                                    <p class="mb-2"><span class="text-white font-medium">Former Roles:</span></p>
+                                    <ul class="space-y-1 text-xs">
+                                        <li>• Head of Global Platform & Insights, Orbis Investments (USD $25B+ AUM)</li>
+                                        <li>• Engagement Manager, McKinsey & Company (Asia/China focus)</li>
+                                        <li>• Program Manager, Microsoft</li>
+                                    </ul>
+                                </div>
+                                <div class="text-sm text-gray-400">
+                                    <p class="mb-2"><span class="text-white font-medium">Education:</span></p>
+                                    <ul class="space-y-1 text-xs">
+                                        <li>• <span class="text-yellow-400">Harvard Business School</span> — MBA, Baker Scholar (Top 5%)</li>
+                                        <li>• University of Toronto — BASc Computer Engineering (Highest Cumulative Average, 2003)</li>
+                                    </ul>
+                                </div>
+                                <p class="text-xs text-gray-500 pt-2 border-t border-dark-600/30">
+                                    17+ years leading data, analytics, AI, and technology teams at top-tier hedge funds and consultancies. Brings world-class expertise in alternative data strategy and enterprise-scale product development.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION H: Why HKSTP -->
+    <section class="py-24">
+        <div class="max-w-7xl mx-auto px-8">
+            <p class="text-neon-400 font-semibold tracking-widest uppercase text-sm mb-4">Section H</p>
+            <h2 class="text-4xl md:text-5xl font-bold mb-4">Why HKSTP</h2>
+            <p class="text-xl text-gray-400 mb-16 max-w-3xl">Strategic Alignment.</p>
+
+            <!-- The Ask -->
+            <h3 class="text-2xl font-bold mb-8">The "Ask" — Why We Need You</h3>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+                <div class="bg-dark-800/50 rounded-2xl p-6 border border-dark-600/30 hover:border-neon-500/30 transition-colors">
+                    <div class="w-12 h-12 bg-neon-500/10 rounded-xl flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-neon-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-bold mb-2">Compute Infrastructure</h4>
+                    <p class="text-gray-400 text-sm">Scoring <span class="text-neon-400 font-semibold">1,000+ cities</span> daily requires GPU inference at scale. HKSTP's supercomputing support is critical.</p>
+                </div>
+                <div class="bg-dark-800/50 rounded-2xl p-6 border border-dark-600/30 hover:border-blue-500/30 transition-colors">
+                    <div class="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-bold mb-2">Ecosystem Access</h4>
+                    <p class="text-gray-400 text-sm">HKSTP's network of <span class="text-blue-400 font-semibold">HK & GBA companies expanding globally</span> provides immediate warm introductions to first customers.</p>
+                </div>
+                <div class="bg-dark-800/50 rounded-2xl p-6 border border-dark-600/30 hover:border-purple-500/30 transition-colors">
+                    <div class="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-bold mb-2">Compliance Guidance</h4>
+                    <p class="text-gray-400 text-sm">Navigating <span class="text-purple-400 font-semibold">PIPL, GDPR, and 50+ jurisdictions</span> requires HKSTP's legal expertise.</p>
+                </div>
+                <div class="bg-gradient-to-br from-orange-500/10 to-dark-800/50 rounded-2xl p-6 border border-orange-500/30 hover:border-orange-500/50 transition-colors">
+                    <div class="w-12 h-12 bg-orange-500/10 rounded-xl flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-bold mb-2">Data Partnerships</h4>
+                    <p class="text-gray-400 text-sm">Access to HKSTP's <span class="text-orange-400 font-semibold">enterprise data partnerships</span> for licensed API access (Reddit, regional sources, government feeds).</p>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="text-center py-16 border-t border-dark-600/30">
+                <p class="text-3xl md:text-4xl font-bold mb-4">Ready to Build the Global Standard.</p>
+                <p class="text-gray-400 mb-4 text-lg">Geo-centric location intelligence for capital allocation decisions.</p>
+                <p class="text-neon-400 mb-8">1,000+ cities. 380,000+ sources. 12 dimensions. One platform.</p>
+                <div class="inline-flex items-center gap-2 bg-neon-500 text-dark-900 font-bold px-8 py-4 rounded-full hover:bg-neon-400 transition-colors cursor-pointer">
+                    <span>Contact: caydenauyang@gmail.com</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-dark-700/50">
+        <div class="max-w-7xl mx-auto px-8 flex justify-between items-center text-sm text-gray-500">
+            <span>Our City Health — Confidential Application</span>
+            <span>HKSTP Ideation Programme 2026</span>
+        </div>
+    </footer>
+
+</body>
+</html>
