@@ -15,12 +15,8 @@
       // Set CESIUM_BASE_URL before any module scripts load.
       // On GitHub Pages the app is served from a sub-path, so Cesium's
       // workers and imagery assets must use that same sub-path prefix.
-      (function() {
-        var base = window.location.pathname.startsWith('/Our-City-Health---Sentiment-Project/')
-          ? '/Our-City-Health---Sentiment-Project/'
-          : '/';
-        window.CESIUM_BASE_URL = base + 'cesium/';
-      })();
+      // Relative path always resolves correctly on GitHub Pages sub-paths.
+      window.CESIUM_BASE_URL = './cesium/';
     </script>
     <script>
       // GitHub Pages SPA redirect handler — decode the 404.html redirect

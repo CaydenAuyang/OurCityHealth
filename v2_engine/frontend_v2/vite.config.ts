@@ -2,22 +2,23 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import cesium from "vite-plugin-cesium";
 
-const REPO = "Our-City-Health---Sentiment-Project";
-
 export default defineConfig(({ mode }) => {
-  const base = mode === "production" ? `/${REPO}/` : "/";
+  const isProd = mode === "production";
 
   return {
-    base,
+    // Relative base means asset URLs become "./assets/..." instead of
+    // "/Our-City-Health---Sentiment-Project/assets/...". This is the most
+    // reliable approach for GitHub Pages sub-directory deployments because
+    // the URLs always resolve correctly relative to index.html.
+    base: isProd ? "./" : "/",
     plugins: [
       react(),
-      // Default options — lets the plugin copy Cesium static assets to dist/cesium/
       cesium(),
     ],
-    // Override vite-plugin-cesium's hardcoded CESIUM_BASE_URL="/cesium/" so
-    // Cesium workers resolve under the GitHub Pages sub-path.
+    // Override vite-plugin-cesium's hardcoded CESIUM_BASE_URL="/cesium/"
+    // so Cesium workers load relative to the page (works on any sub-path).
     define: {
-      CESIUM_BASE_URL: JSON.stringify(`${base}cesium/`),
+      CESIUM_BASE_URL: JSON.stringify(isProd ? "./cesium/" : "/cesium/"),
     },
     server: {
       port: 5173,
