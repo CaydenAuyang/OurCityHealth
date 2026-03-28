@@ -163,19 +163,32 @@ async def ensure_timescale_schema() -> None:
 # Load cities from PostGIS
 # ------------------------------------------------------------------ #
 
-async def load_cities(limit: Optional[int] = None) -> list[CityCoord]:
+async def load_cities(
+    limit: Optional[int] = None,
+    city_name: Optional[str] = None,
+) -> list[CityCoord]:
     """Read city coordinates from the cities table."""
-    q = """
-        SELECT id::text, name, ST_Y(location) AS lat, ST_X(location) AS lng
-        FROM cities
-        ORDER BY population DESC
-    """
-    if limit:
-        q += f" LIMIT {int(limit)}"
-
-    async with async_session_factory() as session:
-        result = await session.execute(text(q))
-        rows = result.fetchall()
+    if city_name:
+        q = """
+            SELECT id::text, name, ST_Y(location) AS lat, ST_X(location) AS lng
+            FROM cities
+            WHERE LOWER(name) = :cname
+            LIMIT 1
+        """
+        async with async_session_factory() as session:
+            result = await session.execute(text(q), {"cname": city_name.strip().lower()})
+            rows = result.fetchall()
+    else:
+        q = """
+            SELECT id::text, name, ST_Y(location) AS lat, ST_X(location) AS lng
+            FROM cities
+            ORDER BY population DESC
+        """
+        if limit:
+            q += f" LIMIT {int(limit)}"
+        async with async_session_factory() as session:
+            result = await session.execute(text(q))
+            rows = result.fetchall()
 
     cities = [CityCoord(city_id=r[0], name=r[1], lat=r[2], lng=r[3]) for r in rows]
     logger.info("Loaded %d cities from database", len(cities))
@@ -499,6 +512,7 @@ async def run_pipeline(
     start_date: str,
     end_date: str,
     limit: Optional[int] = None,
+    city_name: Optional[str] = None,
     radius_km: float = 50.0,
     chunk_months: int = 3,
     dry_run: bool = False,
@@ -512,6 +526,8 @@ async def run_pipeline(
     print(f"  Date range : {start_date} \u2192 {end_date}")
     print(f"  Radius     : {radius_km} km")
     print(f"  Chunk size : {chunk_months} month(s)")
+    if city_name:
+        print(f"  City filter: {city_name}")
     if limit:
         print(f"  City limit : {limit}")
     if dry_run:
@@ -525,7 +541,7 @@ async def run_pipeline(
     await ensure_timescale_schema()
 
     # 2 — Load cities
-    cities = await load_cities(limit=limit)
+    cities = await load_cities(limit=limit, city_name=city_name)
     if not cities:
         logger.error("No cities in database. Run v2_ingest_geo.py first.")
         return
@@ -684,6 +700,10 @@ def main():
         help="End date exclusive (YYYY-MM-DD)",
     )
     parser.add_argument(
+        "--city", default=None,
+        help="Ingest only this city (match by name, case-insensitive).",
+    )
+    parser.add_argument(
         "--limit", type=int, default=None,
         help="Max cities to process (default: all)",
     )
@@ -709,6 +729,7 @@ def main():
         start_date=args.start,
         end_date=args.end,
         limit=args.limit,
+        city_name=args.city,
         radius_km=args.radius,
         chunk_months=args.chunk_months,
         dry_run=args.dry_run,
