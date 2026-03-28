@@ -431,7 +431,8 @@ async def get_city_dimensions(
 
         dims = {}
         for d in full.get("dimensions", []):
-            name = d.get("name", "").lower().replace(" ", "_")
+            # Schema uses "dimension" as the field name (not "name")
+            name = d.get("dimension", d.get("name", "")).lower().replace(" ", "_")
             if name:
                 dims[name] = d.get("score")
 
