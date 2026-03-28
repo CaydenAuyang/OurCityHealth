@@ -3,12 +3,16 @@ Phase 3 — Scoring API Routes
 
 Endpoints:
   GET /api/v2/score/{city_id}?date=YYYY-MM-DD
-      → Runs the full scoring pipeline (aggregator → evaluator → CityHealthScore JSON)
-      → Expensive; cache the result in Redis (TTL 6 h by default).
+      → Checks city_scores table first (sub-second).  Falls back to live
+        GPT-4o pipeline if no pre-computed score exists, then persists the
+        result for future requests.
+      → Redis sits on top as a hot cache; Postgres is the durable store.
 
   GET /api/v2/score/{city_id}/history?start=YYYY-MM-DD&end=YYYY-MM-DD&limit=365
       → Returns raw daily_city_stats rows from TimescaleDB — no LLM call.
-      → Fast; data comes straight from the hypertable.
+
+  GET /api/v2/score/{city_id}/dimensions?start=YYYY-MM-DD&end=YYYY-MM-DD
+      → Returns pre-computed dimension snapshots over time from city_scores.
 
 Both endpoints require a valid city UUID that exists in the cities table.
 A 404 is returned for unknown city IDs to prevent information leakage.
@@ -20,15 +24,16 @@ import json
 import logging
 import os
 from datetime import date, datetime, timezone, timedelta
-from typing import Optional
+from typing import Any, Dict, List, Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import select
+from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend_v2.db.models import City
 from backend_v2.db.session import async_session_factory
+from backend_v2.db.timescale_models import CityScore
 from backend_v2.scoring.aggregator import ScoreAggregator
 from backend_v2.scoring.evaluator import ScoreEvaluator
 from backend_v2.scoring.schemas import CityHealthScore, DailyStatsRow
@@ -97,6 +102,64 @@ def _cache_key(city_id: str, scored_date: date) -> str:
 
 
 # ------------------------------------------------------------------ #
+# Postgres persistent score helpers
+# ------------------------------------------------------------------ #
+
+async def _load_pg_score(
+    session: AsyncSession, city_id: str, scored_date: date,
+) -> Optional[CityHealthScore]:
+    """Return a pre-computed score from city_scores, or None."""
+    result = await session.execute(
+        select(CityScore).where(
+            CityScore.city_id == city_id,
+            CityScore.scored_date == scored_date,
+        )
+    )
+    row = result.scalar_one_or_none()
+    if row is None:
+        return None
+    try:
+        return CityHealthScore.model_validate_json(row.score_json)
+    except Exception:
+        logger.warning("Corrupt score_json for %s / %s — ignoring", city_id, scored_date)
+        return None
+
+
+async def _persist_pg_score(
+    session: AsyncSession,
+    city_id: str,
+    city_name: str,
+    scored_date: date,
+    score: CityHealthScore,
+    model: str = "gpt-4o",
+) -> None:
+    """Store a score in city_scores.  Silently skips on conflict."""
+    try:
+        await session.execute(
+            text("""
+                INSERT INTO city_scores
+                    (city_id, city_name, scored_date, overall_score,
+                     overall_confidence, score_json, model_used)
+                VALUES (:cid, :cname, :sd, :os, :oc, :sj, :mu)
+                ON CONFLICT (city_id, scored_date) DO NOTHING
+            """),
+            {
+                "cid": city_id,
+                "cname": city_name,
+                "sd": scored_date,
+                "os": float(score.overall_score),
+                "oc": float(score.overall_confidence),
+                "sj": score.model_dump_json(),
+                "mu": model,
+            },
+        )
+        await session.commit()
+    except Exception as exc:
+        logger.warning("Failed to persist score to city_scores: %s", exc)
+        await session.rollback()
+
+
+# ------------------------------------------------------------------ #
 # Lookup helper
 # ------------------------------------------------------------------ #
 
@@ -157,24 +220,32 @@ async def get_city_score(
 
     city = await _get_city_or_404(city_id, session)
 
-    # --- Cache check ---
+    # --- 1. Persistent Postgres lookup (sub-millisecond) ---
+    pg_score = await _load_pg_score(session, city_id, scored_date)
+    if pg_score is not None:
+        logger.info("PG score hit for %s / %s", city.name, scored_date)
+        return pg_score
+
+    # --- 2. Redis hot-cache check ---
     redis = _get_redis()
     cache_key = _cache_key(city_id, scored_date)
     if redis:
         cached = redis.get(cache_key)
         if cached:
-            logger.info("Cache hit for %s / %s", city.name, scored_date)
-            return CityHealthScore.model_validate_json(cached)
+            logger.info("Redis cache hit for %s / %s", city.name, scored_date)
+            score = CityHealthScore.model_validate_json(cached)
+            await _persist_pg_score(
+                session, city_id, city.name, scored_date, score,
+            )
+            return score
 
-    # --- Build context ---
+    # --- 3. Live scoring pipeline (GPT-4o) ---
     aggregator = ScoreAggregator(
         session,
         half_life_days=half_life_days,
         lookback_days=lookback_days,
     )
 
-    # V2.1: prefer enriched context (with individual events + CAMEO descriptions).
-    # Falls back to aggregate-only context if city_events table is empty.
     try:
         ctx = await aggregator.get_enriched_context(
             city_id=str(city.id),
@@ -200,7 +271,6 @@ async def get_city_score(
             logger.error("Aggregator failed for %s: %s", city.name, exc)
             raise HTTPException(status_code=500, detail=f"Aggregation error: {exc}")
 
-    # --- LLM scoring ---
     evaluator = _get_evaluator()
     try:
         score = evaluator.calculate_score(ctx)
@@ -219,12 +289,16 @@ async def get_city_score(
             ),
         )
 
-    # --- Cache store (6 h TTL) ---
+    # --- 4. Persist to Postgres + Redis ---
+    await _persist_pg_score(
+        session, city_id, city.name, scored_date, score,
+        model=os.environ.get("OPENAI_MODEL", "gpt-4o"),
+    )
     if redis:
         try:
             redis.set(cache_key, score.model_dump_json(), ex=6 * 3600)
         except Exception as cache_exc:
-            logger.warning("Failed to write cache: %s", cache_exc)
+            logger.warning("Failed to write Redis cache: %s", cache_exc)
 
     return score
 
@@ -289,3 +363,87 @@ async def get_city_history(
         )
 
     return rows
+
+
+# ------------------------------------------------------------------ #
+# GET /api/v2/score/{city_id}/dimensions
+# ------------------------------------------------------------------ #
+
+@router.get(
+    "/{city_id}/dimensions",
+    summary="Pre-computed dimension snapshots over time",
+    description=(
+        "Returns LLM-scored dimension snapshots from the city_scores table.  "
+        "Only dates that have been pre-computed (via the scheduler or on-demand) "
+        "are included.  Fast — no LLM call."
+    ),
+)
+async def get_city_dimensions(
+    city_id: str,
+    start: Optional[str] = Query(
+        default=None,
+        description="Start date YYYY-MM-DD (defaults to 365 days ago).",
+        pattern=r"^\d{4}-\d{2}-\d{2}$",
+    ),
+    end: Optional[str] = Query(
+        default=None,
+        description="End date YYYY-MM-DD (defaults to today UTC).",
+        pattern=r"^\d{4}-\d{2}-\d{2}$",
+    ),
+    session: AsyncSession = Depends(get_session),
+) -> Dict[str, Any]:
+    city = await _get_city_or_404(city_id, session)
+
+    today = datetime.now(timezone.utc).date()
+    end_date = date.fromisoformat(end) if end else today
+    start_date = date.fromisoformat(start) if start else end_date - timedelta(days=365)
+
+    if start_date > end_date:
+        raise HTTPException(status_code=422, detail="start must be before end.")
+
+    result = await session.execute(
+        select(CityScore)
+        .where(
+            CityScore.city_id == city_id,
+            CityScore.scored_date >= start_date,
+            CityScore.scored_date <= end_date,
+        )
+        .order_by(CityScore.scored_date)
+    )
+    rows = result.scalars().all()
+
+    if not rows:
+        raise HTTPException(
+            status_code=404,
+            detail=(
+                f"No pre-computed scores found for '{city.name}' "
+                f"between {start_date} and {end_date}.  "
+                "Run the scheduler to pre-compute scores."
+            ),
+        )
+
+    snapshots: List[Dict[str, Any]] = []
+    for row in rows:
+        try:
+            full = json.loads(row.score_json)
+        except (json.JSONDecodeError, TypeError):
+            continue
+
+        dims = {}
+        for d in full.get("dimensions", []):
+            name = d.get("name", "").lower().replace(" ", "_")
+            if name:
+                dims[name] = d.get("score")
+
+        snapshots.append({
+            "date": row.scored_date.isoformat(),
+            "overall_score": row.overall_score,
+            "overall_confidence": row.overall_confidence,
+            "dimensions": dims,
+        })
+
+    return {
+        "city_id": city_id,
+        "city_name": city.name,
+        "snapshots": snapshots,
+    }

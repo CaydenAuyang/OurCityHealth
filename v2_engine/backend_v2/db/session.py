@@ -207,6 +207,27 @@ async def init_db() -> None:
             "ON city_articles (city_id, source_name);"
         ))
         await conn.commit()
+
+        # V2 Prompt 8: city_scores table (pre-computed LLM scores)
+        await conn.execute(text("""
+            CREATE TABLE IF NOT EXISTS city_scores (
+                id SERIAL PRIMARY KEY,
+                city_id VARCHAR NOT NULL,
+                city_name VARCHAR NOT NULL,
+                scored_date DATE NOT NULL,
+                overall_score DOUBLE PRECISION NOT NULL,
+                overall_confidence DOUBLE PRECISION,
+                score_json TEXT NOT NULL,
+                model_used VARCHAR DEFAULT 'gpt-4o',
+                computed_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                CONSTRAINT uq_city_score_date UNIQUE (city_id, scored_date)
+            );
+        """))
+        await conn.execute(text(
+            "CREATE INDEX IF NOT EXISTS idx_city_scores_lookup "
+            "ON city_scores (city_id, scored_date);"
+        ))
+        await conn.commit()
     
     print("✅ Database initialized with PostGIS extension")
 

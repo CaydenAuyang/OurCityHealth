@@ -188,6 +188,45 @@ class CityArticle(Base):
 
 
 # ---------------------------------------------------------------
+# CityScore — pre-computed LLM scoring results (V2 Prompt 8)
+# ---------------------------------------------------------------
+
+class CityScore(Base):
+    """
+    Persisted CityHealthScore JSON keyed by (city_id, scored_date).
+
+    The scoring API checks this table first for an instant response.
+    The background scheduler (scripts/score_scheduler.py) pre-populates it.
+    """
+    __tablename__ = "city_scores"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    city_id: Mapped[str] = mapped_column(String, nullable=False)
+    city_name: Mapped[str] = mapped_column(String, nullable=False)
+    scored_date: Mapped[date] = mapped_column(Date, nullable=False)
+    overall_score: Mapped[float] = mapped_column(Float, nullable=False)
+    overall_confidence: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    score_json: Mapped[str] = mapped_column(Text, nullable=False)
+    model_used: Mapped[Optional[str]] = mapped_column(String, default="gpt-4o")
+    computed_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=text("CURRENT_TIMESTAMP"),
+    )
+
+    __table_args__ = (
+        UniqueConstraint("city_id", "scored_date", name="uq_city_score_date"),
+        Index("idx_city_scores_lookup", "city_id", "scored_date"),
+    )
+
+    def __repr__(self) -> str:
+        return (
+            f"<CityScore(city={self.city_name}, date={self.scored_date}, "
+            f"score={self.overall_score})>"
+        )
+
+
+# ---------------------------------------------------------------
 # Helper: raw SQL to create the hypertable and continuous agg
 # ---------------------------------------------------------------
 
