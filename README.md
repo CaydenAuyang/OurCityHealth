@@ -3,7 +3,8 @@
 > **Every location decision deserves real-time civic intelligence.**  
 > We turn global news, social media, and event data into a standardized 12-dimension "Civic Health Score" for 1,000+ cities — giving the private sector a predictive edge before protests, delays, and community opposition materialize.
 
-[![Pitch Deck](https://img.shields.io/badge/Pitch%20Deck-View%20Live-brightgreen)](https://caydenauyang.github.io/Our-City-Health---Sentiment-Project/JAN20_pitch_deck.html)
+[![Pitch Deck](https://img.shields.io/badge/HKSTP%20Pitch%20Deck-View%20Live-brightgreen)](https://caydenauyang.github.io/Our-City-Health---Sentiment-Project/JAN20_pitch_deck.html)
+[![CCMF Pitch Deck](https://img.shields.io/badge/CCMF%20Pitch%20Deck-View%20Live-00D4AA)](https://caydenauyang.github.io/Our-City-Health---Sentiment-Project/CCMF_pitch_deck.html)
 [![Globe Demo](https://img.shields.io/badge/V2%20Globe-Live%20Demo-00d4ff)](https://caydenauyang.github.io/Our-City-Health---Sentiment-Project/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-V2%20Active%20Development-blue)]()
@@ -96,7 +97,7 @@ The V2 frontend is built around a **CesiumJS 3D globe** with a floating glassmor
 - **Globe:** 1,000+ city dots color-coded by stability score across a continuous 7-stop gradient (red → yellow → green → teal). No-data cities render as faint white dots to maintain visual hierarchy. District polygons render semi-transparently when zoomed below 200km altitude for a selected city.
 - **HUD Panels:** Glassmorphism (`backdrop-filter: blur`) panels for city detail, sidebar city list, time scrubber, and comparison mode
 - **City Detail Panel:** Stability score with delta arrow, intelligence metadata bar (articles analyzed, outlet count, source tier breakdown), analyst summary, entity tags, theme distribution mini-chart, expandable civic dimensions with causal drivers, structured risks/strengths with tiered citations, key events feed, collapsible media landscape section
-- **Time Machine:** A timeline scrubber with playback animation (1×/2×/5× speed), data coverage indicator, and city color reactivity — drag to any date in the historical archive and watch the globe recolor
+- **Time Machine:** A timeline scrubber with playback animation (1×/2×/5× speed), interactive calendar popup (click-to-jump, day grid with data coverage highlights), and city color reactivity — drag or click to any date in the historical archive and watch the globe recolor
 - **Sidebar:** Virtualized city list with debounced search, population/score filters, and fly-to animation on select
 - **Comparison Mode:** Side-by-side city cards with a Recharts RadarChart for 12-dimension comparison
 - **Keyboard Navigation, URL State, Mobile Responsive**
@@ -195,6 +196,9 @@ For quantitative trading firms and enterprise data teams:
 - ✅ Implemented source credibility ranking, event deduplication, named entity extraction from GKG (V2.2)
 - ✅ Launched V2 globe publicly on GitHub Pages with full HUD interface (V2)
 - ✅ Implemented score deltas, causal attribution per dimension, period-over-period intelligence (V2.2)
+- ✅ Ingested GDELT historical data and pre-computed scores for 7 global cities: Shanghai, Hong Kong, Singapore, Tokyo, London, New York, Shenzhen
+- ✅ Built pre-computed scoring pipeline with persistent `city_scores` table — sub-millisecond score retrieval, eliminating live LLM latency for known cities
+- ✅ Added interactive calendar date picker to timeline scrubber with per-day GDELT coverage indicators
 
 ### Roadmap (2026)
 
@@ -254,7 +258,8 @@ Advisory role: data infrastructure strategy, alternative data acquisition, AI/ML
 | | |
 |-|-|
 | **V2 Globe (Live)** | [caydenauyang.github.io/Our-City-Health---Sentiment-Project](https://caydenauyang.github.io/Our-City-Health---Sentiment-Project/) |
-| **Pitch Deck** | [JAN20 Pitch Deck — HKSTP Ideation](https://caydenauyang.github.io/Our-City-Health---Sentiment-Project/JAN20_pitch_deck.html) |
+| **HKSTP Pitch Deck** | [JAN20 Pitch Deck](https://caydenauyang.github.io/Our-City-Health---Sentiment-Project/JAN20_pitch_deck.html) |
+|| **CCMF Pitch Deck** | [Cyberport Creative Micro Fund Application](https://caydenauyang.github.io/Our-City-Health---Sentiment-Project/CCMF_pitch_deck.html) |
 
 ---
 
@@ -271,4 +276,4 @@ The repository is public for portfolio and demonstration purposes. Core scoring 
 
 ---
 
-*Last updated: February 2026*
+*Last updated: March 2026*

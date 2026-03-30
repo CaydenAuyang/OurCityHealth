@@ -38,6 +38,9 @@ data/latest/*.json
 *.temp
 server_debug.txt
 
+# Large video source files (use .mp4 only)
+*.mov
+
 # OS
 Thumbs.db
 .DS_Store
