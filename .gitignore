@@ -16,16 +16,18 @@ build/
 .vscode/
 *.swp
 *.swo
-.DS_Store
 
-# Logs
-*.log
-logs/
+# OS
+.DS_Store
+Thumbs.db
 
 # Environment
 .env
 .env.local
 .env.*.local
+
+# Backups
+*.backup
 
 # Data (large files)
 data/jobs.sqlite
@@ -33,17 +35,17 @@ data/jobs/
 data/latest/*.json
 *.sqlite
 
+# Large video source files
+*.mov
+
 # Temporary files
 *.tmp
 *.temp
 server_debug.txt
 
-# Large video source files (use .mp4 only)
-*.mov
-
-# OS
-Thumbs.db
-.DS_Store
+# Logs
+*.log
+logs/
 
 # API keys (never commit)
 *_key.txt
