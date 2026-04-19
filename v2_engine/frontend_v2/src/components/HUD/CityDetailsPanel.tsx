@@ -936,12 +936,24 @@ export function CityDetailsPanel() {
             </p>
 
             {scoreError ? (
-              <button
-                onClick={handleRetryScore}
-                className="w-full text-center py-3 text-[11px] text-slate-500 hover:text-hud-accent transition-colors"
-              >
-                Score unavailable — tap to retry
-              </button>
+              <div className="py-3 px-3 rounded-md border border-amber-400/20 bg-amber-400/5">
+                <p className="text-[11px] text-amber-200/90 leading-relaxed">
+                  No AI evaluation has been pre-computed for this city in the
+                  public demo build.
+                </p>
+                <p className="text-[10px] text-slate-500 mt-1.5 leading-relaxed">
+                  Detailed analyses are available for Hong Kong, Shanghai,
+                  Shenzhen, Singapore, Tokyo, London, and New York. Click the{" "}
+                  <span className="text-amber-300/80">Demo build · why</span>{" "}
+                  badge in the top bar for context.
+                </p>
+                <button
+                  onClick={handleRetryScore}
+                  className="mt-2 text-[10px] text-slate-500 hover:text-hud-accent transition-colors font-mono uppercase tracking-wider"
+                >
+                  Retry
+                </button>
+              </div>
             ) : scoreLoading ? (
               <SkeletonBars />
             ) : fullScore ? (

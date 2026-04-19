@@ -18,6 +18,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { GlassPanel } from "./GlassPanel";
 import { CityDetailsPanel } from "./CityDetailsPanel";
 import { ComparisonPanel } from "./ComparisonPanel";
+import { DemoBadge, DemoModal, useDemoNotice } from "./DemoNotice";
 import { ScoreLegend } from "../Globe/CesiumViewer";
 import { useAppStore } from "../../store/useAppStore";
 import { useCities, useCityScores } from "../../api/hooks";
@@ -27,7 +28,11 @@ import { formatDate, useMediaQuery, cn } from "../../lib/utils";
 // Top-left brand bar                                                   //
 // ------------------------------------------------------------------ //
 
-function BrandBar() {
+interface BrandBarProps {
+  onOpenDemoNotice: () => void;
+}
+
+function BrandBar({ onOpenDemoNotice }: BrandBarProps) {
   const apiOffline = useAppStore((s) => s.apiOffline);
   const queryClient = useQueryClient();
 
@@ -56,6 +61,7 @@ function BrandBar() {
           v2 · Geospatial Intelligence
         </span>
       )}
+      <DemoBadge onClick={onOpenDemoNotice} />
     </GlassPanel>
   );
 }
@@ -120,12 +126,13 @@ interface HudLayoutProps {
 export function HudLayout({ scrubber }: HudLayoutProps) {
   const { selectedCityId, isCompareMode } = useAppStore();
   const isMobile = useMediaQuery("(max-width: 767px)");
+  const demoNotice = useDemoNotice();
 
   return (
     <div className="absolute inset-0 pointer-events-none z-10 flex flex-col">
       {/* ---- TOP ROW ---- */}
       <div className="flex items-start justify-between p-4 gap-3">
-        <BrandBar />
+        <BrandBar onOpenDemoNotice={demoNotice.reopen} />
         {!isMobile && <InfoPanel />}
       </div>
 
@@ -149,6 +156,9 @@ export function HudLayout({ scrubber }: HudLayoutProps) {
 
       {/* ---- BOTTOM ROW (time scrubber) ---- */}
       <div className="p-4 pointer-events-auto">{scrubber}</div>
+
+      {/* ---- DEMO NOTICE MODAL (auto-opens on first visit) ---- */}
+      <DemoModal open={demoNotice.open} onClose={demoNotice.close} />
     </div>
   );
 }
