@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useRef, useEffect } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { GlassPanel } from "../HUD/GlassPanel";
@@ -37,21 +37,33 @@ export function Sidebar() {
   const [popFilter, setPopFilter] = useState<PopFilter>("all");
   const [dataOnly, setDataOnly] = useState(false);
 
-  // Height measurement for the virtualized list
-  const listContainerRef = useRef<HTMLDivElement>(null);
+  // Height measurement for the virtualized list.
+  //
+  // BUG-HISTORY: Originally used `useRef` + `useEffect([])`. Because the
+  // sidebar's inner div is wrapped in `<AnimatePresence>`, every close
+  // unmounts the ref target and every reopen mounts a *new* one. The
+  // observer was only attached on first mount so the new node was never
+  // measured, and `listHeight` stayed at the minimum (100px), which fits
+  // exactly two rows at the 52px row height. Result: only Shanghai +
+  // Beijing showed up after reopening the sidebar.
+  //
+  // Fixed by using a callback ref, which fires on every node change so we
+  // can re-attach the observer. We also gate small heights observed during
+  // the close animation, so the dying node can't write a tiny value.
+  const [listContainer, setListContainer] = useState<HTMLDivElement | null>(null);
   const [listHeight, setListHeight] = useState(400);
 
   useEffect(() => {
-    const el = listContainerRef.current;
-    if (!el) return;
-    const observer = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        setListHeight(Math.max(entry.contentRect.height, 100));
-      }
-    });
-    observer.observe(el);
+    if (!listContainer) return;
+    const measure = () => {
+      const h = listContainer.getBoundingClientRect().height;
+      if (h > 100) setListHeight(h);
+    };
+    measure(); // initial size before any resize event fires
+    const observer = new ResizeObserver(() => measure());
+    observer.observe(listContainer);
     return () => observer.disconnect();
-  }, []);
+  }, [listContainer]);
 
   const filteredCities = useMemo(() => {
     const lowerQ = query.toLowerCase().trim();
@@ -244,7 +256,7 @@ export function Sidebar() {
               </div>
 
               {/* Virtualized city list */}
-              <div ref={listContainerRef} className="flex-1 min-h-0">
+              <div ref={setListContainer} className="flex-1 min-h-0">
                 <CityList
                   cities={filteredCities}
                   scoresMap={scoresMap}

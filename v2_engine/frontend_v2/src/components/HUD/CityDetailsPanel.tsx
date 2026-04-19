@@ -947,12 +947,14 @@ export function CityDetailsPanel() {
                   <span className="text-amber-300/80">Demo build · why</span>{" "}
                   badge in the top bar for context.
                 </p>
-                <button
-                  onClick={handleRetryScore}
-                  className="mt-2 text-[10px] text-slate-500 hover:text-hud-accent transition-colors font-mono uppercase tracking-wider"
-                >
-                  Retry
-                </button>
+                {import.meta.env.VITE_API_BASE && (
+                  <button
+                    onClick={handleRetryScore}
+                    className="mt-2 text-[10px] text-slate-500 hover:text-hud-accent transition-colors font-mono uppercase tracking-wider"
+                  >
+                    Retry
+                  </button>
+                )}
               </div>
             ) : scoreLoading ? (
               <SkeletonBars />

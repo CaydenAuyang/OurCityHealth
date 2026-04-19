@@ -95,8 +95,8 @@ export function DemoModal({ open, onClose }: DemoModalProps) {
             exit={{ opacity: 0, y: 16, scale: 0.96 }}
             transition={{ duration: 0.22, ease: "easeOut" }}
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-lg rounded-2xl overflow-hidden
-              bg-[rgba(5,10,25,0.95)] border border-amber-400/25
+            className="relative w-full max-w-xl max-h-[90vh] overflow-y-auto
+              rounded-2xl bg-[rgba(5,10,25,0.95)] border border-amber-400/25
               shadow-[0_0_40px_rgba(251,191,36,0.15)]"
           >
             {/* Top accent line */}
@@ -130,6 +130,64 @@ export function DemoModal({ open, onClose }: DemoModalProps) {
 
             {/* Body */}
             <div className="px-6 pb-6 space-y-4 text-[13px] leading-relaxed text-slate-300">
+              {/* Quick start tutorial */}
+              <div className="rounded-lg border border-hud-accent/25 bg-hud-accent/[0.04] p-4">
+                <p className="text-[10px] font-mono uppercase tracking-widest text-hud-accent/90 mb-3">
+                  Quick start · 4 things to try
+                </p>
+                <ol className="space-y-2.5 text-[12.5px] text-slate-300">
+                  <li className="flex gap-2.5">
+                    <span className="shrink-0 w-5 h-5 rounded-full border border-hud-accent/40 bg-hud-accent/10 text-hud-accent text-[10px] font-mono flex items-center justify-center">
+                      1
+                    </span>
+                    <span>
+                      <span className="text-slate-100">Drag the timeline</span>{" "}
+                      at the bottom to travel through history. Cyan segments
+                      mark dates with available data; click the calendar icon
+                      to jump to a specific day.
+                    </span>
+                  </li>
+                  <li className="flex gap-2.5">
+                    <span className="shrink-0 w-5 h-5 rounded-full border border-hud-accent/40 bg-hud-accent/10 text-hud-accent text-[10px] font-mono flex items-center justify-center">
+                      2
+                    </span>
+                    <span>
+                      <span className="text-slate-100">
+                        Click any colored city dot
+                      </span>{" "}
+                      on the globe to fly in and see its 12-dimension AI
+                      assessment, key events, and source citations.
+                    </span>
+                  </li>
+                  <li className="flex gap-2.5">
+                    <span className="shrink-0 w-5 h-5 rounded-full border border-hud-accent/40 bg-hud-accent/10 text-hud-accent text-[10px] font-mono flex items-center justify-center">
+                      3
+                    </span>
+                    <span>
+                      <span className="text-slate-100">
+                        Use the City Explorer
+                      </span>{" "}
+                      on the left to search and filter all 1,000 cities. Toggle{" "}
+                      <span className="text-hud-accent/90">data only</span> to
+                      hide cities without GDELT activity for the selected date.
+                    </span>
+                  </li>
+                  <li className="flex gap-2.5">
+                    <span className="shrink-0 w-5 h-5 rounded-full border border-hud-accent/40 bg-hud-accent/10 text-hud-accent text-[10px] font-mono flex items-center justify-center">
+                      4
+                    </span>
+                    <span>
+                      <span className="text-slate-100">Press</span>{" "}
+                      <kbd className="px-1.5 py-0.5 rounded border border-white/15 bg-white/5 text-[10px] font-mono text-slate-200">
+                        ?
+                      </kbd>{" "}
+                      to see all keyboard shortcuts (compare cities, time
+                      playback, navigation).
+                    </span>
+                  </li>
+                </ol>
+              </div>
+
               <p>
                 This globe is a public demonstration of the Our City Health
                 platform. The full system is designed to score 1,000+ cities
