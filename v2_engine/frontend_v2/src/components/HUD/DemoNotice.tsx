@@ -1,25 +1,22 @@
 /**
  * DemoNotice
  *
- * Transparency banner that explains why globe coverage is selective in the
- * publicly-deployed demo build.
+ * Onboarding modal that explains the demo's data scope and walks new
+ * visitors through the four key interactions.
  *
  * Two surfaces:
  *   1. Persistent "Demo build · why coverage is limited" pill in the brand
  *      bar — always clickable, always visible, never goes away.
- *   2. First-visit modal that auto-opens once per browser. Dismissed via the
- *      X button or by clicking the backdrop. Dismissal is remembered in
- *      localStorage so repeat visitors aren't pestered.
- *
- * The pill is the primary affordance. The auto-open modal exists so a CCMF
- * reviewer (or any first-time visitor) understands the data scope before
- * forming a judgement.
+ *   2. Modal that auto-opens on every page load (after a brief delay so
+ *      the globe paints behind it). Dismissed via the X button, the "Got
+ *      it" footer button, the Esc key, or by clicking the backdrop. We
+ *      intentionally do NOT remember dismissal across sessions because
+ *      this site is a public demo and most visitors will be first-time
+ *      reviewers who benefit from the same context every time.
  */
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-
-const STORAGE_KEY = "och.demo-notice.dismissed-v1";
 
 // ------------------------------------------------------------------ //
 // Pill button (lives in the brand bar)                                //
@@ -270,7 +267,7 @@ export function DemoModal({ open, onClose }: DemoModalProps) {
             {/* Footer */}
             <div className="px-6 py-4 border-t border-white/5 flex items-center justify-between">
               <span className="text-[10px] font-mono uppercase tracking-widest text-slate-600">
-                You can re-open this from the brand bar
+                Re-open anytime via the badge in the top bar
               </span>
               <button
                 onClick={onClose}
@@ -296,30 +293,15 @@ export function DemoModal({ open, onClose }: DemoModalProps) {
 export function useDemoNotice() {
   const [open, setOpen] = useState(false);
 
-  // Auto-open on first visit
+  // Auto-open on every page load. The 800ms delay lets the globe paint
+  // first so the modal lands deliberately rather than flashing on top of
+  // a black canvas.
   useEffect(() => {
-    try {
-      const dismissed = localStorage.getItem(STORAGE_KEY);
-      if (!dismissed) {
-        // Slight delay so the globe renders behind the modal first — feels
-        // more deliberate than a flash on page load.
-        const t = setTimeout(() => setOpen(true), 800);
-        return () => clearTimeout(t);
-      }
-    } catch {
-      /* localStorage unavailable (privacy mode) — silently skip auto-open */
-    }
+    const t = setTimeout(() => setOpen(true), 800);
+    return () => clearTimeout(t);
   }, []);
 
-  const close = () => {
-    setOpen(false);
-    try {
-      localStorage.setItem(STORAGE_KEY, "1");
-    } catch {
-      /* ignore */
-    }
-  };
-
+  const close = () => setOpen(false);
   const reopen = () => setOpen(true);
 
   return { open, close, reopen };
