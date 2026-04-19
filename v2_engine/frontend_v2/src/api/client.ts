@@ -12,11 +12,49 @@ import type {
 const BASE = import.meta.env.VITE_API_BASE ?? "";
 const SNAPSHOT_BASE = `${import.meta.env.BASE_URL}snapshot`;
 
-/**
- * Fetch a static snapshot file shipped with the build. Returns null on 404
- * so callers can fall back to the live API. Network errors also return null
- * (rather than flipping the offline flag) because snapshots are best-effort.
- */
+// --------------------------------------------------------------------- //
+// Snapshot manifest — loaded once, used to resolve nearest-date lookups
+// --------------------------------------------------------------------- //
+
+interface SnapshotManifest {
+  generated_at: string;
+  city_count: number;
+  color_dates: string[];
+  scored_pairs: { city_id: string; date: string }[];
+  scored_dates_by_city: Record<string, string[]>;
+  history_city_ids: string[];
+}
+
+let _manifestPromise: Promise<SnapshotManifest | null> | null = null;
+
+function loadManifest(): Promise<SnapshotManifest | null> {
+  if (_manifestPromise) return _manifestPromise;
+  _manifestPromise = fetch(`${SNAPSHOT_BASE}/manifest.json`)
+    .then((r) => (r.ok ? (r.json() as Promise<SnapshotManifest>) : null))
+    .catch(() => null);
+  return _manifestPromise;
+}
+
+/** Pick the date in `available` closest to `target`. Returns null if none. */
+function nearestDate(target: string, available: string[]): string | null {
+  if (available.length === 0) return null;
+  const t = new Date(target).getTime();
+  let best = available[0];
+  let bestDiff = Math.abs(new Date(best).getTime() - t);
+  for (let i = 1; i < available.length; i++) {
+    const diff = Math.abs(new Date(available[i]).getTime() - t);
+    if (diff < bestDiff) {
+      best = available[i];
+      bestDiff = diff;
+    }
+  }
+  return best;
+}
+
+// --------------------------------------------------------------------- //
+// Low-level fetchers
+// --------------------------------------------------------------------- //
+
 async function snapshotFetch<T>(filename: string): Promise<T | null> {
   try {
     const res = await fetch(`${SNAPSHOT_BASE}/${filename}`);
@@ -29,8 +67,6 @@ async function snapshotFetch<T>(filename: string): Promise<T | null> {
 
 async function apiFetch<T>(path: string): Promise<T> {
   if (!BASE) {
-    // No backend configured (static-only deploy). Surface a clear error so
-    // callers can decide whether to recover or show an empty state.
     throw new Error(`No API base configured; ${path} unavailable in static demo mode`);
   }
   try {
@@ -49,15 +85,28 @@ async function apiFetch<T>(path: string): Promise<T> {
   }
 }
 
-/** Try the snapshot first, fall back to the live API. */
-async function snapshotOrApi<T>(
-  snapshotFile: string,
-  apiPath: string,
-): Promise<T> {
+async function snapshotOrApi<T>(snapshotFile: string, apiPath: string): Promise<T> {
   const snap = await snapshotFetch<T>(snapshotFile);
   if (snap !== null) return snap;
   return apiFetch<T>(apiPath);
 }
+
+// --------------------------------------------------------------------- //
+// Cached history (sliced client-side from per-city full history file)
+// --------------------------------------------------------------------- //
+
+const _historyCache = new Map<string, DailyStatsRow[] | null>();
+
+async function loadCityHistory(cityId: string): Promise<DailyStatsRow[] | null> {
+  if (_historyCache.has(cityId)) return _historyCache.get(cityId) ?? null;
+  const data = await snapshotFetch<DailyStatsRow[]>(`history-${cityId}.json`);
+  _historyCache.set(cityId, data);
+  return data;
+}
+
+// --------------------------------------------------------------------- //
+// Public client
+// --------------------------------------------------------------------- //
 
 export const apiClient = {
   getCities(): Promise<City[]> {
@@ -71,20 +120,50 @@ export const apiClient = {
     );
   },
 
-  getCityScore(cityId: string, date: string): Promise<CityHealthScore> {
-    return snapshotOrApi<CityHealthScore>(
+  /**
+   * LLM-evaluated city score. If we don't have an exact (city,date) snapshot,
+   * fall back to the nearest scored date for this city — far more useful than
+   * a "Score unavailable" error in static demo mode.
+   */
+  async getCityScore(cityId: string, date: string): Promise<CityHealthScore> {
+    const exact = await snapshotFetch<CityHealthScore>(
       `score-${cityId}-${date}.json`,
+    );
+    if (exact !== null) return exact;
+
+    const manifest = await loadManifest();
+    const available = manifest?.scored_dates_by_city?.[cityId] ?? [];
+    const nearest = nearestDate(date, available);
+    if (nearest && nearest !== date) {
+      const fallback = await snapshotFetch<CityHealthScore>(
+        `score-${cityId}-${nearest}.json`,
+      );
+      if (fallback !== null) return fallback;
+    }
+
+    // Last resort: live API (will throw in static-only mode)
+    return apiFetch<CityHealthScore>(
       `/api/v2/score/${cityId}?date=${date}`,
     );
   },
 
-  getCityHistory(
+  /**
+   * 90-day sparkline. The snapshot ships full per-city history (5-year window);
+   * we slice to the requested range client-side. This means the sparkline works
+   * for any date the user picks, not just snapshotted ones.
+   */
+  async getCityHistory(
     cityId: string,
     start: string,
     end: string,
     limit = 365,
   ): Promise<DailyStatsRow[]> {
-    return apiFetch(
+    const all = await loadCityHistory(cityId);
+    if (all !== null) {
+      const filtered = all.filter((r) => r.day >= start && r.day <= end);
+      return filtered.slice(-limit);
+    }
+    return apiFetch<DailyStatsRow[]>(
       `/api/v2/score/${cityId}/history?start=${start}&end=${end}&limit=${limit}`,
     );
   },
@@ -100,22 +179,32 @@ export const apiClient = {
     return apiFetch(`/api/v2/cities/${cityId}/districts`);
   },
 
-  getSources(
+  /**
+   * Source breakdown. Snapshots are keyed by the end-date (the date the user
+   * is viewing). Falls back to the nearest scored date for the city.
+   */
+  async getSources(
     cityId: string,
     start: string,
     end: string,
   ): Promise<CitySourcesResponse> {
-    return snapshotOrApi<CitySourcesResponse>(
-      `sources-${cityId}-${date_to_anchor(end)}.json`,
+    const exact = await snapshotFetch<CitySourcesResponse>(
+      `sources-${cityId}-${end}.json`,
+    );
+    if (exact !== null) return exact;
+
+    const manifest = await loadManifest();
+    const available = manifest?.scored_dates_by_city?.[cityId] ?? [];
+    const nearest = nearestDate(end, available);
+    if (nearest && nearest !== end) {
+      const fallback = await snapshotFetch<CitySourcesResponse>(
+        `sources-${cityId}-${nearest}.json`,
+      );
+      if (fallback !== null) return fallback;
+    }
+
+    return apiFetch<CitySourcesResponse>(
       `/api/v2/sources/${cityId}?start=${start}&end=${end}`,
     );
   },
 };
-
-/**
- * The sources snapshot is keyed by the end-date (the "anchor" date the user
- * is viewing). The hooks pass start = end - 90 days, so we just use end.
- */
-function date_to_anchor(end: string): string {
-  return end;
-}
