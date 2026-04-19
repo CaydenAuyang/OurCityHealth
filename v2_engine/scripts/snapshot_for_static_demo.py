@@ -1,24 +1,27 @@
 #!/usr/bin/env python3
 """
-Snapshot live API responses into static JSON files that the frontend
-serves directly (no backend needed for the public demo).
+Snapshot the live API into static JSON files so the public GitHub Pages
+deploy works without a backend.
 
 Outputs are written to:
     v2_engine/frontend_v2/public/snapshot/
 
-Files generated:
-    cities.json
-    data-coverage.json
-    cities-scores-{date}.json          for each "feature date"
-    score-{cityId}-{date}.json         for each scored city × feature date
-    sources-{cityId}-{date}.json       for each scored city × feature date
-    manifest.json                      lists what dates/cities are snapshotted
+What gets snapshotted (auto-discovered from the database, not hardcoded):
+    cities.json                            all 1,000 cities with coords
+    data-coverage.json                     timeline data dots
+    cities-scores-{date}.json              for every distinct day in
+                                           daily_city_stats (globe colors)
+    score-{cityId}-{date}.json             for every (city,date) pair in
+                                           city_scores (LLM detail panels)
+    sources-{cityId}-{date}.json           same pairs (GKG source breakdown)
+    manifest.json                          inventory of what's bundled
 
 The frontend client.ts checks for these files first and only calls the
-live API if the snapshot is missing.
+live API as a fallback, so the demo works fully offline.
 """
 from __future__ import annotations
 
+import asyncio
 import json
 import sys
 import time
@@ -31,16 +34,9 @@ from typing import Any
 API_BASE = "http://localhost:8001"
 OUT_DIR = Path(__file__).resolve().parent.parent / "frontend_v2" / "public" / "snapshot"
 
-# Dates the frontend is most likely to land on. Each one becomes a complete
-# snapshot (globe colors + per-city scores + per-city sources).
-FEATURE_DATES = [
-    "2024-01-14",
-    "2024-01-15",  # default date in App.tsx
-    "2024-01-21",
-    "2024-01-28",
-    "2024-01-07",
-]
-
+# --------------------------------------------------------------------- #
+# HTTP helper
+# --------------------------------------------------------------------- #
 
 def get_json(path: str, retries: int = 3) -> Any:
     """GET a JSON endpoint with simple retry."""
@@ -51,93 +47,140 @@ def get_json(path: str, retries: int = 3) -> Any:
             with urllib.request.urlopen(req, timeout=30) as resp:
                 return json.loads(resp.read().decode())
         except urllib.error.HTTPError as e:
-            if e.code in (404, 422) and attempt == retries - 1:
-                return None
-            print(f"  HTTP {e.code} on {path}, retry {attempt + 1}/{retries}")
+            if e.code in (404, 422):
+                return None  # don't retry on definite misses
+            print(f"  HTTP {e.code} on {path}, retry {attempt + 1}/{retries}", flush=True)
             time.sleep(1)
         except Exception as e:
-            print(f"  Error on {path}: {e}")
+            print(f"  Error on {path}: {e}", flush=True)
             if attempt == retries - 1:
                 return None
             time.sleep(1)
     return None
 
 
-def write_json(filename: str, data: Any) -> None:
+def write_json(filename: str, data: Any) -> int:
+    """Write JSON file, return file size in bytes."""
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     path = OUT_DIR / filename
     path.write_text(json.dumps(data, separators=(",", ":")))
-    size_kb = path.stat().st_size / 1024
-    print(f"  wrote {filename} ({size_kb:.1f} KB)")
+    return path.stat().st_size
 
+
+# --------------------------------------------------------------------- #
+# DB discovery (we go directly to Postgres for the inventory queries
+# because we want every (city,date) tuple, which there's no public API for)
+# --------------------------------------------------------------------- #
+
+async def discover_inventory() -> tuple[list[str], list[tuple[str, str]]]:
+    """
+    Returns:
+        (color_dates, score_pairs)
+        color_dates: ISO dates where daily_city_stats has any row
+        score_pairs: (city_id, scored_date) tuples present in city_scores
+    """
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+    from backend_v2.db.session import async_session_factory
+    from sqlalchemy import text
+
+    async with async_session_factory() as session:
+        rows = await session.execute(
+            text("SELECT DISTINCT day FROM daily_city_stats ORDER BY day")
+        )
+        color_dates = [r.day.isoformat() for r in rows.fetchall()]
+
+        rows = await session.execute(
+            text(
+                "SELECT city_id, scored_date FROM city_scores "
+                "ORDER BY scored_date, city_id"
+            )
+        )
+        score_pairs = [(r.city_id, r.scored_date.isoformat()) for r in rows.fetchall()]
+
+    return color_dates, score_pairs
+
+
+# --------------------------------------------------------------------- #
+# Main
+# --------------------------------------------------------------------- #
 
 def main() -> int:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
+    print(f"Output directory: {OUT_DIR}", flush=True)
+    print(f"API base:         {API_BASE}\n", flush=True)
 
-    print(f"Output directory: {OUT_DIR}")
-    print(f"Hitting API at: {API_BASE}\n")
-
-    # -- 1. Cities (the big one — 1,000 entries) --
-    print("== cities ==")
+    # -- 1. Cities (1,000 entries, ~146 KB) --
+    print("[1/5] cities.json", flush=True)
     cities = get_json("/api/v2/cities")
     if cities is None:
-        print("ERROR: /api/v2/cities failed; backend probably not running")
+        print("ERROR: /api/v2/cities failed; backend probably not running", flush=True)
         return 1
-    write_json("cities.json", cities)
+    size = write_json("cities.json", cities)
+    print(f"      {len(cities)} cities, {size / 1024:.1f} KB", flush=True)
 
     # -- 2. Data coverage (powers timeline data dots) --
-    print("\n== data-coverage ==")
+    print("\n[2/5] data-coverage.json", flush=True)
     coverage = get_json("/api/v2/data-coverage")
     if coverage is not None:
-        write_json("data-coverage.json", coverage)
+        size = write_json("data-coverage.json", coverage)
+        print(f"      {len(coverage.get('coverage', []))} days, {size / 1024:.1f} KB", flush=True)
 
-    # -- 3. Build a list of distinct (city_id, date) pairs to snapshot --
-    # Only snapshot scores+sources for cities that actually have data on a
-    # feature date, to keep the bundle small.
-    snapshotted_pairs: list[tuple[str, str]] = []
-    snapshotted_dates: list[str] = []
+    # -- 3. Discover what to snapshot from the DB itself --
+    print("\n[3/5] Discovering inventory from database…", flush=True)
+    color_dates, score_pairs = asyncio.run(discover_inventory())
+    print(f"      {len(color_dates)} dates with raw GDELT data (globe colors)", flush=True)
+    print(f"      {len(score_pairs)} (city,date) pairs with LLM scores (detail panels)", flush=True)
 
-    for d in FEATURE_DATES:
-        print(f"\n== cities/scores for {d} ==")
+    # -- 4. Snapshot cities-scores for every data date (globe colors) --
+    print(f"\n[4/5] cities-scores-{{date}}.json × {len(color_dates)}", flush=True)
+    total_color_bytes = 0
+    color_dates_written: list[str] = []
+    for i, d in enumerate(color_dates, 1):
         scores = get_json(f"/api/v2/cities/scores?date={d}&window_days=30")
         if scores is None:
-            print(f"  no scores for {d}")
             continue
-        write_json(f"cities-scores-{d}.json", scores)
-        snapshotted_dates.append(d)
+        size = write_json(f"cities-scores-{d}.json", scores)
+        total_color_bytes += size
+        color_dates_written.append(d)
+        if i % 20 == 0:
+            print(f"      ... {i}/{len(color_dates)}", flush=True)
+    print(f"      {len(color_dates_written)} files, {total_color_bytes / 1024:.1f} KB total", flush=True)
 
-        # Snapshot full LLM score + sources for each city that has a row.
-        for row in scores:
-            cid = row["city_id"]
-            print(f"  -- city {cid[:8]}... ({d})")
+    # -- 5. Snapshot score+sources for every (city,date) LLM pair --
+    print(f"\n[5/5] score+sources files × {len(score_pairs)}", flush=True)
+    total_detail_bytes = 0
+    pairs_written: list[tuple[str, str]] = []
+    for i, (cid, d) in enumerate(score_pairs, 1):
+        score = get_json(f"/api/v2/score/{cid}?date={d}")
+        if score is not None:
+            total_detail_bytes += write_json(f"score-{cid}-{d}.json", score)
 
-            score = get_json(f"/api/v2/score/{cid}?date={d}")
-            if score is not None:
-                write_json(f"score-{cid}-{d}.json", score)
-                snapshotted_pairs.append((cid, d))
+        end = date.fromisoformat(d)
+        start = end - timedelta(days=90)
+        sources = get_json(
+            f"/api/v2/sources/{cid}?start={start.isoformat()}&end={end.isoformat()}"
+        )
+        if sources is not None:
+            total_detail_bytes += write_json(f"sources-{cid}-{d}.json", sources)
 
-            # Sources query needs a date range; use 90 days back.
-            end = date.fromisoformat(d)
-            start = end - timedelta(days=90)
-            sources = get_json(
-                f"/api/v2/sources/{cid}?start={start.isoformat()}&end={end.isoformat()}"
-            )
-            if sources is not None:
-                write_json(f"sources-{cid}-{d}.json", sources)
+        if score is not None:
+            pairs_written.append((cid, d))
+        if i % 20 == 0:
+            print(f"      ... {i}/{len(score_pairs)}", flush=True)
+    print(f"      {len(pairs_written)} pairs, {total_detail_bytes / 1024:.1f} KB total", flush=True)
 
-    # -- 4. Manifest so the frontend knows what's pre-baked --
+    # -- Manifest --
     manifest = {
         "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-        "feature_dates": snapshotted_dates,
-        "scored_pairs": [
-            {"city_id": c, "date": d} for c, d in snapshotted_pairs
-        ],
         "city_count": len(cities),
+        "color_dates": color_dates_written,
+        "scored_pairs": [{"city_id": c, "date": d} for c, d in pairs_written],
     }
-    print("\n== manifest ==")
     write_json("manifest.json", manifest)
 
-    print(f"\nDone. {len(snapshotted_dates)} dates × {len(set(p[0] for p in snapshotted_pairs))} cities snapshotted.")
+    total_files = len(list(OUT_DIR.glob("*.json")))
+    total_size_mb = sum(p.stat().st_size for p in OUT_DIR.glob("*.json")) / (1024 * 1024)
+    print(f"\nDone. {total_files} files, {total_size_mb:.2f} MB total in {OUT_DIR}", flush=True)
     return 0
 
 
