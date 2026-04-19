@@ -35,7 +35,7 @@ let _toastTimer: ReturnType<typeof setTimeout> | undefined;
 export const useAppStore = create<AppState>((set, get) => ({
   selectedCityId: null,
   selectedCityName: null,
-  selectedDate: "2023-01-15",
+  selectedDate: "2024-01-15",
   sidebarOpen: true,
   isPlaying: false,
   playbackSpeed: 1,

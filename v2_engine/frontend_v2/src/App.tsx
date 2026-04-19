@@ -24,7 +24,7 @@ import { searchInputRef } from "./components/Sidebar/CitySearch";
 import { useAppStore } from "./store/useAppStore";
 import { useCities, useCityScores } from "./api/hooks";
 
-const DEFAULT_DATE = "2023-01-15";
+const DEFAULT_DATE = "2024-01-15";
 
 export default function App() {
   const { data: cities = [], isLoading: citiesLoading } = useCities();
