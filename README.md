@@ -2,8 +2,8 @@
 
 > A city intelligence API that scores cities across 12 civic dimensions using AI analysis of 380,000+ global news sources.
 
-[![CCMF Pitch Deck](https://img.shields.io/badge/CCMF%20Pitch%20Deck-View%20Live-00D4AA)](https://caydenauyang.github.io/Our-City-Health---Sentiment-Project/CCMF_pitch_deck.html)
-[![Globe Demo](https://img.shields.io/badge/V2%20Globe-Live%20Demo-00d4ff)](https://caydenauyang.github.io/Our-City-Health---Sentiment-Project/)
+[![CCMF Pitch Deck](https://img.shields.io/badge/CCMF%20Pitch%20Deck-View%20Live-00D4AA)](https://caydenauyang.github.io/OurCityHealth/CCMF_pitch_deck.html)
+[![Globe Demo](https://img.shields.io/badge/V2%20Globe-Live%20Demo-00d4ff)](https://caydenauyang.github.io/OurCityHealth/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Active%20Development-blue)]()
 

@@ -2,7 +2,7 @@
 #
 # 1. Go to https://railway.app and sign in with GitHub
 # 2. Click "New Project" → "Deploy from GitHub repo"
-# 3. Select "Our-City-Health---Sentiment-Project"
+# 3. Select "OurCityHealth"
 # 4. Set the root directory to "v2_engine"
 # 5. Railway will detect the Dockerfile automatically
 #

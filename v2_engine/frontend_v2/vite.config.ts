@@ -7,9 +7,10 @@ export default defineConfig(({ mode }) => {
 
   return {
     // Relative base means asset URLs become "./assets/..." instead of
-    // "/Our-City-Health---Sentiment-Project/assets/...". This is the most
-    // reliable approach for GitHub Pages sub-directory deployments because
-    // the URLs always resolve correctly relative to index.html.
+    // "/OurCityHealth/assets/...". This is the most reliable approach for
+    // GitHub Pages sub-directory deployments because the URLs always
+    // resolve correctly relative to index.html, and it means the build
+    // does not have to know the repo name at compile time.
     base: isProd ? "./" : "/",
     plugins: [
       react(),

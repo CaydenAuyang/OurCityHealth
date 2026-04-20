@@ -5,7 +5,7 @@
 Your project showcase is now ready to deploy! Follow these steps:
 
 1. **Go to your repository on GitHub:**
-   - Navigate to: https://github.com/CaydenAuyang/Our-City-Health---Sentiment-Project
+   - Navigate to: https://github.com/CaydenAuyang/OurCityHealth
 
 2. **Enable GitHub Pages:**
    - Click on **Settings** (in the repository navigation bar)
@@ -21,7 +21,7 @@ Your project showcase is now ready to deploy! Follow these steps:
    - You'll see a green checkmark when it's ready
 
 4. **Access your site:**
-   - Your site will be live at: https://caydenauyang.github.io/Our-City-Health---Sentiment-Project/
+   - Your site will be live at: https://caydenauyang.github.io/OurCityHealth/
 
 ## Files Included
 
@@ -33,9 +33,9 @@ Your project showcase is now ready to deploy! Follow these steps:
 
 ## Available Pages
 
-- **Project Showcase**: https://caydenauyang.github.io/Our-City-Health---Sentiment-Project/
-- **Corporate Dashboard**: https://caydenauyang.github.io/Our-City-Health---Sentiment-Project/corporate_dashboard.html
-- **3D Globe Map**: https://caydenauyang.github.io/Our-City-Health---Sentiment-Project/modern_map.html
+- **Project Showcase**: https://caydenauyang.github.io/OurCityHealth/
+- **Corporate Dashboard**: https://caydenauyang.github.io/OurCityHealth/corporate_dashboard.html
+- **3D Globe Map**: https://caydenauyang.github.io/OurCityHealth/modern_map.html
 
 ## Updating the Site
 
