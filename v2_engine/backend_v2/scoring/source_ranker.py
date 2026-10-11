@@ -1,8 +1,9 @@
 """
 Source Credibility Ranking
 
-Hardcoded 3-tier source classification and ranking/deduplication logic for
-selecting the highest-quality citations from a pool of articles.
+Hardcoded 4-tier source classification and ranking/deduplication logic for
+selecting the highest-quality citations from a pool of articles.  Tiers 1-3
+come from the domain lists below; any other domain is tier 4.
 """
 
 from __future__ import annotations

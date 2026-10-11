@@ -15,6 +15,7 @@ from __future__ import annotations
 
 from datetime import date, timedelta
 from typing import List, Optional
+from urllib.parse import urlparse
 
 from pydantic import BaseModel
 
@@ -146,8 +147,8 @@ def deduplicate_events(events: List[dict]) -> List[DedupedEvent]:
                 best = e
                 best_score = impact
 
-        # Rank URLs by source credibility
-        url_tiers = [(u, get_source_tier(u)) for u in urls]
+        # Rank URLs by source credibility (get_source_tier expects a bare domain)
+        url_tiers = [(u, get_source_tier(urlparse(u).hostname or "")) for u in urls]
         url_tiers.sort(key=lambda x: x[1])
         ranked_urls = [u for u, _ in url_tiers]
 

@@ -352,7 +352,7 @@ class CityHealthScore(BaseModel):
     def overall_score_matches_dimensions(self) -> "CityHealthScore":
         """
         Verify that overall_score is a plausible weighted mean of dimension scores.
-        Allow ±5 tolerance for floating-point rounding from the aggregator.
+        Allow ±10 tolerance for floating-point rounding from the aggregator.
         """
         if not self.dimensions:
             return self
