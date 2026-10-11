@@ -236,8 +236,7 @@ export function DemoModal({ open, onClose }: DemoModalProps) {
                   <p className="text-[12.5px]">
                     Each AI evaluation requires a frontier large language
                     model call against several hundred curated articles per
-                    city. At commercial scale that runs into significant
-                    monthly compute spend. For a public demonstration we
+                    city. For a public demonstration we
                     pre-compute a representative sample rather than expose a
                     live API that anonymous traffic could rack up costs on.
                   </p>
@@ -258,9 +257,8 @@ export function DemoModal({ open, onClose }: DemoModalProps) {
               </div>
 
               <p className="text-[12px] text-slate-500">
-                Production deployments score the full city catalogue on a
-                continuous schedule. Reach out if you'd like a walkthrough
-                of the live ingestion and scoring pipeline.
+                This demo shows saved scores from news dated 2014 to early
+                2024.
               </p>
             </div>
 
