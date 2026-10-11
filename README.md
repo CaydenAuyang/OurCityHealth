@@ -1,6 +1,8 @@
 # OurCityHealth
 
-OurCityHealth is a free civic dashboard that shows how cities are doing on things like housing, safety and cost of living, and what is driving the changes. Each city gets a 0 to 100 score on 12 dimensions, a week-over-week change, a short explanation of what caused the change, and links to the news articles behind it.
+[![Tests](https://github.com/CaydenAuyang/OurCityHealth/actions/workflows/tests.yml/badge.svg)](https://github.com/CaydenAuyang/OurCityHealth/actions/workflows/tests.yml)
+
+OurCityHealth is a free civic dashboard that shows how cities are doing on things like housing, safety and cost of living, and what is driving the changes. Each city gets a 0 to 100 score on 12 dimensions, how much it changed from the previous period, a short explanation of what caused the change, and links to the news articles behind it.
 
 **Live demo:** [caydenauyang.github.io/OurCityHealth](https://caydenauyang.github.io/OurCityHealth/)
 
@@ -14,7 +16,7 @@ The demo runs on a saved snapshot of scores (news dates from January 2014 to Jan
 
 OurCityHealth is an API where you call a city name and get back structured JSON with scores across 12 civic dimensions: safety, economy, transport, governance, housing, environment, health, culture, education, technology, community, and cost of living.
 
-Scores update weekly based on a rolling window of global news data. Each score includes a week-over-week delta showing direction of change, a causal explanation of what drove the change, and links to the original source articles. Historical scores are stored for trend tracking over months.
+Scores update weekly based on a rolling window of global news data. Each score includes how much it changed from the previous period, a causal explanation of what drove the change, and links to the original source articles. Historical scores are stored for trend tracking over months.
 
 Data comes from AI analysis of 380,000+ news outlets via GDELT, with every source ranked across a 4-tier credibility system (Tier 1: major international wire services, down to Tier 4: unverified sources).
 
@@ -142,7 +144,7 @@ The first version proved the core technical thesis. It used direct web scraping 
 | Community | Social cohesion, civic engagement, trust |
 | Cost of Living | Broad affordability, price stress |
 
-Each dimension produces a 0-100 score with a confidence level, week-over-week delta, causal driver explanation, evidence snippets, and source citations with credibility tier badges.
+Each dimension produces a 0-100 score with a confidence level, change from the previous period, causal driver explanation, evidence snippets, and source citations with credibility tier badges.
 
 ![New York City dimension scores with the driver behind a change](v2_engine/frontend_v2/public/screenshots/nyc_dimensions.png)
 
