@@ -52,3 +52,6 @@ logs/
 *_secret.txt
 gcp_credentials.json
 *.json.bak
+
+# Local job outputs from the archived v1 pipeline
+archive/v1/data/jobs/

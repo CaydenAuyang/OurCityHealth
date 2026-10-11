@@ -1,11 +1,12 @@
 # OurCityHealth
 
-> A city intelligence API that scores cities across 12 civic dimensions using AI analysis of 380,000+ global news sources.
+OurCityHealth is a free civic dashboard that shows how cities are doing on things like housing, safety and cost of living, and what is driving the changes. Each city gets a 0 to 100 score on 12 dimensions, a week-over-week change, a short explanation of what caused the change, and links to the news articles behind it.
 
-[![CCMF Pitch Deck](https://img.shields.io/badge/CCMF%20Pitch%20Deck-View%20Live-00D4AA)](https://caydenauyang.github.io/OurCityHealth/CCMF_pitch_deck.html)
-[![Globe Demo](https://img.shields.io/badge/V2%20Globe-Live%20Demo-00d4ff)](https://caydenauyang.github.io/OurCityHealth/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Status](https://img.shields.io/badge/Status-Active%20Development-blue)]()
+**Live demo:** [caydenauyang.github.io/OurCityHealth](https://caydenauyang.github.io/OurCityHealth/)
+
+The demo runs on a saved snapshot of scores (news dates from January 2014 to January 2024), so it works without the backend running.
+
+![OurCityHealth globe view](v2_engine/frontend_v2/public/screenshots/globe.png)
 
 ---
 
@@ -19,7 +20,7 @@ Data comes from AI analysis of 380,000+ news outlets via GDELT, with every sourc
 
 ### The Problem
 
-Decisions worth billions of dollars depend on understanding how cities are performing, yet there is no standardized, programmatic way to assess a city's conditions:
+There is no standard, easy way to see how a city is doing and why it is changing:
 
 - **Consultancy reports** (McKinsey, EIU) are deep but cost six figures, cover a few hundred cities, and publish once a year as PDFs.
 - **Raw event data** (GDELT) is free but requires building an entire processing pipeline from scratch.
@@ -85,7 +86,7 @@ OurCityHealth has gone through two major versions. V1 was a proof of concept. V2
 
 ### V2 (Current, 2025-2026)
 
-The V2 system is a ground-up rebuild targeting data integrity and commercial viability.
+The V2 system is a ground-up rebuild focused on data integrity.
 
 **Backend:**
 - Python/FastAPI with async SQLAlchemy
@@ -143,18 +144,7 @@ The first version proved the core technical thesis. It used direct web scraping 
 
 Each dimension produces a 0-100 score with a confidence level, week-over-week delta, causal driver explanation, evidence snippets, and source citations with credibility tier badges.
 
----
-
-## Business Model
-
-OurCityHealth is an API-first data utility. Free public dashboard for civic transparency, with paid tiers for developers and companies who integrate city intelligence into their products.
-
-| Tier | Price | What You Get |
-|------|-------|-------------|
-| Free | HK$0 | Public dashboard at ourcityhealth.com |
-| Developer | HK$380/mo | 500 API calls/day, 30-day history |
-| Pro | HK$2,300/mo | Unlimited calls, full history, webhooks, source-level detail |
-| Enterprise | HK$7,800+/mo | Custom weighting, white-label, dedicated SLA |
+![New York City dimension scores with the driver behind a change](v2_engine/frontend_v2/public/screenshots/nyc_dimensions.png)
 
 ---
 
@@ -182,7 +172,7 @@ OurCityHealth is an API-first data utility. Free public dashboard for civic tran
 │   ├── scripts/               Ingestion and utility scripts
 │   ├── Dockerfile             Railway deployment
 │   └── requirements.txt
-├── archive/                   V1 code and old pitch decks (preserved for reference)
+├── archive/                   V1 code (preserved for reference)
 ├── docs/                      Documentation and images
 ├── screenshots/               Product screenshots and demo videos
 ├── .github/workflows/         CI/CD configuration
@@ -191,13 +181,25 @@ OurCityHealth is an API-first data utility. Free public dashboard for civic tran
 
 ---
 
-## Team
+## How I built this
 
-**Cayden Auyang, Founder**
-18 years old. Built the entire platform solo. Previously interned at Wisers Information Limited (Hong Kong) on the AI team, where he built an LLM-powered market analysis pipeline and a macOS GUI automation agent combining computer vision with LLM reasoning. Runs AI Simply, a productivity consulting business serving clients across 7 industries. Founded the Civic AI Group at Pomfret School (20+ members). Head of School Scholar. Hong Kong ID holder, based in Hong Kong for summer 2026 and planned gap year starting 2027.
+I made the core design decisions myself. I chose the 12 civic dimensions each city is scored on and the 4-tier system that ranks how credible each news source is, after researching which ones fit best. I also decided the AI scoring step had to answer in a fixed, structured format, so its output stays consistent from one run to the next and every claim can be traced back to its sources.
 
-**Alvin Mok, Key Advisor**
-Chief Information and Data Officer at Select Equity Group, L.P. (New York). Former Head of Global Platform and Insights at Orbis Investments ($25B+ AUM). Former Engagement Manager at McKinsey (Asia/China). Harvard Business School MBA, Baker Scholar (top 5%). University of Toronto BASc Computer Engineering (highest cumulative average). Regular calls reviewing product decisions and advising on data buyer expectations.
+I built the code with AI coding tools in Cursor. My job was deciding what to build, testing what came back and fixing what was broken.
+
+---
+
+## Credits
+
+Built by Cayden Auyang, a senior at Pomfret School. See [How I built this](#how-i-built-this).
+
+Thanks to Alvin Mok for feedback.
+
+---
+
+## Sustainability
+
+The public dashboard is free, and a paid API for companies could help fund it later.
 
 ---
 
